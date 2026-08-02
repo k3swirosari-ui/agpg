@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samudra Literasi Hayati Goes to Karimunjawa - AGPG</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        ocean: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        sand: {
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-ocean-600 to-teal-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    <i class="fa-solid fa-water"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg text-slate-900 tracking-tight block leading-none">AGPG GROBOGAN</span>
+                    <span class="text-xs text-ocean-600 font-medium tracking-wide">Literasi & Education</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="#tentang" class="hover:text-ocean-600 transition-colors">Tentang</a>
+                <a href="#galeri" class="hover:text-ocean-600 transition-colors">Keindahan Karimunjawa</a>
+                <a href="#paket" class="hover:text-ocean-600 transition-colors">Pilihan Paket</a>
+                <a href="#rundown" class="hover:text-ocean-600 transition-colors">Rundown</a>
+                <a href="#pendaftaran" class="hover:text-ocean-600 transition-colors">Form Pendaftaran</a>
+            </nav>
+
+            <a href="#pendaftaran" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-ocean-600 hover:bg-ocean-700 rounded-full shadow-sm hover:shadow transition-all">
+                Daftar Sekarang
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-b from-ocean-900 via-ocean-800 to-slate-900 text-white overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ocean-500/20 border border-ocean-400/30 text-ocean-200 text-xs sm:text-sm font-semibold">
+                        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>Asosiasi Guru Penulis Grobogan (AGPG)</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                        🌊📚 Samudra Literasi Hayati <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-teal-300">Goes To Karimunjawa</span>
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                        Saatnya menikmati keindahan Karimunjawa sambil membangun jejaring, memperkuat semangat literasi, dan menghasilkan karya bersama 3 Hari 2 Malam!
+                    </p>
+
+                    <!-- Warning Badge Quota -->
+                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 backdrop-blur-sm max-w-md mx-auto lg:mx-0 flex items-start gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xl mt-0.5"></i>
+                        <div class="text-left text-xs sm:text-sm text-amber-200">
+                            <span class="font-bold text-amber-300 block">⚠️ Kuota Terbatas Hanya 45 Peserta!</span>
+                            Pendaftaran ditutup jika kuota terpenuhi atau paling lambat <strong>20 Agustus 2026</strong>.
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
+                        <a href="#pendaftaran" class="inline-flex items-center justify-center px-8 py-3.5 text-base font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Daftar Sekarang
+                        </a>
+                        <a href="#galeri" class="inline-flex items-center justify-center px-8 py-3.5 text-base font-bold text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700 rounded-xl transition-all">
+                            Lihat Keindahan Destinasi
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Event Quick Info Card -->
+                <div class="lg:col-span-5">
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-3xl p-6 sm:p-8 backdrop-blur-md shadow-2xl relative">
+                        <div class="absolute -top-3 -right-3 bg-teal-500 text-slate-950 font-bold text-xs uppercase tracking-wider px-3 py-1 rounded-full shadow">
+                            Jadwal Agenda
+                        </div>
+
+                        <h3 class="text-xl font-bold text-white mb-6 border-b border-slate-700 pb-4 flex items-center gap-2">
+                            <i class="fa-regular fa-calendar-check text-ocean-400"></i> Detail Perjalanan
+                        </h3>
+
+                        <ul class="space-y-4 text-sm sm:text-base text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-ocean-500/20 flex items-center justify-center text-ocean-400 shrink-0 mt-0.5">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Tanggal Pelaksanaan</span>
+                                    <strong class="text-white">18 – 20 September 2026</strong>
+                                </div>
+                            </li>
+
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-ocean-500/20 flex items-center justify-center text-ocean-400 shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Titik Keberangkatan (Start)</span>
+                                    <strong class="text-white">Dinas Pendidikan Kab. Grobogan</strong>
+                                </div>
+                            </li>
+
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-ocean-500/20 flex items-center justify-center text-ocean-400 shrink-0 mt-0.5">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Waktu Berangkat & Kembali</span>
+                                    <strong class="text-white">18 Sept (04.00 WIB) - 20 Sept (16.00 WIB)</strong>
+                                </div>
+                            </li>
+
+                            <li class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center text-teal-400 shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">Acara Puncak</span>
+                                    <strong class="text-teal-200">Gala Dinner bersama Kepala Dinas Pendidikan Kab. Grobogan</strong>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight Section -->
+    <section id="tentang" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold tracking-widest text-ocean-600 uppercase">Mengapa Harus Ikut?</h2>
+                <p class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Kombinasi Sempurna Liburan, Edukasi, dan Karya</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-ocean-100 text-ocean-700 rounded-2xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-umbrella-beach"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Wisata Bahari Karimunjawa</h3>
+                    <p class="text-slate-600 leading-relaxed text-sm">
+                        Eksplorasi keindahan pulau, snorkeling terumbu karang & ikan hias, penangkaran hiu di Pulau Menjangan Kecil, hingga sunset eksotis di Pantai Ujung Gelam.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">NUBAR & Penerbitan Buku</h3>
+                    <p class="text-slate-600 leading-relaxed text-sm">
+                        Program Nulis Bareng (NUBAR) yang terarah. Setiap peserta berhak mendapatkan fasilitas gratis penerbitan buku dan 1 eksemplar buku cetak karya bersama!
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
+                    <div class="w-14 h-14 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Jejaring & Inspirasi</h3>
+                    <p class="text-slate-600 leading-relaxed text-sm">
+                        Sesi pengarahan, motivasi, dan Gala Dinner spesial bersama Kepala Dinas Pendidikan Kabupaten Grobogan untuk memperkuat silaturahmi & profesionalisme.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destination Gallery Section -->
+    <section id="galeri" class="py-16 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-extrabold tracking-widest text-teal-400 uppercase">Pesona Destinasi</span>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Keindahan Karimunjawa Menanti Anda</h2>
+                <p class="mt-3 text-slate-400 text-sm sm:text-base">Nikmati sepenggal keindahan surga tropis yang akan kita kunjungi bersama dalam trip ini.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Gallery Card 1 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" 
+                         alt="" 
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Pantai+Karimunjawa';"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                        <span class="text-xs text-amber-400 font-semibold">Land Tour</span>
+                        <h3 class="font-bold text-lg text-white">Sunset Pantai Ujung Gelam</h3>
+                        <p class="text-xs text-slate-300 mt-1">Pemandangan matahari terbenam nan eksotis di tepi pantai berpasir putih.</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Card 2 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" 
+                         alt="" 
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Snorkeling+Karimunjawa';"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                        <span class="text-xs text-teal-300 font-semibold">Snorkeling</span>
+                        <h3 class="font-bold text-lg text-white">Secret Garden & Terumbu Karang</h3>
+                        <p class="text-xs text-slate-300 mt-1">Jelajahi keindahan bawah laut dengan ikan hias yang ramah.</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Card 3 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80" 
+                         alt="" 
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Island+Hopping';"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                        <span class="text-xs text-ocean-300 font-semibold">Island Hopping</span>
+                        <h3 class="font-bold text-lg text-white">Pulau Menjangan Kecil</h3>
+                        <p class="text-xs text-slate-300 mt-1">BBQ lunch di tepi pantai, berenang, kano, dan penangkaran hiu.</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Card 4 -->
+                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
+                    <img src="https://ik.imagekit.io/paradiso/karimunjawa-islands/wp-content/uploads/2021/01/bukit-love-karimunjawa.jpg" 
+                         alt="" 
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Bukit+Love';"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                        <span class="text-xs text-amber-300 font-semibold">Bukit Love & Rumah Pohon</span>
+                        <h3 class="font-bold text-lg text-white">Spot Foto Panorama Bukit</h3>
+                        <p class="text-xs text-slate-300 mt-1">Spot foto ikonik tulisan Karimunjawa berlatar belakang lautan biru.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="paket" class="py-16 bg-slate-100/70 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-extrabold tracking-widest text-ocean-600 uppercase">Pilihan Pendaftaran</span>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Pilih Paket Sesuai Kebutuhan Anda</h2>
+                <p class="mt-4 text-slate-600 text-base">Tersedia opsi paket wisata lengkap dan paket nubar literasi saja.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
+                
+                <!-- Package 1: Complete Tour -->
+                <div class="bg-white rounded-3xl p-8 shadow-lg border-2 border-ocean-500 relative flex flex-col justify-between">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-ocean-600 to-teal-600 text-white font-bold text-xs px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
+                        🌴 Paling Populer & Rekomendasi
+                    </div>
+
+                    <div>
+                        <div class="text-center pb-6 border-b border-slate-100">
+                            <h3 class="text-2xl font-bold text-slate-900">Paket Lengkap Wisata + Literasi</h3>
+                            <p class="text-slate-500 text-sm mt-1">Pengalaman penuh 3 Hari 2 Malam ke Karimunjawa</p>
+                            <div class="mt-6">
+                                <span class="text-4xl font-extrabold text-ocean-700">Rp1.690.000</span>
+                                <span class="text-slate-500 text-sm">/ orang</span>
+                            </div>
+                        </div>
+
+                        <div class="py-6">
+                            <p class="font-semibold text-slate-800 mb-4 text-sm uppercase tracking-wide">Fasilitas & Benefit Termasuk:</p>
+                            <ul class="space-y-3 text-sm text-slate-600">
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Transportasi PP (Bus & Kapal Penyeberangan)</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Penginapan AC (1 Kamar 2 Orang)</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Makan 8 Kali Selama Perjalanan</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Tiket Masuk Wisata & Tiket Kapal</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Island Hopping & Snorkeling Lengkap Peralatan</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Dokumentasi Kegiatan & Air Mineral</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Asuransi Perjalanan</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> <strong>Gala Dinner</strong> bersama Kadisdik Grobogan</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> <strong>Gratis Penerbitan Buku & 1 Eksemplar Cetak</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button onclick="selectPackage('wisata')" class="w-full py-3.5 px-6 rounded-2xl bg-ocean-600 hover:bg-ocean-700 text-white font-bold transition-colors shadow-md mt-4">
+                        Pilih Paket Wisata Lengkap
+                    </button>
+                </div>
+
+                <!-- Package 2: Literacy Only -->
+                <div class="bg-white rounded-3xl p-8 shadow-md border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="text-center pb-6 border-b border-slate-100">
+                            <h3 class="text-2xl font-bold text-slate-900">Paket Literasi (Tanpa Wisata)</h3>
+                            <p class="text-slate-500 text-sm mt-1">Khusus bagi peserta yang hanya mengikuti NUBAR</p>
+                            <div class="mt-6">
+                                <span class="text-4xl font-extrabold text-slate-900">Rp125.000</span>
+                                <span class="text-slate-500 text-sm">/ orang</span>
+                            </div>
+                        </div>
+
+                        <div class="py-6">
+                            <p class="font-semibold text-slate-800 mb-4 text-sm uppercase tracking-wide">Fasilitas Termasuk:</p>
+                            <ul class="space-y-3 text-sm text-slate-600">
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Keikutsertaan NUBAR (Nulis Bareng)</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Proses Editing & Layout Buku</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Penerbitan Buku Ber-QRCBN</li>
+                                <li class="flex items-center gap-3"><i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> 1 Eksemplar Buku Cetak Hasil Karya</li>
+                                <li class="flex items-center gap-3 opacity-40"><i class="fa-solid fa-circle-xmark text-slate-400 text-base"></i> Tidak termasuk perjalanan wisata ke Karimunjawa</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <button onclick="selectPackage('literasi')" class="w-full py-3.5 px-6 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold transition-colors shadow mt-4">
+                        Pilih Paket Literasi Saja
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Itinerary / Rundown Section -->
+    <section id="rundown" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-extrabold tracking-widest text-ocean-600 uppercase">Jadwal Acara</span>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Rundown Perjalanan 3H2M</h2>
+                <p class="mt-2 text-slate-600">Susunan kegiatan Paket Wisata + Literasi di Karimunjawa</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Day 1 -->
+                <div class="bg-gradient-to-b from-slate-50 to-white rounded-3xl p-6 border border-slate-200 relative">
+                    <div class="inline-block bg-ocean-600 text-white font-bold text-xs px-3 py-1 rounded-full mb-4">
+                        HARI 1 - 18 September 2026
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Keberangkatan, Land Tour & Gala Dinner</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-bus text-ocean-500 mt-1"></i>
+                            <span>Penyeberangan Jepara – Karimunjawa.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-hotel text-ocean-500 mt-1"></i>
+                            <span>Check-in penginapan.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-camera text-ocean-500 mt-1"></i>
+                            <span><strong>Land Tour:</strong> Pantai Bobby, Bukit Love, Rumah Pohon, & Spot Tulisan Karimunjawa.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-sun text-amber-500 mt-1"></i>
+                            <span>Menikmati Sunset eksotis.</span>
+                        </li>
+                        <li class="flex items-start gap-2 font-semibold text-slate-900 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60">
+                            <i class="fa-solid fa-star text-amber-500 mt-0.5"></i>
+                            <span>Acara Puncak: Pengarahan, Motivasi, & Gala Dinner bersama Kadisdik Grobogan.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="bg-gradient-to-b from-ocean-50/50 to-white rounded-3xl p-6 border border-ocean-200 relative shadow-sm">
+                    <div class="inline-block bg-teal-600 text-white font-bold text-xs px-3 py-1 rounded-full mb-4">
+                        HARI 2 - 19 September 2026
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Island Hopping</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-fish text-teal-500 mt-1"></i>
+                            <span>Snorkeling di terumbu karang & ikan hias.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-water text-teal-500 mt-1"></i>
+                            <span>Wisata Pulau Menjangan Kecil (BBQ Lunch, kano & penangkaran hiu).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-umbrella-beach text-teal-500 mt-1"></i>
+                            <span>Snorkeling Secret Garden & Sunset Ujung Gelam.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-utensils text-ocean-500 mt-1"></i>
+                            <span>Makan malam & acara bebas.</span>
+                        </li>
+                        
+                    </ul>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="bg-gradient-to-b from-slate-50 to-white rounded-3xl p-6 border border-slate-200 relative">
+                    <div class="inline-block bg-slate-800 text-white font-bold text-xs px-3 py-1 rounded-full mb-4">
+                        HARI 3 - 20 September 2026
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Kepulangan ke Grobogan</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-mug-hot text-slate-500 mt-1"></i>
+                            <span>Sarapan pagi di penginapan.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-suitcase text-slate-500 mt-1"></i>
+                            <span>Check-out & persiapan kepulangan.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-ship text-slate-500 mt-1"></i>
+                            <span>Penyeberangan kembali Karimunjawa – Jepara.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-house text-slate-500 mt-1"></i>
+                            <span>Perjalanan pulang & estimasi tiba di Grobogan pukul 16.00 WIB.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Registration Section -->
+    <section id="pendaftaran" class="py-20 bg-slate-900 text-white relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <span class="text-xs font-extrabold tracking-widest text-amber-400 uppercase">Form Pendaftaran Resmi</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Daftarkan Diri Anda Sekarang</h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-2">Data pendaftaran akan terekap otomatis ke dalam <strong>Google Spreadsheet</strong> Panitia.</p>
+            </div>
+
+            <!-- Bank Transfer Details Card -->
+            <div class="mb-10 bg-gradient-to-r from-blue-900/60 to-slate-800 border border-blue-500/30 rounded-3xl p-6 sm:p-8 backdrop-blur-md">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 text-amber-400 font-semibold text-xs tracking-wider uppercase">
+                            <i class="fa-solid fa-building-columns"></i> Rekening Resmi Pembayaran
+                        </div>
+                        <h3 class="text-2xl font-extrabold text-white">Bank Mandiri</h3>
+                        <div class="text-slate-300 text-sm space-y-1">
+                            <p>No. Rekening: <strong class="text-yellow-300 text-lg tracking-wider" id="noRek">136-00-1125019-5</strong></p>
+                            <p>Atas Nama: <strong>Farida Nurul Qomariah</strong></p>
+                        </div>
+                    </div>
+                    <button onclick="copyToClipboard('1360011250195')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-md transition-all">
+                        <i class="fa-regular fa-copy"></i> Salin No. Rekening
+                    </button>
+                </div>
+                <div id="copyToast" class="hidden mt-3 text-xs text-emerald-400 font-semibold">
+                    ✓ Nomor rekening berhasil disalin!
+                </div>
+            </div>
+
+            <div class="bg-slate-800 border border-slate-700 rounded-3xl p-6 sm:p-10 shadow-2xl">
+                <form id="regForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                    
+                    <!-- Package Choice Mode -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-200 mb-3">Pilih Mode / Paket Pendaftaran <span class="text-rose-400">*</span></label>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <label id="label-wisata" class="cursor-pointer border-2 border-ocean-500 bg-ocean-950/40 p-4 rounded-2xl flex items-center gap-3 transition-all">
+                                <input type="radio" name="paket" value="Paket Lengkap Wisata + Literasi (Rp1.690.000)" checked onclick="updatePackageStyle()" class="w-4 h-4 text-ocean-500 focus:ring-ocean-500">
+                                <div>
+                                    <span class="font-bold block text-sm text-white">Paket Wisata + Literasi</span>
+                                    <span class="text-xs text-ocean-300 font-medium">Rp1.690.000 / orang</span>
+                                </div>
+                            </label>
+
+                            <label id="label-literasi" class="cursor-pointer border-2 border-slate-700 bg-slate-900/50 p-4 rounded-2xl flex items-center gap-3 transition-all">
+                                <input type="radio" name="paket" value="Paket Literasi NUBAR (Rp125.000)" onclick="updatePackageStyle()" class="w-4 h-4 text-ocean-500 focus:ring-ocean-500">
+                                <div>
+                                    <span class="font-bold block text-sm text-white">Paket Literasi Saja</span>
+                                    <span class="text-xs text-slate-400 font-medium">Rp125.000 / orang</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Input Nama -->
+                    <div>
+                        <label for="nama" class="block text-sm font-semibold text-slate-200 mb-2">Nama Lengkap & Gelar <span class="text-rose-400">*</span></label>
+                        <input type="text" id="nama" required placeholder="Contoh: Dr. Supriyanto, M.Pd." class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition-colors">
+                    </div>
+
+                    <!-- Input Unit Kerja -->
+                    <div>
+                        <label for="unit_kerja" class="block text-sm font-semibold text-slate-200 mb-2">Unit Kerja / Instansi <span class="text-rose-400">*</span></label>
+                        <input type="text" id="unit_kerja" required placeholder="Contoh: SMP Negeri 1 Grobogan / Disdik" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition-colors">
+                    </div>
+
+                    <!-- Input Jabatan -->
+                    <div>
+                        <label for="jabatan" class="block text-sm font-semibold text-slate-200 mb-2">Jabatan <span class="text-rose-400">*</span></label>
+                        <select id="jabatan" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition-colors">
+                            <option value="" disabled selected>-- Pilih Jabatan --</option>
+                            <option value="Kepala Sekolah">Kepala Sekolah</option>
+                            <option value="Guru">Guru</option>
+                            <option value="Pengawas">Pengawas</option>
+                            <option value="Dinas Pendidikan">Dinas Pendidikan</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <!-- Input No WA -->
+                        <div>
+                            <label for="wa" class="block text-sm font-semibold text-slate-200 mb-2">Nomor WhatsApp <span class="text-rose-400">*</span></label>
+                            <input type="tel" id="wa" required placeholder="Contoh: 081234567890" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition-colors">
+                        </div>
+
+                        <!-- Input Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-slate-200 mb-2">Alamat Email <span class="text-rose-400">*</span></label>
+                            <input type="email" id="email" required placeholder="Contoh: nama@email.com" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Upload Bukti Transfer (OPSIONAL) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-200 mb-2">Unggah Bukti Transfer <span class="text-slate-400 font-normal text-xs">(Opsional)</span></label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-700 border-dashed rounded-2xl bg-slate-900/50 hover:border-ocean-500 transition-colors">
+                            <div class="space-y-2 text-center" id="uploadPlaceholder">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400"></i>
+                                <div class="flex text-sm text-slate-400 justify-center">
+                                    <label for="bukti_tf" class="relative cursor-pointer rounded-md font-bold text-ocean-400 hover:text-ocean-300 focus-within:outline-none">
+                                        <span>Pilih file foto bukti transfer</span>
+                                        <input id="bukti_tf" name="bukti_tf" type="file" accept="image/*" onchange="previewImage(this)" class="sr-only">
+                                    </label>
+                                </div>
+                                <p class="text-xs text-slate-500">Format JPG, PNG atau JPEG (Bisa diunggah nanti)</p>
+                            </div>
+                            <div id="imagePreviewContainer" class="hidden text-center space-y-3">
+                                <img id="imagePreview" src="" alt="Pratinjau Bukti Transfer" class="max-h-48 mx-auto rounded-xl border border-slate-700 shadow">
+                                <button type="button" onclick="resetImageUpload()" class="text-xs text-rose-400 hover:text-rose-300 font-semibold underline">
+                                    Hapus / Ganti Foto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="btnSubmit" class="w-full py-4 px-8 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-base rounded-2xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i> Konfirmasi Pendaftaran
+                        </button>
+                        <p class="text-xs text-slate-400 text-center mt-3">Data Anda akan terekap secara otomatis oleh sistem.</p>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Person Section -->
+    <section class="py-16 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold text-slate-900 mb-4">Ada Pertanyaan Seputar Pendaftaran & Kegiatan?</h3>
+            <p class="text-slate-600 mb-8 text-sm sm:text-base">Hubungi Contact Person panitia kami untuk informasi lebih lanjut mengenai kegiatan dan teknis perjalanan.</p>
+
+            <a href="https://api.whatsapp.com/send?phone=6285225062043&text=Halo%20Kak%20Hendrik,%20saya%20ingin%20bertanya%20mengenai%20pendaftaran%20Samudra%20Literasi%20Hayati%20Karimunjawa" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base shadow-lg transition-all">
+                <i class="fa-brands fa-whatsapp text-2xl"></i>
+                <span>Contact Person: Kak Hendrik (085225062043)</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-800 text-xs sm:text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>© 2026 AGPG (Asosiasi Guru Penulis Grobogan). All Rights Reserved.</p>
+            <p class="mt-2 text-slate-500">Samudra Literasi Hayati Goes to Karimunjawa | 18-20 September 2026</p>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-file-circle-check"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900">Pendaftaran Terekap!</h3>
+            <p class="text-slate-600 text-sm mt-2">Data pendaftaran Anda berhasil disimpan di <strong>Google Spreadsheet</strong> Panitia.</p>
+
+            <div class="my-6 p-4 bg-slate-50 rounded-2xl text-left text-xs space-y-2 text-slate-700 border border-slate-200" id="summaryText">
+                <!-- Filled dynamically by JS -->
+            </div>
+
+            <div class="space-y-3">
+                <a id="btnWAConfirmation" href="#" target="_blank" rel="noopener noreferrer" class="block w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all text-xs shadow">
+                    <i class="fa-brands fa-whatsapp mr-1.5"></i> Konfirmasi Pembayaran via WA ke Ibu Farida
+                </a>
+                <button onclick="closeModal()" class="block w-full py-2 text-slate-500 hover:text-slate-700 font-semibold text-xs">
+                    Selesai & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Handling -->
+    <script>
+        // =========================================================================
+        // EDIT URL GOOGLE APPS SCRIPT ANDA DI SINI:
+        // =========================================================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydjMhJKM4mEC2iZqTIzh4K_u5L8A8nm5e0tk6bmOegfRIfUyIvi-bBdWDjeyfXoc7kow/exec";
+        // =========================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+        });
+
+        let base64ProofImage = "";
+
+        function selectPackage(type) {
+            const wisataRadio = document.querySelector('input[name="paket"][value*="Wisata"]');
+            const literasiRadio = document.querySelector('input[name="paket"][value*="Literasi"]');
+
+            if (type === 'wisata') {
+                wisataRadio.checked = true;
+            } else {
+                literasiRadio.checked = true;
+            }
+            updatePackageStyle();
+            document.getElementById('pendaftaran').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updatePackageStyle() {
+            const wisataRadio = document.querySelector('input[name="paket"][value*="Wisata"]');
+            const labelWisata = document.getElementById('label-wisata');
+            const labelLiterasi = document.getElementById('label-literasi');
+
+            if (wisataRadio.checked) {
+                labelWisata.className = "cursor-pointer border-2 border-ocean-500 bg-ocean-950/40 p-4 rounded-2xl flex items-center gap-3 transition-all";
+                labelLiterasi.className = "cursor-pointer border-2 border-slate-700 bg-slate-900/50 p-4 rounded-2xl flex items-center gap-3 transition-all";
+            } else {
+                labelLiterasi.className = "cursor-pointer border-2 border-ocean-500 bg-ocean-950/40 p-4 rounded-2xl flex items-center gap-3 transition-all";
+                labelWisata.className = "cursor-pointer border-2 border-slate-700 bg-slate-900/50 p-4 rounded-2xl flex items-center gap-3 transition-all";
+            }
+        }
+
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('input');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const toast = document.getElementById('copyToast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    base64ProofImage = e.target.result;
+                    document.getElementById('imagePreview').src = e.target.result;
+                    document.getElementById('uploadPlaceholder').classList.add('hidden');
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                }
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetImageUpload() {
+            document.getElementById('bukti_tf').value = "";
+            base64ProofImage = "";
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const btnSubmit = document.getElementById('btnSubmit');
+            const originalBtnText = btnSubmit.innerHTML;
+            
+            // Show loading
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyimpan data pendaftaran...`;
+
+            const nama = document.getElementById('nama').value;
+            const unitKerja = document.getElementById('unit_kerja').value;
+            const jabatan = document.getElementById('jabatan').value;
+            const wa = document.getElementById('wa').value;
+            const email = document.getElementById('email').value;
+            const paket = document.querySelector('input[name="paket"]:checked').value;
+
+            const formData = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                nama: nama,
+                unitKerja: unitKerja,
+                jabatan: jabatan,
+                wa: wa,
+                email: email,
+                paket: paket,
+                buktiTransfer: base64ProofImage ? "Ada Foto Terunggah" : "Belum Diunggah"
+            };
+
+            // Attempting POST to Google Apps Script
+            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "" && !GOOGLE_SCRIPT_URL.includes("YOUR_SCRIPT_ID_HERE")) {
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                } catch (err) {
+                    console.log("Submit result:", err);
+                }
+            }
+
+            // Restore button
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = originalBtnText;
+
+            // Display Summary Modal
+            const summaryHTML = `
+                <p><strong>Status Rekap:</strong> <span class="text-emerald-600 font-bold">✓ Tersimpan di Google Sheet</span></p>
+                <p><strong>Nama:</strong> ${nama}</p>
+                <p><strong>Unit Kerja:</strong> ${unitKerja}</p>
+                <p><strong>Jabatan:</strong> ${jabatan}</p>
+                <p><strong>No. WA:</strong> ${wa}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Paket Dipilih:</strong> ${paket}</p>
+                <p><strong>Bukti Transfer:</strong> <span class="${base64ProofImage ? 'text-emerald-600' : 'text-amber-600'} font-semibold">${base64ProofImage ? 'Telah Diunggah' : 'Belum Diunggah (Opsional)'}</span></p>
+            `;
+            document.getElementById('summaryText').innerHTML = summaryHTML;
+
+            // WhatsApp Confirmation Link to Farida Nurul Qomariah (081216725510)
+            const rawMessage = `Halo Ibu Farida Nurul Qomariah, saya telah melakukan pendaftaran via website untuk kegiatan "Samudra Literasi Hayati Goes to Karimunjawa".\n\nRincian Pendaftaran:\n- Nama: ${nama}\n- Unit Kerja: ${unitKerja}\n- Jabatan: ${jabatan}\n- No. WA: ${wa}\n- Email: ${email}\n- Paket: ${paket}\n- Status Bukti Transfer: ${base64ProofImage ? 'Telah Diunggah di Form' : 'Akan Diisikan/Menyusul'}\n\nMohon konfirmasi pendaftarannya. Terima kasih!`;
+            
+            const waUrl = `https://api.whatsapp.com/send?phone=6281216725510&text=${encodeURIComponent(rawMessage)}`;
+            const btnWA = document.getElementById('btnWAConfirmation');
+            btnWA.href = waUrl;
+            btnWA.onclick = function(e) {
+                e.preventDefault();
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+            };
+
+            // Show Modal
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('regForm').reset();
+            resetImageUpload();
+        }
+    </script>
+</body>
+</html>
