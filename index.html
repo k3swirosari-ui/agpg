@@ -39,6 +39,15 @@
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
@@ -208,70 +217,184 @@
         </div>
     </section>
 
-    <!-- Destination Gallery Section -->
-    <section id="galeri" class="py-16 bg-slate-900 text-white">
+    <!-- Destination Gallery Section (SLIDER & MODAL FULLSCREEN) -->
+    <section id="galeri" class="py-16 bg-slate-900 text-white relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <span class="text-xs font-extrabold tracking-widest text-teal-400 uppercase">Pesona Destinasi</span>
-                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Keindahan Karimunjawa Menanti Anda</h2>
-                <p class="mt-3 text-slate-400 text-sm sm:text-base">Nikmati sepenggal keindahan surga tropis yang akan kita kunjungi bersama dalam trip ini.</p>
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-xs font-extrabold tracking-widest text-teal-400 uppercase">Pesona Destinasi Karimunjawa</span>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Eksplorasi 10 Objek Wisata Ikonik</h2>
+                <p class="mt-3 text-slate-400 text-sm sm:text-base">Geser slider untuk melihat keindahan destinasi. Klik pada foto untuk melihat tampilan Full Screen lengkap dengan detail kegiatan.</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Gallery Card 1 -->
-                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" 
-                         alt="" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Pantai+Karimunjawa';"
-                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
-                        <span class="text-xs text-amber-400 font-semibold">Land Tour</span>
-                        <h3 class="font-bold text-lg text-white">Sunset Pantai Ujung Gelam</h3>
-                        <p class="text-xs text-slate-300 mt-1">Pemandangan matahari terbenam nan eksotis di tepi pantai berpasir putih.</p>
-                    </div>
-                </div>
+            <!-- Carousel Controls & Container -->
+            <div class="relative group">
+                <!-- Navigation Buttons -->
+                <button onclick="scrollGallery(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 sm:-translate-x-5 z-20 w-11 h-11 bg-ocean-600/90 hover:bg-ocean-500 text-white rounded-full flex items-center justify-center shadow-2xl backdrop-blur-md transition-all border border-ocean-400/40 focus:outline-none">
+                    <i class="fa-solid fa-chevron-left text-lg"></i>
+                </button>
+                <button onclick="scrollGallery(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 sm:translate-x-5 z-20 w-11 h-11 bg-ocean-600/90 hover:bg-ocean-500 text-white rounded-full flex items-center justify-center shadow-2xl backdrop-blur-md transition-all border border-ocean-400/40 focus:outline-none">
+                    <i class="fa-solid fa-chevron-right text-lg"></i>
+                </button>
 
-                <!-- Gallery Card 2 -->
-                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
-                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80" 
-                         alt="" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Snorkeling+Karimunjawa';"
-                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
-                        <span class="text-xs text-teal-300 font-semibold">Snorkeling</span>
-                        <h3 class="font-bold text-lg text-white">Secret Garden & Terumbu Karang</h3>
-                        <p class="text-xs text-slate-300 mt-1">Jelajahi keindahan bawah laut dengan ikan hias yang ramah.</p>
+                <!-- Slider Horizontal Scroll -->
+                <div id="gallerySlider" class="flex gap-6 overflow-x-auto scroll-smooth no-scrollbar py-4 px-1 snap-x snap-mandatory">
+                    
+                    <!-- Card 1: Pantai Bobby -->
+                    <div onclick="openDestinationModal(0)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://cdn.wisata.app/diary/8c4b2c9b-4308-4a49-b632-3e605e5bed20.jpg" alt="Pantai Bobby" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Pantai+Bobby';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">1. Pantai Bobby</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Pantai eksotis dengan pemandangan sunrise, pohon kelapa miring, dan ayunan pantai.</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Gallery Card 3 -->
-                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
-                    <img src="https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=800&q=80" 
-                         alt="" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Island+Hopping';"
-                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
-                        <span class="text-xs text-ocean-300 font-semibold">Island Hopping</span>
-                        <h3 class="font-bold text-lg text-white">Pulau Menjangan Kecil</h3>
-                        <p class="text-xs text-slate-300 mt-1">BBQ lunch di tepi pantai, berenang, kano, dan penangkaran hiu.</p>
+                    <!-- Card 2: Bukit Love -->
+                    <div onclick="openDestinationModal(1)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://ik.imagekit.io/paradiso/karimunjawa-islands/wp-content/uploads/2021/01/bukit-love-karimunjawa.jpg" alt="Bukit Love" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Bukit+Love';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">2. Bukit Love</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Bukit berlatar belakang lautan biru dengan tugu batu LOVE dan ikon Karimunjawa.</p>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Gallery Card 4 -->
-                <div class="group relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl">
-                    <img src="https://ik.imagekit.io/paradiso/karimunjawa-islands/wp-content/uploads/2021/01/bukit-love-karimunjawa.jpg" 
-                         alt="" 
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Bukit+Love';"
-                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
-                        <span class="text-xs text-amber-300 font-semibold">Bukit Love & Rumah Pohon</span>
-                        <h3 class="font-bold text-lg text-white">Spot Foto Panorama Bukit</h3>
-                        <p class="text-xs text-slate-300 mt-1">Spot foto ikonik tulisan Karimunjawa berlatar belakang lautan biru.</p>
+                    <!-- Card 3: Alun-Alun Karimunjawa -->
+                    <div onclick="openDestinationModal(2)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://wisatakarimunjawa.co.id/wp-content/uploads/2024/09/Alun-alun-Batu-Lawang-Karimunjawa.jpg" alt="Alun-alun Karimunjawa" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Alun-alun+Karimunjawa';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">3. Alun-Alun Karimunjawa</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Pusat kuliner malam pulau Karimunjawa dengan berbagai sajian seafood segar bakar.</p>
+                        </div>
                     </div>
+
+                    <!-- Card 4: Snorkeling Spot Nemo -->
+                    <div onclick="openDestinationModal(3)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://wisatakarimunjawa.co.id/wp-content/uploads/2023/07/Snorkeling-di-Spot-Nemo-Karimunjawa-1024x654.jpg" alt="Spot Ikan Nemo" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Spot+Nemo';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">4. Spot Nemo & Karang</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Spot menyelam dangkal tempat bermukimnya kawanan ikan Nemo dan anemon laut.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Pulau Menjangan Kecil -->
+                    <div onclick="openDestinationModal(4)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIVE2G1ZI2hffLFuwXk6zu7m9sn5S6GiYkKNWMuGoWCK40HcFfcGOufaQ&s=10" alt="Pulau Menjangan Kecil" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Menjangan+Kecil';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">5. Pulau Menjangan Kecil</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Pulau privat berpasir putih tempat santai, kano, dan penangkaran biota laut.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Bakar Ikan di Pantai -->
+                    <div onclick="openDestinationModal(5)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://asset.kompas.com/crops/N04epmYdqg009LKV2a8Q7eRmbwo=/0x0:1500x1000/750x500/data/photo/2022/09/18/63268050a560d.jpg" alt="Bakar Ikan di Pantai" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Bakar+Ikan+di+Pantai';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">6. BBQ Bakar Ikan Pantai</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Nikmati sajian makan siang barbeque khas pinggir pantai pulau tak berpenghuni.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 7: Renang Bersama Hiu -->
+                    <div onclick="openDestinationModal(6)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://awsimages.detik.net.id/customthumb/2014/09/11/1519/114533_hiu1.jpg?w=600&q=90" alt="Renang Bersama Hiu" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Renang+Bersama+Hiu';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">7. Renang Bersama Hiu</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Uji adrenalin dengan masuk ke kolam penangkaran hiu jinak di Pulau Menjangan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 8: Main Kano -->
+                    <div onclick="openDestinationModal(7)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3b1PjfLHWfNaQW3yY_R2az7FdeE38pliUJ9K2plofHFhcNr-AC_0W9CU&s=10" alt="Main Kano" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Main+Kano';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">8. Main Kano Transparan</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Mendayung kano di perairan dangkal yang tenang dan bening bagaikan kaca.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 9: Secret Garden Maer -->
+                    <div onclick="openDestinationModal(8)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://wisatakarimunjawa.co.id/wp-content/uploads/2024/11/Spot-Snorkeling-Terbaik-di-Karimunjawa-Menjangan-Kecil.jpg" alt="Secret Garden Area Maer" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Secret+Garden+Maer';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">9. Secret Garden Maer</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Taman laut bawah air terbesar dengan aneka jenis ikan hias berwarna-warni.</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 10: Pantai Ujung Gelam -->
+                    <div onclick="openDestinationModal(9)" class="snap-start shrink-0 w-72 sm:w-80 group/card relative overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 shadow-xl cursor-pointer hover:border-ocean-500 transition-all duration-300">
+                        <img src="https://www.agenwisatakarimunjawa.com/wp-content/uploads/2014/10/sunset-di-pantai-ujung-gelam-karimunjawa.jpg" alt="Pantai Ujung Gelam" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=Pantai+Ujung+Gelam';" class="w-full h-72 object-cover transform group-hover/card:scale-110 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent p-6 flex flex-col justify-end">
+                            <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider mb-1"><i class="fa-solid fa-expand mr-1"></i> Klik Fullscreen</span>
+                            <h3 class="font-bold text-xl text-white">10. Pantai Ujung Gelam</h3>
+                            <p class="text-xs text-slate-300 mt-1 line-clamp-2">Spot sunset terbaik dengan kelapa miring ikonik dan bentangan pasir putih halus.</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Modal Fullscreen Objek Wisata -->
+    <div id="destinationModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="relative bg-slate-900 border border-slate-700 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl my-auto">
+            
+            <!-- Close Modal Button -->
+            <button onclick="closeDestinationModal()" class="absolute top-4 right-4 z-20 w-10 h-10 bg-slate-800/80 hover:bg-rose-600 text-white rounded-full flex items-center justify-center transition-all border border-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="grid md:grid-cols-2">
+                <!-- Foto Fullscreen Preview -->
+                <div class="relative h-64 sm:h-80 md:h-full min-h-[280px] bg-black">
+                    <img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent md:hidden"></div>
+                </div>
+
+                <!-- Detail Objek Wisata & Deskripsi Kegiatan -->
+                <div class="p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ocean-500/20 text-ocean-300 text-xs font-semibold mb-3 border border-ocean-500/30">
+                            <i class="fa-solid fa-location-dot"></i> Destinasi Ikonik Karimunjawa
+                        </div>
+                        <h3 id="modalTitle" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight"></h3>
+                        <p id="modalDesc" class="text-slate-300 text-sm sm:text-base mt-3 leading-relaxed"></p>
+
+                        <hr class="my-5 border-slate-800">
+
+                        <!-- Deskripsi Kegiatan -->
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i> Kegiatan Yang Bisa Dilakukan:
+                            </h4>
+                            <ul id="modalActivities" class="space-y-2 text-xs sm:text-sm text-slate-300">
+                                <!-- Populated dynamically by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="pt-4 flex items-center gap-3">
+                        <a href="#pendaftaran" onclick="closeDestinationModal()" class="flex-1 py-3 px-5 bg-ocean-600 hover:bg-ocean-500 text-white font-bold text-center rounded-xl transition-all text-xs sm:text-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Daftar Trip Sekarang
+                        </a>
+                        <button onclick="closeDestinationModal()" class="py-3 px-5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-xs sm:text-sm transition-all">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Pricing Section -->
     <section id="paket" class="py-16 bg-slate-100/70 border-y border-slate-200">
@@ -635,6 +758,147 @@
 
     <!-- JavaScript Handling -->
     <script>
+        // =========================================================================
+        // DATA OBJEK WISATA KARIMUNJAWA (10 DESTINASI)
+        // =========================================================================
+        const destinationsData = [
+            {
+                title: "1. Pantai Bobby",
+                image: "https://cdn.wisata.app/diary/8c4b2c9b-4308-4a49-b632-3e605e5bed20.jpg",
+                desc: "Pantai Bobby menawarkan garis pantai yang tenang berpasir putih bersih dengan spot deretan pohon kelapa miring yang sangat ikonik. Pemandangan perairan jernihnya sangat menenangkan untuk bersantai.",
+                activities: [
+                    "Menikmati pemandangan matahari terbit (sunrise) nan eksotis",
+                    "Berfoto di ikon pohon kelapa miring & ayunan tepi pantai",
+                    "Bersantai sambil menikmati es kelapa muda segar"
+                ]
+            },
+            {
+                title: "2. Bukit Love",
+                image: "https://ik.imagekit.io/paradiso/karimunjawa-islands/wp-content/uploads/2021/01/bukit-love-karimunjawa.jpg",
+                desc: "Destinasi wisata dataran tinggi Karimunjawa yang menyuguhkan pemandangan lanskap panorama laut lepas dari ketinggian, dilengkapi monumen batu tulisan 'LOVE' dan 'KARIMUNJAWA'.",
+                activities: [
+                    "Foto panorama laut Karimunjawa dari spot ketinggian",
+                    "Berfoto di tugu batu ikonik LOVE dan Karimunjawa",
+                    "Bersantai di kafe puncak bukit sambil menikmati angin laut"
+                ]
+            },
+            {
+                title: "3. Alun-Alun Karimunjawa",
+                image: "https://wisatakarimunjawa.co.id/wp-content/uploads/2024/09/Alun-alun-Batu-Lawang-Karimunjawa.jpg",
+                desc: "Pusat keramaian dan kehangatan malam di Pulau Karimunjawa. Lokasi favorit untuk berkumpul, berinteraksi dengan warga lokal, serta memanjakan lidah dengan hidangan kuliner laut.",
+                activities: [
+                    "Wisata kuliner malam seafood segar (ikan, cumi, udang bakar)",
+                    "Membeli suvenir, kaos, dan kerajinan khas Karimunjawa",
+                    "Bercengkerama dan menikmati suasana malam pulau"
+                ]
+            },
+            {
+                title: "4. Snorkeling Spot Ikan Nemo & Terumbu Karang",
+                image: "https://wisatakarimunjawa.co.id/wp-content/uploads/2023/07/Snorkeling-di-Spot-Nemo-Karimunjawa-1024x654.jpg",
+                desc: "Salah satu spot snorkeling favorit dengan perairan dangkal yang dihiasi terumbu karang berwarna-warni dan menjadi rumah bagi kawanan ikan badut (Nemo) yang ramah.",
+                activities: [
+                    "Snorkeling dan berenang bersama kawanan Ikan Nemo",
+                    "Sesi foto dan video underwater bersama terumbu karang",
+                    "Memberi makan ikan-ikan kecil di habitat alaminya"
+                ]
+            },
+            {
+                title: "5. Pulau Menjangan Kecil",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIVE2G1ZI2hffLFuwXk6zu7m9sn5S6GiYkKNWMuGoWCK40HcFfcGOufaQ&s=10",
+                desc: "Pulau tak berpenghuni dengan pantai berpasir putih yang sangat lembut, air laut bening kristal, serta dikelilingi vegetasi hijau yang masih sangat asri.",
+                activities: [
+                    "Island Hopping dan eksplorasi pesisir pantai pasir putih",
+                    "Berenang dan berjemur menikmati suasana pulau tropis",
+                    "Santai sore dan menikmati momen kebersamaan di tepi pantai"
+                ]
+            },
+            {
+                title: "6. Bakar Ikan di Pantai (BBQ Lunch)",
+                image: "https://asset.kompas.com/crops/N04epmYdqg009LKV2a8Q7eRmbwo=/0x0:1500x1000/750x500/data/photo/2022/09/18/63268050a560d.jpg",
+                desc: "Pengalaman kuliner istimewa menyantap hidangan ikan laut segar yang dibakar langsung di tepi pantai oleh tim lokal saat agenda Island Hopping berlangsung.",
+                activities: [
+                    "Makan siang bersama khas perjamuan BBQ tepi pantai",
+                    "Menikmati sajian ikan bakar segar dipadu sambal khas pulau",
+                    "Membangun keakraban dan kehangatan antarterlibat peserta"
+                ]
+            },
+            {
+                title: "7. Renang Bersama Hiu",
+                image: "https://awsimages.detik.net.id/customthumb/2014/09/11/1519/114533_hiu1.jpg?w=600&q=90",
+                desc: "Pengalaman memacu adrenalin yang aman di kolam penangkaran hiu Pulau Menjangan Kecil. Di sini peserta dapat berenang dekat dengan spesies hiu yang sudah terbiasa dengan manusia.",
+                activities: [
+                    "Masuk ke dalam kolam penangkaran dan berenang mendekati hiu",
+                    "Foto sensasional underwater bersama hiu jinak",
+                    "Mendapat edukasi pelestarian dan konservasi satwa laut"
+                ]
+            },
+            {
+                title: "8. Main Kano Transparan",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3b1PjfLHWfNaQW3yY_R2az7FdeE38pliUJ9K2plofHFhcNr-AC_0W9CU&s=10",
+                desc: "Aktivitas mendayung perahu kano ringan di atas permukaan perairan dangkal yang tenang dan sangat jernih, memungkinkan Anda melihat langsung terumbu bawah air.",
+                activities: [
+                    "Mendayung kano menyusuri pesisir pantai yang tenang",
+                    "Melihat pemandangan bawah air dari atas perahu",
+                    "Foto estetik berperahu di atas air bening kristal"
+                ]
+            },
+            {
+                title: "9. Snorkeling Spot Ikan Hias Area Maer (Secret Garden)",
+                image: "https://wisatakarimunjawa.co.id/wp-content/uploads/2024/11/Spot-Snorkeling-Terbaik-di-Karimunjawa-Menjangan-Kecil.jpg",
+                desc: "Terkenal sebagai 'Taman Rahasia' bawah laut Karimunjawa. Menawarkan hamparan terumbu karang yang luas dan keanekaragaman spesies ikan hias paling melimpah.",
+                activities: [
+                    "Snorkeling di spot konservasi terumbu karang terbaik",
+                    "Atraksi feeding fish (dikelilingi ratusan ikan hias)",
+                    "Dokumentasi video underwater resolusi tinggi"
+                ]
+            },
+            {
+                title: "10. Pantai Ujung Gelam (Ikon Kepala Miring & Sunset Point)",
+                image: "https://www.agenwisatakarimunjawa.com/wp-content/uploads/2014/10/sunset-di-pantai-ujung-gelam-karimunjawa.jpg",
+                desc: "Destinasi penutup paling spektakuler di Karimunjawa. Terkenal dengan pohon kelapa miring yang unik, batuan karang besar, dan julukan sebagai spot sunset tercantik.",
+                activities: [
+                    "Menyaksikan pemandangan detik-detik Sunset (Matahari Terbenam)",
+                    "Foto di pohon kelapa miring ikonik dan formasi batuan karang",
+                    "Menikmati cemilan gorengan hangat dan es kelapa di tepi pantai"
+                ]
+            }
+        ];
+
+        // Slider Navigation Function
+        function scrollGallery(direction) {
+            const slider = document.getElementById('gallerySlider');
+            const scrollAmount = 320;
+            slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // Open Modal Function
+        function openDestinationModal(index) {
+            const data = destinationsData[index];
+            if (!data) return;
+
+            document.getElementById('modalImg').src = data.image;
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDesc').textContent = data.desc;
+
+            const actContainer = document.getElementById('modalActivities');
+            actContainer.innerHTML = '';
+            data.activities.forEach(act => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start gap-2.5';
+                li.innerHTML = `<i class="fa-solid fa-circle-check text-teal-400 mt-1 shrink-0"></i> <span>${act}</span>`;
+                actContainer.appendChild(li);
+            });
+
+            document.getElementById('destinationModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal Function
+        function closeDestinationModal() {
+            document.getElementById('destinationModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         // =========================================================================
         // EDIT URL GOOGLE APPS SCRIPT ANDA DI SINI:
         // =========================================================================
