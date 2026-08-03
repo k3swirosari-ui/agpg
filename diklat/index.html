@@ -1,1 +1,1252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemari Menu Ibuku - AGPG Grobogan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Dashboard Diagram -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-pattern text-slate-800 min-h-screen flex flex-col justify-between">
 
+    <!-- HEADER SEKSI -->
+    <header class="bg-white shadow-md border-b border-red-100 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <img id="headerLogo" src="https://i.ibb.co.com/k2S8w3vg/logo-agpg-1.png" alt="" class="h-16 w-auto object-contain">
+                <div>
+                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">HARDIKNAS 2027</span>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">Gemari Menu Ibuku</h1>
+                    <p class="text-xs text-slate-600 font-medium">Gerakan Murid Berkarya Menulis Buku • Rekor MURI 1.000 Buku Siswa</p>
+                </div>
+            </div>
+            
+            <!-- NAVIGASI TAB -->
+            <nav class="flex bg-slate-100 p-1 rounded-xl text-xs sm:text-sm font-semibold w-full sm:w-auto">
+                <button onclick="switchTab('form')" id="tab-form" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-pen"></i> Form Pendaftaran
+                </button>
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </button>
+                <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-lock"></i> <span id="adminNavLabel">Login Pengurus</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- BANNER INFO -->
+    <section class="bg-gradient-to-r from-red-700 via-red-600 to-red-800 text-white py-3 shadow-inner">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left text-xs sm:text-sm gap-2">
+            <div class="flex items-center gap-2 justify-center sm:justify-start">
+                <i class="fa-solid fa-award text-amber-300 text-lg"></i>
+                <span>Diselenggarakan oleh <strong>AGPG (Asosiasi Guru Penulis Grobogan)</strong> bekerja sama dengan <strong>Dinas Pendidikan Kabupaten Grobogan</strong>.</span>
+            </div>
+            <div class="bg-red-900/50 px-3 py-1 rounded-full border border-red-400/30 text-amber-200 font-medium">
+                <i class="fa-solid fa-bullseye mr-1"></i> Target: 1.000 Buku Siswa
+            </div>
+        </div>
+    </section>
+
+    <!-- KONTEN UTAMA -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- ================= TAB 1: FORMULIR PENDAFTARAN ================= -->
+        <div id="view-form" class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-red-500"></i> Formulir Pendaftaran Peserta
+                        </h2>
+                        <p class="text-xs text-slate-400">Silakan isi data calon penulis muda dengan lengkap dan benar.</p>
+                    </div>
+                    <span class="text-xs bg-red-600/30 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg font-bold">
+                        Biaya: Rp350.000,-
+                    </span>
+                </div>
+
+                <form id="registrationForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-6">
+                    
+                    <!-- INFO BIAYA & MANFAAT -->
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-900 space-y-1">
+                        <div class="font-bold flex items-center gap-2 text-amber-950">
+                            <i class="fa-solid fa-circle-info text-amber-600"></i> Keterangan Biaya Pendaftaran:
+                        </div>
+                        <p>Biaya pendaftaran sebesar <strong>Rp350.000,-</strong> sudah mencakup:</p>
+                        <ul class="list-disc list-inside pl-2 space-y-0.5">
+                            <li>Pelatihan/Bimbingan Menulis Buku secara Intensif</li>
+                            <li>Biaya Penerbitan Ber-QRCBN & Cetak <strong>2 (dua) Eksemplar Buku</strong></li>
+                            <li>Sertifikat Peserta Pemecahan Rekor MURI HARDIKNAS 2027</li>
+                        </ul>
+                    </div>
+
+                    <!-- INPUT FIELDS GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Nama Siswa -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Nama Lengkap Siswa <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="namaSiswa" required placeholder="Contoh: Anisa Rahmawati"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                        </div>
+
+                        <!-- Asal Sekolah -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Asal Sekolah <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="asalSekolah" required placeholder="Contoh: SD Negeri 1 Purwodadi"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                        </div>
+
+                        <!-- Pilihan Kelas -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Tingkat Kelas <span class="text-red-500">*</span>
+                            </label>
+                            <select id="kelas" required
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
+                                <option value="">-- Pilih Kelas --</option>
+                                <optgroup label="Tingkat SD / MI">
+                                    <option value="Kelas 1 SD/MI">Kelas 1 SD/MI</option>
+                                    <option value="Kelas 2 SD/MI">Kelas 2 SD/MI</option>
+                                    <option value="Kelas 3 SD/MI">Kelas 3 SD/MI</option>
+                                    <option value="Kelas 4 SD/MI">Kelas 4 SD/MI</option>
+                                    <option value="Kelas 5 SD/MI">Kelas 5 SD/MI</option>
+                                </optgroup>
+                                <optgroup label="Tingkat SMP / MTs">
+                                    <option value="Kelas 7 SMP/MTs">Kelas 7 SMP/MTs</option>
+                                    <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option>
+                                </optgroup>
+                            </select>
+                            <p class="text-[11px] text-slate-500 mt-1 font-medium">
+                                <i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Sesuai ketentuan, pendaftaran khusus untuk Kelas 1, 2, 3, 4, 5 (SD/MI) dan Kelas 7, 8 (SMP/MTs).
+                            </p>
+                        </div>
+
+                        <!-- Asal 19 Kecamatan di Grobogan -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Asal Kecamatan (Kab. Grobogan) <span class="text-red-500">*</span>
+                            </label>
+                            <select id="asalKecamatan" required onchange="handleKecamatanChange()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
+                                <option value="">-- Pilih Kecamatan --</option>
+                                <option value="Brati">Brati</option>
+                                <option value="Gabus">Gabus</option>
+                                <option value="Geyer">Geyer</option>
+                                <option value="Godong">Godong</option>
+                                <option value="Grobogan">Grobogan</option>
+                                <option value="Gubug">Gubug</option>
+                                <option value="Karangrayung">Karangrayung</option>
+                                <option value="Kedungjati">Kedungjati</option>
+                                <option value="Klambu">Klambu</option>
+                                <option value="Kradenan">Kradenan</option>
+                                <option value="Ngaringan">Ngaringan</option>
+                                <option value="Penawangan">Penawangan</option>
+                                <option value="Pulokulon">Pulokulon</option>
+                                <option value="Purwodadi">Purwodadi</option>
+                                <option value="Tanggungharjo">Tanggungharjo</option>
+                                <option value="Tawangharjo">Tawangharjo</option>
+                                <option value="Tegowanu">Tegowanu</option>
+                                <option value="Toroh">Toroh</option>
+                                <option value="Wirosari">Wirosari</option>
+                            </select>
+                        </div>
+
+                        <!-- Nama Guru Pendamping -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Nama Guru Pendamping <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="namaGuru" required placeholder="Contoh: Budi Santoso, S.Pd."
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                        </div>
+
+                        <!-- Email Guru Pendamping -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Email Guru Pendamping <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" id="emailGuru" required placeholder="Contoh: budi@gmail.com"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                        </div>
+
+                        <!-- Nomor WA Guru Pendamping -->
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                Nomor WhatsApp Guru Pendamping <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="waGuru" required placeholder="Contoh: 08123456789"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                        </div>
+
+                        <!-- PILIHAN JENIS PENDAFTARAN -->
+                        <div class="md:col-span-2 border-t border-slate-200 pt-4">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
+                                Pilih Opsi Pendaftaran & Pembayaran <span class="text-red-500">*</span>
+                            </label>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Option Kolektif -->
+                                <label id="label-kolektif" class="relative border-2 border-slate-200 rounded-2xl p-4 flex items-start gap-3 cursor-pointer hover:border-red-500 transition-all bg-slate-50">
+                                    <input type="radio" name="jenisPendaftaran" value="Kolektif" checked onchange="togglePendaftaranType()" class="mt-1 text-red-600 focus:ring-red-500">
+                                    <div>
+                                        <div class="font-bold text-slate-900 text-sm">Pendaftaran Kolektif</div>
+                                        <p class="text-xs text-slate-500 mt-0.5">Didaftarkan bersama rombongan sekolah / Koordinator Kecamatan.</p>
+                                    </div>
+                                </label>
+
+                                <!-- Option Mandiri -->
+                                <label id="label-mandiri" class="relative border-2 border-slate-200 rounded-2xl p-4 flex items-start gap-3 cursor-pointer hover:border-red-500 transition-all bg-slate-50">
+                                    <input type="radio" name="jenisPendaftaran" value="Mandiri" onchange="togglePendaftaranType()" class="mt-1 text-red-600 focus:ring-red-500">
+                                    <div>
+                                        <div class="font-bold text-slate-900 text-sm">Pendaftaran Mandiri</div>
+                                        <p class="text-xs text-slate-500 mt-0.5">Mendaftar dan melakukan pembayaran secara perorangan langsung.</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- DYNAMIC PAYMENT INSTRUCTION BOX -->
+                        <div class="md:col-span-2">
+                            <!-- Box Kolektif Dynamic -->
+                            <div id="info-kolektif" class="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 text-xs text-blue-900 space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-users text-blue-600 text-2xl mt-0.5"></i>
+                                    <div class="flex-grow">
+                                        <p class="font-extrabold text-blue-950 text-sm">Informasi Pembayaran Kolektif Kecamatan</p>
+                                        <p class="text-slate-600 mt-0.5">Berikut adalah detail akun pembayaran Koordinator Kecamatan Anda:</p>
+                                    </div>
+                                </div>
+
+                                <div id="kolektifDetailsBox" class="bg-white/80 border border-blue-200 rounded-xl p-3.5 space-y-1.5 font-medium">
+                                    <p class="text-slate-500 text-xs italic"><i class="fa-solid fa-arrow-pointer mr-1"></i>Pilih Kecamatan di atas untuk menampilkan detail Koordinator Kecamatan Anda.</p>
+                                </div>
+
+                                <div id="kolektifWaButtonContainer">
+                                    <!-- Dynamic WA Button -->
+                                </div>
+                            </div>
+
+                            <!-- Box Mandiri -->
+                            <div id="info-mandiri" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 text-xs text-emerald-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-building-columns text-emerald-600 text-2xl mt-1"></i>
+                                    <div>
+                                        <p class="font-bold text-emerald-950 text-sm">Ketentuan Pendaftaran Mandiri:</p>
+                                        <p class="mt-1">Silakan melakukan transfer sebesar <strong>Rp350.000,-</strong> ke:</p>
+                                        <p class="font-bold text-emerald-900 text-sm bg-white/70 px-3 py-1.5 rounded-lg border border-emerald-200 mt-1 inline-block">
+                                            Bank Mandiri: 136-00-1125019-5 <br>
+                                            <span class="text-xs font-normal text-emerald-700">a.n. Farida Nurul Qomariah</span>
+                                        </p>
+                                        <p class="mt-2 text-slate-600">Bukti transfer wajib dikirimkan ke Ibu Farida Nurul Qomariah via WA (081216725510).</p>
+                                    </div>
+                                </div>
+                                <a href="https://wa.me/6281216725510?text=Halo%20Ibu%20Farida,%20saya%20ingin%20mengirimkan%20bukti%20transfer%20pendaftaran%20Gemari%20Menu%20Ibuku%20(Mandiri)." 
+                                   target="_blank" 
+                                   class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                                    Kirim WA Bu Farida
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="pt-4 border-t border-slate-200 flex justify-end">
+                        <button type="submit" id="submitBtn" 
+                                class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: DASHBOARD & STATISTIK ================= -->
+        <div id="view-dashboard" class="hidden space-y-6">
+            
+            <!-- STATS CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Peserta</p>
+                        <p id="statTotal" class="text-3xl font-extrabold text-slate-900 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Target Rekor MURI</p>
+                        <p class="text-3xl font-extrabold text-amber-600 mt-1">1.000</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Status Lunas</p>
+                        <p id="statLunas" class="text-3xl font-extrabold text-emerald-600 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Belum Konfirmasi</p>
+                        <p id="statBelumLunas" class="text-3xl font-extrabold text-orange-500 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PROGRESS BAR TOWARDS MURI RECORD -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-2">
+                <div class="flex justify-between items-center text-sm font-bold">
+                    <span>Progress Pencapaian Target 1.000 Buku</span>
+                    <span id="progressText" class="text-red-600">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden p-0.5">
+                    <div id="progressBar" class="bg-gradient-to-r from-red-500 to-amber-500 h-full rounded-full transition-all duration-1000 w-0"></div>
+                </div>
+            </div>
+
+            <!-- CHART PER KECAMATAN -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Sebaran Pendaftar 19 Kecamatan di Kab. Grobogan</h3>
+                        <p class="text-xs text-slate-500">Grafik real-time pendaftaran murid untuk Rekor MURI HARDIKNAS 2027</p>
+                    </div>
+                    <button onclick="fetchDashboardData()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 self-start sm:self-auto">
+                        <i class="fa-solid fa-rotate"></i> Refresh Data
+                    </button>
+                </div>
+                
+                <div class="relative w-full h-[320px] sm:h-[400px]">
+                    <canvas id="kecamatanChart"></canvas>
+                </div>
+            </div>
+
+            <!-- LISTING SUMMARY PER KECAMATAN TABLE -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 font-bold text-sm text-slate-800">
+                    <i class="fa-solid fa-list-ol mr-2 text-red-600"></i> Rekapitulasi Per Kecamatan
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                            <tr>
+                                <th class="py-3 px-4">Kecamatan</th>
+                                <th class="py-3 px-4 text-center">Total Pendaftar</th>
+                                <th class="py-3 px-4 text-center">Lunas</th>
+                                <th class="py-3 px-4 text-center">Belum Konfirmasi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rekapTableBody" class="divide-y divide-slate-100 text-slate-700">
+                            <tr>
+                                <td colspan="4" class="py-6 text-center text-slate-400">Memuat data rekapitulasi...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= TAB 3: LOGIN & MANAGEMENT PORTAL ================= -->
+        <div id="view-admin" class="hidden space-y-6">
+            
+            <!-- LOGIN FORM (IF NOT LOGGED IN) -->
+            <div id="loginSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-900">Portal Akses Pengurus</h2>
+                    <p class="text-xs text-slate-500">Khusus Bendahara, Koordinator Kecamatan, dan Pengurus AGPG.</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Peran / Jabatan</label>
+                        <select id="loginRole" required onchange="handleRoleSelectChange()"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
+                            <option value="Bendahara">Bendahara (Pendaftar Mandiri)</option>
+                            <option value="Koordinator">Koordinator Kecamatan (Pendaftar Kolektif)</option>
+                            <option value="Pengurus AGPG">Pengurus AGPG (Semua Pendaftar)</option>
+                        </select>
+                    </div>
+
+                    <!-- SELECT KECAMATAN (IF ROLE IS KOORDINATOR) -->
+                    <div id="kecamatanSelectContainer" class="hidden">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pilih Kecamatan Anda</label>
+                        <select id="loginKecamatan"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
+                            <option value="Brati">Brati</option>
+                            <option value="Gabus">Gabus</option>
+                            <option value="Geyer">Geyer</option>
+                            <option value="Godong">Godong</option>
+                            <option value="Grobogan">Grobogan</option>
+                            <option value="Gubug">Gubug</option>
+                            <option value="Karangrayung">Karangrayung</option>
+                            <option value="Kedungjati">Kedungjati</option>
+                            <option value="Klambu">Klambu</option>
+                            <option value="Kradenan">Kradenan</option>
+                            <option value="Ngaringan">Ngaringan</option>
+                            <option value="Penawangan">Penawangan</option>
+                            <option value="Pulokulon">Pulokulon</option>
+                            <option value="Purwodadi" selected>Purwodadi</option>
+                            <option value="Tanggungharjo">Tanggungharjo</option>
+                            <option value="Tawangharjo">Tawangharjo</option>
+                            <option value="Tegowanu">Tegowanu</option>
+                            <option value="Toroh">Toroh</option>
+                            <option value="Wirosari">Wirosari</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1" id="loginPassLabel">Kata Sandi / PIN</label>
+                        <input type="password" id="loginPassword" required placeholder="Masukkan kata sandi / No. HP Koordinator"
+                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    </div>
+
+                    <div id="loginErrorMessage" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 p-3 rounded-xl font-medium"></div>
+
+                    <button type="submit" id="loginBtn"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+                    </button>
+                </form>
+            </div>
+
+            <!-- ADMIN / KOORDINATOR DASHBOARD PANEL (IF LOGGED IN) -->
+            <div id="adminPanelSection" class="hidden space-y-6">
+                
+                <!-- USER SESSION INFO BAR -->
+                <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 text-center sm:text-left">
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-lg shrink-0">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-sm" id="userRoleBadge">Bendahara</div>
+                            <div class="text-xs text-slate-400" id="userScopeInfo">Akses Data Pendaftar</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="handleLogout()" class="bg-slate-800 hover:bg-red-600/80 text-xs px-4 py-2 rounded-xl font-semibold border border-slate-700 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
+                    </button>
+                </div>
+
+                <!-- KHUSUS PENGURUS AGPG: MENU GANTI PASSWORD AKUN BENDAHARA & KOORDINATOR -->
+                <div id="pengurusPasswordManagerSection" class="hidden bg-white rounded-2xl shadow-xl border border-red-100 p-6 space-y-4">
+                    <div class="flex items-center gap-2 text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-key text-red-600 text-lg"></i>
+                        <h3>Pengaturan Kata Sandi & Nomor HP (Khusus Pengurus AGPG)</h3>
+                    </div>
+                    
+                    <p class="text-xs text-slate-500">Atur atau perbarui kata sandi Bendahara atau Nomor HP Login Koordinator Kecamatan.</p>
+
+                    <form onsubmit="handleChangePasswordSubmit(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Sasaran Akun</label>
+                            <select id="changePassTargetRole" required onchange="handleChangePassRoleChange()" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white">
+                                <option value="Bendahara">Bendahara</option>
+                                <option value="Koordinator">Koordinator Kecamatan</option>
+                            </select>
+                        </div>
+
+                        <div id="changePassKecamatanContainer" class="hidden">
+                            <label class="block font-bold text-slate-700 mb-1">Pilih Kecamatan</label>
+                            <select id="changePassTargetKecamatan" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white">
+                                <option value="Brati">Brati</option>
+                                <option value="Gabus">Gabus</option>
+                                <option value="Geyer">Geyer</option>
+                                <option value="Godong">Godong</option>
+                                <option value="Grobogan">Grobogan</option>
+                                <option value="Gubug">Gubug</option>
+                                <option value="Karangrayung">Karangrayung</option>
+                                <option value="Kedungjati">Kedungjati</option>
+                                <option value="Klambu">Klambu</option>
+                                <option value="Kradenan">Kradenan</option>
+                                <option value="Ngaringan">Ngaringan</option>
+                                <option value="Penawangan">Penawangan</option>
+                                <option value="Pulokulon">Pulokulon</option>
+                                <option value="Purwodadi" selected>Purwodadi</option>
+                                <option value="Tanggungharjo">Tanggungharjo</option>
+                                <option value="Tawangharjo">Tawangharjo</option>
+                                <option value="Tegowanu">Tegowanu</option>
+                                <option value="Toroh">Toroh</option>
+                                <option value="Wirosari">Wirosari</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1" id="changePassValueLabel">Kata Sandi Baru</label>
+                            <input type="text" id="changePassNewValue" required placeholder="Sandi / No. HP Baru..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                        </div>
+
+                        <div class="md:col-span-3 flex justify-end pt-2">
+                            <button type="submit" id="changePassBtn" class="bg-slate-900 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- MANAGEMENT TABLE DATA PESERTA -->
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden space-y-4">
+                    
+                    <div class="p-6 border-b border-slate-100 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-red-600"></i> Manajemen Data & Verifikasi Pembayaran
+                            </h3>
+                            <p class="text-xs text-slate-500">Hanya akun berwenang yang dapat melakukan verifikasi pembayaran.</p>
+                        </div>
+
+                        <!-- SEARCH & FILTER -->
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                            <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari nama siswa / sekolah..."
+                                class="w-full sm:w-64 px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-red-500">
+                            
+                            <select id="adminStatusFilter" onchange="filterAdminTable()" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white">
+                                <option value="ALL">Semua Status</option>
+                                <option value="Lunas">Hanya Lunas</option>
+                                <option value="Belum Lunas">Belum Lunas</option>
+                            </select>
+
+                            <button onclick="loadAdminData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-rotate"></i> Sync
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TABLE PESERTA -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                                <tr>
+                                    <th class="py-3 px-4">Verifikasi Pembayaran</th>
+                                    <th class="py-3 px-4">Nama Siswa</th>
+                                    <th class="py-3 px-4">Sekolah / Kelas</th>
+                                    <th class="py-3 px-4">Kecamatan</th>
+                                    <th class="py-3 px-4">Guru Pendamping</th>
+                                    <th class="py-3 px-4">Opsi</th>
+                                    <th class="py-3 px-4">Kontak WA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminTableBody" class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td colspan="7" class="py-8 text-center text-slate-400">Memuat data pendaftar...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white border-t border-slate-800 mt-12 py-8">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <img id="footerLogo" src="https://i.ibb.co.com/6Rp3bjkT/Desain-tanpa-judul-1-1.png" alt="" class="h-12 w-auto object-contain">
+                <div>
+                    <h4 class="font-bold text-sm">AGPG (Asosiasi Guru Penulis Grobogan)</h4>
+                    <p class="text-xs text-slate-400">Menulis Karya, Mengukir Sejarah HARDIKNAS 2027</p>
+                </div>
+            </div>
+
+            <div class="text-center md:text-right text-xs text-slate-400 space-y-1">
+                <p>Bekerja Sama dengan <strong>Dinas Pendidikan Kab. Grobogan</strong></p>
+                <p>&copy; Dikembangkan oleh Hendrik Pencerah</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL POPUP NOTIFIKASI SUKSES PENDAFTARAN -->
+    <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl animate-bounce-short">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900">Pendaftaran Berhasil!</h3>
+            <p class="text-xs text-slate-600 leading-relaxed" id="modalMessageText">
+                Data calon penulis muda telah tersimpan. Silakan lanjutkan konfirmasi pembayaran.
+            </p>
+
+            <div id="modalActionContainer" class="pt-2">
+                <!-- Dynamic Button -->
+            </div>
+
+            <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT LOGIC -->
+    <script>
+        // PENTING: GANTI DENGAN URL WEB APP DEPLOYMENT BARU ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjIZURAILPaSmbf4GCykzbE-rWWaj4zEj5Ku9OGs5dx5bl-bEjRsQiQkmazIzDbCCjzA/exec';
+
+        // Global State Variables
+        let chartInstance = null;
+        let globalRegistrations = [];
+        let globalCoordinators = {};
+        let currentUser = null; // { role, kecamatan, password }
+
+        // Master List 19 Kecamatan Resmi di Kabupaten Grobogan
+        const KECAMATAN_LIST = [
+            "Brati", "Gabus", "Geyer", "Godong", "Grobogan", "Gubug", 
+            "Karangrayung", "Kedungjati", "Klambu", "Kradenan", "Ngaringan", 
+            "Penawangan", "Pulokulon", "Purwodadi", "Tanggungharjo", 
+            "Tawangharjo", "Tegowanu", "Toroh", "Wirosari"
+        ];
+
+        // ON LOAD INITIALIZATION & AUTOMATIC SESSION RESTORE
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchInitialConfig();
+            fetchDashboardData();
+            restoreSavedSession();
+        });
+
+        // RESTORE SAVED USER LOGIN SESSION
+        function restoreSavedSession() {
+            const savedSession = localStorage.getItem('gemari_user_session_2027');
+            if (savedSession) {
+                try {
+                    currentUser = JSON.parse(savedSession);
+                    updateUserUI();
+                    loadAdminData(); // Tampilkan data peserta secara otomatis
+                } catch (e) {
+                    localStorage.removeItem('gemari_user_session_2027');
+                }
+            }
+        }
+
+        // TAB SWITCHING
+        function switchTab(tabName) {
+            ['form', 'dashboard', 'admin'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2";
+            });
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-2";
+
+            if (tabName === 'dashboard') {
+                fetchDashboardData();
+            } else if (tabName === 'admin' && currentUser) {
+                loadAdminData();
+            }
+        }
+
+        // HANDLE KECAMATAN SELECTION CHANGE ON FORM
+        function handleKecamatanChange() {
+            updateKolektifPaymentInfo();
+        }
+
+        // TOGGLE PENDAFTARAN TYPE (KOLEKTIF VS MANDIRI)
+        function togglePendaftaranType() {
+            const isMandiri = document.querySelector('input[name="jenisPendaftaran"]:checked').value === 'Mandiri';
+            
+            if (isMandiri) {
+                document.getElementById('info-kolektif').classList.add('hidden');
+                document.getElementById('info-mandiri').classList.remove('hidden');
+            } else {
+                document.getElementById('info-kolektif').classList.remove('hidden');
+                document.getElementById('info-mandiri').classList.add('hidden');
+                updateKolektifPaymentInfo();
+            }
+        }
+
+        // UPDATE DYNAMIC KOLEKTIF PAYMENT INFO BOX
+        function updateKolektifPaymentInfo() {
+            const selectedKec = document.getElementById('asalKecamatan').value;
+            const box = document.getElementById('kolektifDetailsBox');
+            const btnContainer = document.getElementById('kolektifWaButtonContainer');
+
+            if (!selectedKec) {
+                box.innerHTML = `<p class="text-slate-500 text-xs italic"><i class="fa-solid fa-arrow-pointer mr-1"></i>Pilih Kecamatan di atas untuk menampilkan detail Koordinator Kecamatan Anda.</p>`;
+                btnContainer.innerHTML = '';
+                return;
+            }
+
+            const coord = globalCoordinators[selectedKec] || {
+                namaKoordinator: `Koordinator ${selectedKec}`,
+                bank: "Bank Jateng",
+                noRekening: "-",
+                noWa: "-"
+            };
+
+            const cleanWa = formatWaNumber(coord.noWa);
+
+            box.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div><span class="text-slate-500">Kecamatan:</span> <strong class="text-blue-950">${selectedKec}</strong></div>
+                    <div><span class="text-slate-500">Nama Koordinator:</span> <strong class="text-blue-950">${coord.namaKoordinator}</strong></div>
+                    <div><span class="text-slate-500">Bank:</span> <strong class="text-blue-950">${coord.bank}</strong></div>
+                    <div><span class="text-slate-500">No. Rekening:</span> <strong class="text-blue-950 bg-blue-100/60 px-2 py-0.5 rounded border border-blue-200">${coord.noRekening}</strong></div>
+                    <div class="sm:col-span-2"><span class="text-slate-500">WhatsApp Koordinator:</span> <strong class="text-emerald-700">${coord.noWa}</strong></div>
+                </div>
+            `;
+
+            if (cleanWa) {
+                btnContainer.innerHTML = `
+                    <a href="https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(coord.namaKoordinator)},%20saya%20ingin%20mengirimkan%20bukti%20transfer%20pendaftaran%20Kolektif%20Gemari%20Menu%20Ibuku%20Kecamatan%20${encodeURIComponent(selectedKec)}." 
+                       target="_blank" 
+                       class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 inline-flex">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Transfer ke WA Koordinator ${selectedKec}
+                    </a>
+                `;
+            } else {
+                btnContainer.innerHTML = '';
+            }
+        }
+
+        // FETCH INITIAL CONFIG & COORDINATOR MASTER
+        function fetchInitialConfig() {
+            fetch(`${SCRIPT_URL}?action=getPublicData`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.data) {
+                        if (data.data.settings) {
+                            if (data.data.settings.header_logo) document.getElementById('headerLogo').src = data.data.settings.header_logo;
+                            if (data.data.settings.footer_logo) document.getElementById('footerLogo').src = data.data.settings.footer_logo;
+                        }
+                        if (data.data.coordinators) {
+                            globalCoordinators = data.data.coordinators;
+                            updateKolektifPaymentInfo();
+                        }
+                    }
+                })
+                .catch(err => console.log('Menggunakan data default.'));
+        }
+
+        // HANDLE SUBMIT FORM PENDAFTARAN
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pendaftaran...`;
+
+            const payload = {
+                action: 'register',
+                namaSiswa: document.getElementById('namaSiswa').value.trim(),
+                asalSekolah: document.getElementById('asalSekolah').value.trim(),
+                kelas: document.getElementById('kelas').value,
+                asalKecamatan: document.getElementById('asalKecamatan').value,
+                namaGuru: document.getElementById('namaGuru').value.trim(),
+                emailGuru: document.getElementById('emailGuru').value.trim(),
+                waGuru: document.getElementById('waGuru').value.trim(),
+                jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+
+                if (res.status === 'success') {
+                    showSuccessModal(payload);
+                    document.getElementById('registrationForm').reset();
+                    togglePendaftaranType();
+                    fetchDashboardData();
+                } else {
+                    alert('Gagal pendaftaran: ' + (res.message || 'Terjadi kesalahan sistem.'));
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                alert('Gagal terhubung ke server. Pastikan URL Apps Script sudah dikonfigurasi.');
+            });
+        }
+
+        // SHOW SUCCESS MODAL WITH DYNAMIC COORDINATOR INFO
+        function showSuccessModal(data) {
+            const modal = document.getElementById('successModal');
+            const msgText = document.getElementById('modalMessageText');
+            const actionContainer = document.getElementById('modalActionContainer');
+
+            if (data.jenisPendaftaran === 'Mandiri') {
+                msgText.innerHTML = `Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar sebagai peserta Mandiri! <br><br>Silakan transfer <strong>Rp350.000,-</strong> ke Bank Mandiri <strong>136-00-1125019-5</strong> a.n Farida Nurul Qomariah dan kirim bukti transfer via WhatsApp.`;
+                actionContainer.innerHTML = `
+                    <a href="https://wa.me/6281216725510?text=Halo%20Ibu%20Farida,%20saya%20sudah%20mendaftar%20Gemari%20Menu%20Ibuku%20a.n%20${encodeURIComponent(data.namaSiswa)}%20dari%20${encodeURIComponent(data.asalSekolah)}%20(${encodeURIComponent(data.asalKecamatan)}).%20Berikut%20bukti%20transfernya." 
+                       target="_blank" 
+                       class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mb-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Pembayaran Ke WA Bu Farida
+                    </a>
+                `;
+            } else {
+                const coord = globalCoordinators[data.asalKecamatan] || {
+                    namaKoordinator: `Koordinator ${data.asalKecamatan}`,
+                    bank: "Bank Jateng",
+                    noRekening: "-",
+                    noWa: "-"
+                };
+                const cleanWa = formatWaNumber(coord.noWa);
+
+                msgText.innerHTML = `
+                    Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar dalam pendaftaran Kolektif Kecamatan <strong>${data.asalKecamatan}</strong>! 
+                    <br><br>
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-left space-y-1 my-2">
+                        <div><strong>Koordinator:</strong> ${coord.namaKoordinator}</div>
+                        <div><strong>Bank:</strong> ${coord.bank}</div>
+                        <div><strong>No. Rekening:</strong> ${coord.noRekening}</div>
+                        <div><strong>No. WA Koordinator:</strong> ${coord.noWa}</div>
+                    </div>
+                    Silakan transfer <strong>Rp350.000,-</strong> dan kirimkan bukti pembayaran kepada Koordinator Kecamatan Anda.
+                `;
+
+                if (cleanWa) {
+                    actionContainer.innerHTML = `
+                        <a href="https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(coord.namaKoordinator)},%20saya%20sudah%20mendaftar%20Kolektif%20a.n%20${encodeURIComponent(data.namaSiswa)}%20(${encodeURIComponent(data.asalSekolah)}).%20Berikut%20bukti%20transfernya." 
+                           target="_blank" 
+                           class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mb-2">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Transfer ke WA Koordinator ${data.asalKecamatan}
+                        </a>
+                    `;
+                } else {
+                    actionContainer.innerHTML = ``;
+                }
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        // FETCH DASHBOARD DATA & STATS
+        function fetchDashboardData() {
+            fetch(`${SCRIPT_URL}?action=getPublicData`)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        const data = res.data;
+                        document.getElementById('statTotal').innerText = data.totalCount || 0;
+                        document.getElementById('statLunas').innerText = data.lunasCount || 0;
+                        document.getElementById('statBelumLunas').innerText = data.belumLunasCount || 0;
+
+                        const pct = Math.min(100, Math.round(((data.totalCount || 0) / 1000) * 100));
+                        document.getElementById('progressText').innerText = `${pct}% (${data.totalCount || 0} / 1000 Buku)`;
+                        document.getElementById('progressBar').style.width = `${pct}%`;
+
+                        if (data.coordinators) globalCoordinators = data.coordinators;
+
+                        renderKecamatanChart(data.kecamatanStats || {});
+                        renderRekapTable(data.kecamatanStats || {});
+                    }
+                })
+                .catch(err => console.log('Mengambil data dashboard...'));
+        }
+
+        // RENDER CHART JS
+        function renderKecamatanChart(stats) {
+            const ctx = document.getElementById('kecamatanChart').getContext('2d');
+            
+            const labels = KECAMATAN_LIST;
+            const dataCounts = labels.map(k => (stats[k] ? stats[k].total : 0));
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Siswa Mendaftar',
+                        data: dataCounts,
+                        backgroundColor: '#dc2626',
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#991b1b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Total: ${context.parsed.y} Siswa`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 }, autoSkip: false, maxRotation: 45, minRotation: 45 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // RENDER REKAP TABLE
+        function renderRekapTable(stats) {
+            const tbody = document.getElementById('rekapTableBody');
+            tbody.innerHTML = '';
+
+            KECAMATAN_LIST.forEach(kec => {
+                const item = stats[kec] || { total: 0, lunas: 0, belum: 0 };
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="py-2.5 px-4 font-semibold text-slate-800">${kec}</td>
+                    <td class="py-2.5 px-4 text-center font-bold text-slate-900">${item.total}</td>
+                    <td class="py-2.5 px-4 text-center text-emerald-600 font-bold">${item.lunas}</td>
+                    <td class="py-2.5 px-4 text-center text-orange-500 font-semibold">${item.belum}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // HANDLE ROLE SELECTION IN LOGIN FORM
+        function handleRoleSelectChange() {
+            const role = document.getElementById('loginRole').value;
+            const kecContainer = document.getElementById('kecamatanSelectContainer');
+            const passLabel = document.getElementById('loginPassLabel');
+
+            if (role === 'Koordinator') {
+                kecContainer.classList.remove('hidden');
+                passLabel.innerText = "Nomor HP Koordinator Kecamatan";
+            } else {
+                kecContainer.classList.add('hidden');
+                passLabel.innerText = "Kata Sandi / PIN";
+            }
+        }
+
+        // HANDLE LOGIN
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('loginRole').value;
+            const password = document.getElementById('loginPassword').value;
+            const kecamatan = role === 'Koordinator' ? document.getElementById('loginKecamatan').value : '';
+            
+            const errDiv = document.getElementById('loginErrorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+
+            errDiv.classList.add('hidden');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...`;
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'login',
+                    role: role,
+                    password: password,
+                    kecamatan: kecamatan
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem`;
+
+                if (res.status === 'success') {
+                    currentUser = {
+                        role: role,
+                        kecamatan: kecamatan,
+                        password: password
+                    };
+                    localStorage.setItem('gemari_user_session_2027', JSON.stringify(currentUser));
+                    
+                    updateUserUI();
+                    loadAdminData();
+                } else {
+                    errDiv.innerText = res.message || 'Kata sandi atau hak akses salah.';
+                    errDiv.classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem`;
+                errDiv.innerText = 'Gagal memverifikasi login. Periksa koneksi atau URL Apps Script.';
+                errDiv.classList.remove('hidden');
+            });
+        }
+
+        function updateUserUI() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminPanelSection').classList.remove('hidden');
+
+            document.getElementById('adminNavLabel').innerText = currentUser.role;
+            document.getElementById('userRoleBadge').innerText = `${currentUser.role} ${currentUser.kecamatan ? ' - Kec. ' + currentUser.kecamatan : ''}`;
+            
+            if (currentUser.role === 'Bendahara') {
+                document.getElementById('userScopeInfo').innerText = 'Akses Pendaftar Mandiri & Verifikasi Pembayaran';
+                document.getElementById('pengurusPasswordManagerSection').classList.add('hidden');
+            } else if (currentUser.role === 'Koordinator') {
+                document.getElementById('userScopeInfo').innerText = `Akses Pendaftar Kolektif Kecamatan ${currentUser.kecamatan}`;
+                document.getElementById('pengurusPasswordManagerSection').classList.add('hidden');
+            } else if (currentUser.role === 'Pengurus AGPG') {
+                document.getElementById('userScopeInfo').innerText = 'Akses Penuh Seluruh Pendaftar (Kolektif & Mandiri All Kecamatan)';
+                document.getElementById('pengurusPasswordManagerSection').classList.remove('hidden');
+            }
+        }
+
+        function handleChangePassRoleChange() {
+            const role = document.getElementById('changePassTargetRole').value;
+            const container = document.getElementById('changePassKecamatanContainer');
+            const valLabel = document.getElementById('changePassValueLabel');
+
+            if (role === 'Koordinator') {
+                container.classList.remove('hidden');
+                valLabel.innerText = "Nomor HP Koordinator Baru";
+            } else {
+                container.classList.add('hidden');
+                valLabel.innerText = "Kata Sandi Baru";
+            }
+        }
+
+        function handleChangePasswordSubmit(e) {
+            e.preventDefault();
+            if (!currentUser || currentUser.role !== 'Pengurus AGPG') return;
+
+            const targetRole = document.getElementById('changePassTargetRole').value;
+            const targetKecamatan = targetRole === 'Koordinator' ? document.getElementById('changePassTargetKecamatan').value : '';
+            const newPassword = document.getElementById('changePassNewValue').value.trim();
+            const btn = document.getElementById('changePassBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'changePassword',
+                    pengurusPassword: currentUser.password,
+                    targetRole: targetRole,
+                    targetKecamatan: targetKecamatan,
+                    newPassword: newPassword
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru`;
+
+                if (res.status === 'success') {
+                    alert(res.message || 'Berhasil diperbarui.');
+                    document.getElementById('changePassNewValue').value = '';
+                    fetchDashboardData();
+                } else {
+                    alert('Gagal: ' + (res.message || 'Terjadi kesalahan.'));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru`;
+                alert('Gagal memperbarui. Periksa jaringan.');
+            });
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('gemari_user_session_2027');
+            document.getElementById('adminPanelSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminNavLabel').innerText = 'Login Pengurus';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // FETCH ADMIN DATA FROM APPS SCRIPT
+        function loadAdminData() {
+            if (!currentUser) return;
+
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data pendaftar...</td></tr>`;
+
+            const fetchUrl = `${SCRIPT_URL}?action=getAdminData&role=${encodeURIComponent(currentUser.role)}&kecamatan=${encodeURIComponent(currentUser.kecamatan || '')}`;
+
+            fetch(fetchUrl)
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        globalRegistrations = res.data || [];
+                        renderAdminTable(globalRegistrations);
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-red-500">${res.message || 'Gagal memuat data.'}</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-red-500">Gagal memuat data admin. Periksa tautan Apps Script.</td></tr>`;
+                });
+        }
+
+        // RENDER DATA TABLE WITH CHECKLIST STATUS WITH STRICT ROLE VERIFICATION PERMISSION
+        function renderAdminTable(data) {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Belum ada data pendaftar untuk kriteria akun Anda.</td></tr>`;
+                return;
+            }
+
+            data.forEach((row) => {
+                const isLunas = String(row.statusPembayaran).toLowerCase() === 'lunas';
+                
+                // Permission Check: Can this user verify/checklist this payment?
+                let canVerify = false;
+                if (currentUser.role === 'Pengurus AGPG') {
+                    canVerify = true;
+                } else if (currentUser.role === 'Bendahara' && String(row.jenisPendaftaran).toLowerCase() === 'mandiri') {
+                    canVerify = true;
+                } else if (currentUser.role === 'Koordinator' && 
+                           String(row.jenisPendaftaran).toLowerCase() === 'kolektif' && 
+                           String(row.asalKecamatan).toLowerCase() === String(currentUser.kecamatan).toLowerCase()) {
+                    canVerify = true;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 border-b border-slate-100";
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4">
+                        ${canVerify ? `
+                            <label class="inline-flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" ${isLunas ? 'checked' : ''} 
+                                    onchange="togglePaymentStatus(${row.rowIndex}, this.checked)"
+                                    class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">
+                                    ${isLunas ? 'LUNAS' : 'Belum Lunas'}
+                                </span>
+                            </label>
+                        ` : `
+                            <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">
+                                ${isLunas ? 'LUNAS' : 'Belum Lunas'}
+                            </span>
+                        `}
+                    </td>
+                    <td class="py-3 px-4 font-bold text-slate-900">${row.namaSiswa}</td>
+                    <td class="py-3 px-4 text-slate-700">${row.asalSekolah} <br><span class="text-xs text-slate-500 font-medium">${row.kelas}</span></td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">${row.asalKecamatan}</td>
+                    <td class="py-3 px-4 text-slate-700">${row.namaGuru} <br><span class="text-xs text-slate-400">${row.emailGuru}</span></td>
+                    <td class="py-3 px-4">
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded ${row.jenisPendaftaran === 'Mandiri' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
+                            ${row.jenisPendaftaran}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <a href="https://wa.me/62${formatWaNumber(row.waGuru)}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> ${row.waGuru}
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function formatWaNumber(num) {
+            if (!num) return '';
+            let cleaned = String(num).replace(/\D/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '62' + cleaned.substring(1);
+            }
+            return cleaned;
+        }
+
+        function togglePaymentStatus(rowIndex, isChecked) {
+            const newStatus = isChecked ? 'Lunas' : 'Belum Lunas';
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updatePaymentStatus',
+                    rowIndex: rowIndex,
+                    statusPembayaran: newStatus
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    const item = globalRegistrations.find(r => r.rowIndex === rowIndex);
+                    if (item) item.statusPembayaran = newStatus;
+                    renderAdminTable(globalRegistrations);
+                    fetchDashboardData();
+                } else {
+                    alert('Gagal mengupdate status pembayaran.');
+                    loadAdminData();
+                }
+            })
+            .catch(err => {
+                alert('Gagal terhubung ke server untuk update status.');
+                loadAdminData();
+            });
+        }
+
+        function filterAdminTable() {
+            const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('adminStatusFilter').value;
+
+            const filtered = globalRegistrations.filter(r => {
+                const matchesSearch = r.namaSiswa.toLowerCase().includes(searchText) || 
+                                      r.asalSekolah.toLowerCase().includes(searchText) ||
+                                      r.namaGuru.toLowerCase().includes(searchText);
+                const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderAdminTable(filtered);
+        }
+    </script>
+</body>
+</html>
