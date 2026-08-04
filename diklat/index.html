@@ -10,6 +10,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- SHEETJS DENGAN DUKUNGAN STYLING -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -81,7 +89,6 @@
                 </div>
 
                 <form id="registrationForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-6">
-                    
                     <!-- INFO BIAYA & MANFAAT -->
                     <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-900 space-y-1">
                         <div class="font-bold flex items-center gap-2 text-amber-950">
@@ -97,32 +104,19 @@
 
                     <!-- INPUT FIELDS GRID -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        <!-- Nama Siswa -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Nama Lengkap Siswa <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="namaSiswa" required placeholder="Contoh: Anisa Rahmawati"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Lengkap Siswa <span class="text-red-500">*</span></label>
+                            <input type="text" id="namaSiswa" required placeholder="Contoh: Anisa Rahmawati" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
                         </div>
 
-                        <!-- Asal Sekolah -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Asal Sekolah <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="asalSekolah" required placeholder="Contoh: SD Negeri 1 Purwodadi"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Asal Sekolah <span class="text-red-500">*</span></label>
+                            <input type="text" id="asalSekolah" required placeholder="Contoh: SD Negeri 1 Purwodadi" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
                         </div>
 
-                        <!-- Pilihan Kelas -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Tingkat Kelas <span class="text-red-500">*</span>
-                            </label>
-                            <select id="kelas" required
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tingkat Kelas <span class="text-red-500">*</span></label>
+                            <select id="kelas" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
                                 <option value="">-- Pilih Kelas --</option>
                                 <optgroup label="Tingkat SD / MI">
                                     <option value="Kelas 1 SD/MI">Kelas 1 SD/MI</option>
@@ -136,76 +130,41 @@
                                     <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option>
                                 </optgroup>
                             </select>
-                            <p class="text-[11px] text-slate-500 mt-1 font-medium">
-                                <i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Sesuai ketentuan, pendaftaran khusus untuk Kelas 1, 2, 3, 4, 5 (SD/MI) dan Kelas 7, 8 (SMP/MTs).
-                            </p>
+                            <p class="text-[11px] text-slate-500 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Sesuai ketentuan, pendaftaran khusus untuk Kelas 1-5 (SD/MI) dan Kelas 7-8 (SMP/MTs).</p>
                         </div>
 
-                        <!-- Asal 19 Kecamatan di Grobogan -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Asal Kecamatan (Kab. Grobogan) <span class="text-red-500">*</span>
-                            </label>
-                            <select id="asalKecamatan" required onchange="handleKecamatanChange()"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Asal Kecamatan (Kab. Grobogan) <span class="text-red-500">*</span></label>
+                            <select id="asalKecamatan" required onchange="handleKecamatanChange()" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
                                 <option value="">-- Pilih Kecamatan --</option>
-                                <option value="Brati">Brati</option>
-                                <option value="Gabus">Gabus</option>
-                                <option value="Geyer">Geyer</option>
-                                <option value="Godong">Godong</option>
-                                <option value="Grobogan">Grobogan</option>
-                                <option value="Gubug">Gubug</option>
-                                <option value="Karangrayung">Karangrayung</option>
-                                <option value="Kedungjati">Kedungjati</option>
-                                <option value="Klambu">Klambu</option>
-                                <option value="Kradenan">Kradenan</option>
-                                <option value="Ngaringan">Ngaringan</option>
-                                <option value="Penawangan">Penawangan</option>
-                                <option value="Pulokulon">Pulokulon</option>
-                                <option value="Purwodadi">Purwodadi</option>
-                                <option value="Tanggungharjo">Tanggungharjo</option>
-                                <option value="Tawangharjo">Tawangharjo</option>
-                                <option value="Tegowanu">Tegowanu</option>
-                                <option value="Toroh">Toroh</option>
+                                <option value="Brati">Brati</option><option value="Gabus">Gabus</option><option value="Geyer">Geyer</option>
+                                <option value="Godong">Godong</option><option value="Grobogan">Grobogan</option><option value="Gubug">Gubug</option>
+                                <option value="Karangrayung">Karangrayung</option><option value="Kedungjati">Kedungjati</option><option value="Klambu">Klambu</option>
+                                <option value="Kradenan">Kradenan</option><option value="Ngaringan">Ngaringan</option><option value="Penawangan">Penawangan</option>
+                                <option value="Pulokulon">Pulokulon</option><option value="Purwodadi">Purwodadi</option><option value="Tanggungharjo">Tanggungharjo</option>
+                                <option value="Tawangharjo">Tawangharjo</option><option value="Tegowanu">Tegowanu</option><option value="Toroh">Toroh</option>
                                 <option value="Wirosari">Wirosari</option>
                             </select>
                         </div>
 
-                        <!-- Nama Guru Pendamping -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Nama Guru Pendamping <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="namaGuru" required placeholder="Contoh: Budi Santoso, S.Pd."
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Guru Pendamping <span class="text-red-500">*</span></label>
+                            <input type="text" id="namaGuru" required placeholder="Contoh: Budi Santoso, S.Pd." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
                         </div>
 
-                        <!-- Email Guru Pendamping -->
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Email Guru Pendamping <span class="text-red-500">*</span>
-                            </label>
-                            <input type="email" id="emailGuru" required placeholder="Contoh: budi@gmail.com"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Guru Pendamping <span class="text-red-500">*</span></label>
+                            <input type="email" id="emailGuru" required placeholder="Contoh: budi@gmail.com" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
                         </div>
 
-                        <!-- Nomor WA Guru Pendamping -->
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                Nomor WhatsApp Guru Pendamping <span class="text-red-500">*</span>
-                            </label>
-                            <input type="tel" id="waGuru" required placeholder="Contoh: 08123456789"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nomor WhatsApp Guru Pendamping <span class="text-red-500">*</span></label>
+                            <input type="tel" id="waGuru" required placeholder="Contoh: 08123456789" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all">
                         </div>
 
-                        <!-- PILIHAN JENIS PENDAFTARAN -->
                         <div class="md:col-span-2 border-t border-slate-200 pt-4">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
-                                Pilih Opsi Pendaftaran & Pembayaran <span class="text-red-500">*</span>
-                            </label>
-                            
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Pilih Opsi Pendaftaran & Pembayaran <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Option Kolektif -->
                                 <label id="label-kolektif" class="relative border-2 border-slate-200 rounded-2xl p-4 flex items-start gap-3 cursor-pointer hover:border-red-500 transition-all bg-slate-50">
                                     <input type="radio" name="jenisPendaftaran" value="Kolektif" checked onchange="togglePendaftaranType()" class="mt-1 text-red-600 focus:ring-red-500">
                                     <div>
@@ -214,7 +173,6 @@
                                     </div>
                                 </label>
 
-                                <!-- Option Mandiri -->
                                 <label id="label-mandiri" class="relative border-2 border-slate-200 rounded-2xl p-4 flex items-start gap-3 cursor-pointer hover:border-red-500 transition-all bg-slate-50">
                                     <input type="radio" name="jenisPendaftaran" value="Mandiri" onchange="togglePendaftaranType()" class="mt-1 text-red-600 focus:ring-red-500">
                                     <div>
@@ -227,7 +185,6 @@
 
                         <!-- DYNAMIC PAYMENT INSTRUCTION BOX -->
                         <div class="md:col-span-2">
-                            <!-- Box Kolektif Dynamic -->
                             <div id="info-kolektif" class="bg-blue-50 border border-blue-200 rounded-2xl p-4 sm:p-5 text-xs text-blue-900 space-y-3">
                                 <div class="flex items-start gap-3">
                                     <i class="fa-solid fa-users text-blue-600 text-2xl mt-0.5"></i>
@@ -236,17 +193,12 @@
                                         <p class="text-slate-600 mt-0.5">Berikut adalah detail akun pembayaran Koordinator Kecamatan Anda:</p>
                                     </div>
                                 </div>
-
                                 <div id="kolektifDetailsBox" class="bg-white/80 border border-blue-200 rounded-xl p-3.5 space-y-1.5 font-medium">
                                     <p class="text-slate-500 text-xs italic"><i class="fa-solid fa-arrow-pointer mr-1"></i>Pilih Kecamatan di atas untuk menampilkan detail Koordinator Kecamatan Anda.</p>
                                 </div>
-
-                                <div id="kolektifWaButtonContainer">
-                                    <!-- Dynamic WA Button -->
-                                </div>
+                                <div id="kolektifWaButtonContainer"></div>
                             </div>
 
-                            <!-- Box Mandiri -->
                             <div id="info-mandiri" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 text-xs text-emerald-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div class="flex items-start gap-3">
                                     <i class="fa-solid fa-building-columns text-emerald-600 text-2xl mt-1"></i>
@@ -254,84 +206,59 @@
                                         <p class="font-bold text-emerald-950 text-sm">Ketentuan Pendaftaran Mandiri:</p>
                                         <p class="mt-1">Silakan melakukan transfer sebesar <strong>Rp350.000,-</strong> ke:</p>
                                         <p class="font-bold text-emerald-900 text-sm bg-white/70 px-3 py-1.5 rounded-lg border border-emerald-200 mt-1 inline-block">
-                                            Bank Mandiri: 136-00-1125019-5 <br>
-                                            <span class="text-xs font-normal text-emerald-700">a.n. Farida Nurul Qomariah</span>
+                                            Bank Mandiri: 136-00-1125019-5 <br><span class="text-xs font-normal text-emerald-700">a.n. Farida Nurul Qomariah</span>
                                         </p>
-                                        <p class="mt-2 text-slate-600">Bukti transfer wajib dikirimkan ke Ibu Farida Nurul Qomariah via WA (081216725510).</p>
                                     </div>
                                 </div>
-                                <a href="https://wa.me/6281216725510?text=Halo%20Ibu%20Farida,%20saya%20ingin%20mengirimkan%20bukti%20transfer%20pendaftaran%20Gemari%20Menu%20Ibuku%20(Mandiri)." 
-                                   target="_blank" 
-                                   class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0">
-                                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                                    Kirim WA Bu Farida
+                                <a href="https://wa.me/6281216725510?text=Halo%20Ibu%20Farida,%20saya%20ingin%20mengirimkan%20bukti%20transfer%20pendaftaran%20Gemari%20Menu%20Ibuku%20(Mandiri)." target="_blank" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 shrink-0">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA Bu Farida
                                 </a>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- SUBMIT BUTTON -->
                     <div class="pt-4 border-t border-slate-200 flex justify-end">
-                        <button type="submit" id="submitBtn" 
-                                class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center gap-2">
+                        <button type="submit" id="submitBtn" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center gap-2">
                             <i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran
                         </button>
                     </div>
-
                 </form>
             </div>
         </div>
 
         <!-- ================= TAB 2: DASHBOARD & STATISTIK ================= -->
         <div id="view-dashboard" class="hidden space-y-6">
-            
-            <!-- STATS CARDS -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Peserta</p>
                         <p id="statTotal" class="text-3xl font-extrabold text-slate-900 mt-1">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Target Rekor MURI</p>
                         <p class="text-3xl font-extrabold text-amber-600 mt-1">1.000</p>
                     </div>
-                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-trophy"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-trophy"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Status Lunas</p>
                         <p id="statLunas" class="text-3xl font-extrabold text-emerald-600 mt-1">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-circle-check"></i></div>
                 </div>
-
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Belum Konfirmasi</p>
                         <p id="statBelumLunas" class="text-3xl font-extrabold text-orange-500 mt-1">0</p>
                     </div>
-                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-clock"></i></div>
                 </div>
-
             </div>
 
-            <!-- PROGRESS BAR TOWARDS MURI RECORD -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-2">
                 <div class="flex justify-between items-center text-sm font-bold">
                     <span>Progress Pencapaian Target 1.000 Buku</span>
@@ -342,7 +269,6 @@
                 </div>
             </div>
 
-            <!-- CHART PER KECAMATAN -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                     <div>
@@ -353,13 +279,11 @@
                         <i class="fa-solid fa-rotate"></i> Refresh Data
                     </button>
                 </div>
-                
                 <div class="relative w-full h-[320px] sm:h-[400px]">
                     <canvas id="kecamatanChart"></canvas>
                 </div>
             </div>
 
-            <!-- LISTING SUMMARY PER KECAMATAN TABLE -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 font-bold text-sm text-slate-800">
                     <i class="fa-solid fa-list-ol mr-2 text-red-600"></i> Rekapitulasi Per Kecamatan
@@ -375,25 +299,18 @@
                             </tr>
                         </thead>
                         <tbody id="rekapTableBody" class="divide-y divide-slate-100 text-slate-700">
-                            <tr>
-                                <td colspan="4" class="py-6 text-center text-slate-400">Memuat data rekapitulasi...</td>
-                            </tr>
+                            <tr><td colspan="4" class="py-6 text-center text-slate-400">Memuat data rekapitulasi...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
 
         <!-- ================= TAB 3: LOGIN & MANAGEMENT PORTAL ================= -->
         <div id="view-admin" class="hidden space-y-6">
-            
-            <!-- LOGIN FORM (IF NOT LOGGED IN) -->
             <div id="loginSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-6">
                 <div class="text-center space-y-2">
-                    <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-user-shield"></i></div>
                     <h2 class="text-xl font-bold text-slate-900">Portal Akses Pengurus</h2>
                     <p class="text-xs text-slate-500">Khusus Bendahara, Koordinator Kecamatan, dan Pengurus AGPG.</p>
                 </div>
@@ -401,85 +318,73 @@
                 <form onsubmit="handleLogin(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Peran / Jabatan</label>
-                        <select id="loginRole" required onchange="handleRoleSelectChange()"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
+                        <select id="loginRole" required onchange="handleRoleSelectChange()" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
                             <option value="Bendahara">Bendahara (Pendaftar Mandiri)</option>
                             <option value="Koordinator">Koordinator Kecamatan (Pendaftar Kolektif)</option>
                             <option value="Pengurus AGPG">Pengurus AGPG (Semua Pendaftar)</option>
                         </select>
                     </div>
 
-                    <!-- SELECT KECAMATAN (IF ROLE IS KOORDINATOR) -->
                     <div id="kecamatanSelectContainer" class="hidden">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pilih Kecamatan Anda</label>
-                        <select id="loginKecamatan"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
-                            <option value="Brati">Brati</option>
-                            <option value="Gabus">Gabus</option>
-                            <option value="Geyer">Geyer</option>
-                            <option value="Godong">Godong</option>
-                            <option value="Grobogan">Grobogan</option>
-                            <option value="Gubug">Gubug</option>
-                            <option value="Karangrayung">Karangrayung</option>
-                            <option value="Kedungjati">Kedungjati</option>
-                            <option value="Klambu">Klambu</option>
-                            <option value="Kradenan">Kradenan</option>
-                            <option value="Ngaringan">Ngaringan</option>
-                            <option value="Penawangan">Penawangan</option>
-                            <option value="Pulokulon">Pulokulon</option>
-                            <option value="Purwodadi" selected>Purwodadi</option>
-                            <option value="Tanggungharjo">Tanggungharjo</option>
-                            <option value="Tawangharjo">Tawangharjo</option>
-                            <option value="Tegowanu">Tegowanu</option>
-                            <option value="Toroh">Toroh</option>
+                        <select id="loginKecamatan" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white">
+                            <option value="Brati">Brati</option><option value="Gabus">Gabus</option><option value="Geyer">Geyer</option>
+                            <option value="Godong">Godong</option><option value="Grobogan">Grobogan</option><option value="Gubug">Gubug</option>
+                            <option value="Karangrayung">Karangrayung</option><option value="Kedungjati">Kedungjati</option><option value="Klambu">Klambu</option>
+                            <option value="Kradenan">Kradenan</option><option value="Ngaringan">Ngaringan</option><option value="Penawangan">Penawangan</option>
+                            <option value="Pulokulon">Pulokulon</option><option value="Purwodadi" selected>Purwodadi</option><option value="Tanggungharjo">Tanggungharjo</option>
+                            <option value="Tawangharjo">Tawangharjo</option><option value="Tegowanu">Tegowanu</option><option value="Toroh">Toroh</option>
                             <option value="Wirosari">Wirosari</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1" id="loginPassLabel">Kata Sandi / PIN</label>
-                        <input type="password" id="loginPassword" required placeholder="Masukkan kata sandi"
-                            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                        <input type="password" id="loginPassword" required placeholder="Masukkan kata sandi" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
                     </div>
 
                     <div id="loginErrorMessage" class="hidden text-xs text-red-600 bg-red-50 border border-red-200 p-3 rounded-xl font-medium"></div>
 
-                    <button type="submit" id="loginBtn"
-                        class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    <button type="submit" id="loginBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
                     </button>
                 </form>
             </div>
 
-            <!-- ADMIN / KOORDINATOR DASHBOARD PANEL (IF LOGGED IN) -->
             <div id="adminPanelSection" class="hidden space-y-6">
-                
-                <!-- USER SESSION INFO BAR -->
                 <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="flex items-center gap-3 text-center sm:text-left">
-                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-lg shrink-0">
-                            <i class="fa-solid fa-user-check"></i>
-                        </div>
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center font-bold text-lg shrink-0"><i class="fa-solid fa-user-check"></i></div>
                         <div>
                             <div class="font-bold text-sm" id="userRoleBadge">Bendahara</div>
                             <div class="text-xs text-slate-400" id="userScopeInfo">Akses Data Pendaftar</div>
                         </div>
                     </div>
-                    
                     <button onclick="handleLogout()" class="bg-slate-800 hover:bg-red-600/80 text-xs px-4 py-2 rounded-xl font-semibold border border-slate-700 transition-all flex items-center gap-2">
                         <i class="fa-solid fa-right-from-bracket"></i> Keluar (Logout)
                     </button>
                 </div>
 
-                <!-- KHUSUS PENGURUS AGPG: MENU GANTI PASSWORD AKUN BENDAHARA & KOORDINATOR -->
+                <div id="selfPasswordManagerSection" class="hidden bg-white rounded-2xl shadow-xl border border-slate-100 p-6 space-y-4">
+                    <div class="flex items-center gap-2 text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
+                        <i class="fa-solid fa-user-lock text-red-600 text-lg"></i>
+                        <h3>Ganti Kata Sandi Anda</h3>
+                    </div>
+                    <p class="text-xs text-slate-500">Amankan akun Anda dengan rutin mengubah kata sandi akses.</p>
+                    <form onsubmit="handleSelfChangePassword(event)" class="flex flex-col sm:flex-row gap-4 text-xs">
+                        <input type="text" id="selfNewPassword" required placeholder="Ketik Sandi Baru..." class="flex-1 px-3 py-2.5 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-red-500">
+                        <button type="submit" id="selfChangePassBtn" class="bg-slate-900 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Sandi Baru
+                        </button>
+                    </form>
+                </div>
+
                 <div id="pengurusPasswordManagerSection" class="hidden bg-white rounded-2xl shadow-xl border border-red-100 p-6 space-y-4">
                     <div class="flex items-center gap-2 text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
                         <i class="fa-solid fa-key text-red-600 text-lg"></i>
-                        <h3>Pengaturan Kata Sandi</h3>
+                        <h3>Pengaturan Kata Sandi Global</h3>
                     </div>
-                    
-                    <p class="text-xs text-slate-500">Atur atau perbarui kata sandi Bendahara atau  Koordinator Kecamatan.</p>
-
+                    <p class="text-xs text-slate-500">Atur atau perbarui kata sandi Bendahara atau Koordinator Kecamatan.</p>
                     <form onsubmit="handleChangePasswordSubmit(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">Sasaran Akun</label>
@@ -488,74 +393,68 @@
                                 <option value="Koordinator">Koordinator Kecamatan</option>
                             </select>
                         </div>
-
                         <div id="changePassKecamatanContainer" class="hidden">
                             <label class="block font-bold text-slate-700 mb-1">Pilih Kecamatan</label>
                             <select id="changePassTargetKecamatan" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white">
-                                <option value="Brati">Brati</option>
-                                <option value="Gabus">Gabus</option>
-                                <option value="Geyer">Geyer</option>
-                                <option value="Godong">Godong</option>
-                                <option value="Grobogan">Grobogan</option>
-                                <option value="Gubug">Gubug</option>
-                                <option value="Karangrayung">Karangrayung</option>
-                                <option value="Kedungjati">Kedungjati</option>
-                                <option value="Klambu">Klambu</option>
-                                <option value="Kradenan">Kradenan</option>
-                                <option value="Ngaringan">Ngaringan</option>
-                                <option value="Penawangan">Penawangan</option>
-                                <option value="Pulokulon">Pulokulon</option>
-                                <option value="Purwodadi" selected>Purwodadi</option>
-                                <option value="Tanggungharjo">Tanggungharjo</option>
-                                <option value="Tawangharjo">Tawangharjo</option>
-                                <option value="Tegowanu">Tegowanu</option>
-                                <option value="Toroh">Toroh</option>
+                                <option value="Brati">Brati</option><option value="Gabus">Gabus</option><option value="Geyer">Geyer</option>
+                                <option value="Godong">Godong</option><option value="Grobogan">Grobogan</option><option value="Gubug">Gubug</option>
+                                <option value="Karangrayung">Karangrayung</option><option value="Kedungjati">Kedungjati</option><option value="Klambu">Klambu</option>
+                                <option value="Kradenan">Kradenan</option><option value="Ngaringan">Ngaringan</option><option value="Penawangan">Penawangan</option>
+                                <option value="Pulokulon">Pulokulon</option><option value="Purwodadi" selected>Purwodadi</option><option value="Tanggungharjo">Tanggungharjo</option>
+                                <option value="Tawangharjo">Tawangharjo</option><option value="Tegowanu">Tegowanu</option><option value="Toroh">Toroh</option>
                                 <option value="Wirosari">Wirosari</option>
                             </select>
                         </div>
-
                         <div>
                             <label class="block font-bold text-slate-700 mb-1" id="changePassValueLabel">Kata Sandi Baru</label>
                             <input type="text" id="changePassNewValue" required placeholder="Sandi Baru..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
                         </div>
-
                         <div class="md:col-span-3 flex justify-end pt-2">
                             <button type="submit" id="changePassBtn" class="bg-slate-900 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- MANAGEMENT TABLE DATA PESERTA -->
                 <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden space-y-4">
-                    
                     <div class="p-6 border-b border-slate-100 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                         <div>
                             <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
-                                <i class="fa-solid fa-list-check text-red-600"></i> Manajemen Data & Verifikasi Pembayaran
+                                <i class="fa-solid fa-list-check text-red-600"></i> Manajemen Data Peserta
                             </h3>
-                            <p class="text-xs text-slate-500">Hanya akun berwenang yang dapat melakukan verifikasi pembayaran.</p>
+                            <p class="text-xs text-slate-500">Kelola pendaftar, import/export excel, dan verifikasi pembayaran.</p>
                         </div>
 
-                        <!-- SEARCH & FILTER -->
-                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                            <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari nama siswa / sekolah..."
-                                class="w-full sm:w-64 px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-red-500">
+                        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
+                            <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="Cari nama / sekolah..."
+                                class="w-full sm:w-48 px-3 py-2 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-red-500">
                             
-                            <select id="adminStatusFilter" onchange="filterAdminTable()" class="w-full sm:w-auto px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white">
+                            <select id="adminStatusFilter" onchange="filterAdminTable()" class="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white">
                                 <option value="ALL">Semua Status</option>
                                 <option value="Lunas">Hanya Lunas</option>
                                 <option value="Belum Lunas">Belum Lunas</option>
                             </select>
 
-                            <button onclick="loadAdminData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0">
-                                <i class="fa-solid fa-rotate"></i> Sync
+                            <button onclick="loadAdminData()" title="Refresh Data" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center shrink-0">
+                                <i class="fa-solid fa-rotate"></i>
+                            </button>
+
+                            <button onclick="downloadTemplateExcel()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-download"></i> Template
+                            </button>
+
+                            <label class="bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0 cursor-pointer m-0">
+                                <i class="fa-solid fa-upload"></i> Import
+                                <input type="file" id="importExcelFile" accept=".xlsx, .xls" class="hidden" onchange="handleImportExcel(event)">
+                            </label>
+
+                            <button onclick="exportToExcel()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0">
+                                <i class="fa-solid fa-file-excel"></i> Export
                             </button>
                         </div>
                     </div>
 
-                    <!-- TABLE PESERTA -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs sm:text-sm">
                             <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
@@ -565,27 +464,22 @@
                                     <th class="py-3 px-4">Sekolah / Kelas</th>
                                     <th class="py-3 px-4">Kecamatan</th>
                                     <th class="py-3 px-4">Guru Pendamping</th>
-                                    <th class="py-3 px-4">Opsi</th>
-                                    <th class="py-3 px-4">Kontak WA</th>
+                                    <th class="py-3 px-4">Jenis & Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="adminTableBody" class="divide-y divide-slate-100 text-slate-700">
                                 <tr>
-                                    <td colspan="7" class="py-8 text-center text-slate-400">Memuat data pendaftar...</td>
+                                    <td colspan="6" class="py-8 text-center text-slate-400">Memuat data pendaftar...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
     </main>
 
-    <!-- FOOTER -->
     <footer class="bg-slate-900 text-white border-t border-slate-800 mt-12 py-8">
         <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-4">
@@ -595,7 +489,6 @@
                     <p class="text-xs text-slate-400">Menulis Karya, Mengukir Sejarah HARDIKNAS 2027</p>
                 </div>
             </div>
-
             <div class="text-center md:text-right text-xs text-slate-400 space-y-1">
                 <p>Bekerja Sama dengan <strong>Dinas Pendidikan Kab. Grobogan</strong></p>
                 <p>&copy; Dikembangkan oleh Hendrik Pencerah</p>
@@ -606,36 +499,114 @@
     <!-- MODAL POPUP NOTIFIKASI SUKSES PENDAFTARAN -->
     <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl animate-bounce-short">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl"><i class="fa-solid fa-circle-check"></i></div>
             <h3 class="text-xl font-extrabold text-slate-900">Pendaftaran Berhasil!</h3>
-            <p class="text-xs text-slate-600 leading-relaxed" id="modalMessageText">
-                Data calon penulis muda telah tersimpan. Silakan lanjutkan konfirmasi pembayaran.
-            </p>
-
-            <div id="modalActionContainer" class="pt-2">
-                <!-- Dynamic Button -->
-            </div>
-
-            <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all">
-                Tutup
-            </button>
+            <p class="text-xs text-slate-600 leading-relaxed" id="modalMessageText">Data calon penulis muda telah tersimpan.</p>
+            <div id="modalActionContainer" class="pt-2"></div>
+            <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all">Tutup</button>
         </div>
     </div>
 
-    <!-- SCRIPT JAVASCRIPT LOGIC -->
-    <script>
-        // PENTING: GANTI DENGAN URL WEB APP DEPLOYMENT BARU ANDA
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjIZURAILPaSmbf4GCykzbE-rWWaj4zEj5Ku9OGs5dx5bl-bEjRsQiQkmazIzDbCCjzA/exec';
+    <!-- MODAL EDIT PESERTA (KHUSUS PENGURUS) -->
+    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-user-pen text-blue-600 mr-2"></i> Edit Data Peserta</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="editForm" onsubmit="submitEditData(event)" class="space-y-4 text-xs sm:text-sm">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nama Lengkap Siswa</label>
+                        <input type="text" id="editNamaSiswa" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Asal Sekolah</label>
+                        <input type="text" id="editAsalSekolah" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tingkat Kelas</label>
+                        <select id="editKelas" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="Kelas 1 SD/MI">Kelas 1 SD/MI</option><option value="Kelas 2 SD/MI">Kelas 2 SD/MI</option>
+                            <option value="Kelas 3 SD/MI">Kelas 3 SD/MI</option><option value="Kelas 4 SD/MI">Kelas 4 SD/MI</option>
+                            <option value="Kelas 5 SD/MI">Kelas 5 SD/MI</option><option value="Kelas 7 SMP/MTs">Kelas 7 SMP/MTs</option>
+                            <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Kecamatan</label>
+                        <select id="editAsalKecamatan" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                            <option value="Brati">Brati</option><option value="Gabus">Gabus</option><option value="Geyer">Geyer</option>
+                            <option value="Godong">Godong</option><option value="Grobogan">Grobogan</option><option value="Gubug">Gubug</option>
+                            <option value="Karangrayung">Karangrayung</option><option value="Kedungjati">Kedungjati</option><option value="Klambu">Klambu</option>
+                            <option value="Kradenan">Kradenan</option><option value="Ngaringan">Ngaringan</option><option value="Penawangan">Penawangan</option>
+                            <option value="Pulokulon">Pulokulon</option><option value="Purwodadi">Purwodadi</option><option value="Tanggungharjo">Tanggungharjo</option>
+                            <option value="Tawangharjo">Tawangharjo</option><option value="Tegowanu">Tegowanu</option><option value="Toroh">Toroh</option>
+                            <option value="Wirosari">Wirosari</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nama Guru Pendamping</label>
+                        <input type="text" id="editNamaGuru" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Email Guru</label>
+                        <input type="email" id="editEmailGuru" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">WA Guru</label>
+                        <input type="tel" id="editWaGuru" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Jenis Daftar</label>
+                            <select id="editJenisPendaftaran" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="Kolektif">Kolektif</option><option value="Mandiri">Mandiri</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Pembayaran</label>
+                            <select id="editStatusPembayaran" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="Belum Lunas">Belum Lunas</option><option value="Lunas">Lunas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end">
+                    <button type="submit" id="submitEditBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl transition-all">
+                        <i class="fa-solid fa-save"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // Global State Variables
+    <!-- SCRIPT JAVASCRIPT LOGIC (FIREBASE INTEGRATION) -->
+    <script>
+        // =========================================================================
+        // 1. KONFIGURASI FIREBASE ANDA
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDltEA5xLqaOHTAzqNZRNkiAzvG2jMbxkc",
+            authDomain: "gemari-menu-ibuku-2027.firebaseapp.com",
+            projectId: "gemari-menu-ibuku-2027",
+            storageBucket: "gemari-menu-ibuku-2027.firebasestorage.app",
+            messagingSenderId: "54821754642",
+            appId: "1:54821754642:web:698c507fefc2703a3305cb",
+            measurementId: "G-H9TK9QS8LM"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        // =========================================================================
+
         let chartInstance = null;
         let globalRegistrations = [];
         let globalCoordinators = {};
-        let currentUser = null; // { role, kecamatan, password }
+        let currentUser = null; 
+        let systemSettings = {};
+        let currentEditDocId = null;
 
-        // Master List 19 Kecamatan Resmi di Kabupaten Grobogan
         const KECAMATAN_LIST = [
             "Brati", "Gabus", "Geyer", "Godong", "Grobogan", "Gubug", 
             "Karangrayung", "Kedungjati", "Klambu", "Kradenan", "Ngaringan", 
@@ -643,53 +614,46 @@
             "Tawangharjo", "Tegowanu", "Toroh", "Wirosari"
         ];
 
-        // ON LOAD INITIALIZATION & AUTOMATIC SESSION RESTORE
         window.addEventListener('DOMContentLoaded', () => {
             fetchInitialConfig();
             fetchDashboardData();
             restoreSavedSession();
         });
 
-        // RESTORE SAVED USER LOGIN SESSION
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, function(txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+
         function restoreSavedSession() {
             const savedSession = localStorage.getItem('gemari_user_session_2027');
             if (savedSession) {
                 try {
                     currentUser = JSON.parse(savedSession);
                     updateUserUI();
-                    loadAdminData(); // Tampilkan data peserta secara otomatis
+                    loadAdminData();
                 } catch (e) {
                     localStorage.removeItem('gemari_user_session_2027');
                 }
             }
         }
 
-        // TAB SWITCHING
         function switchTab(tabName) {
             ['form', 'dashboard', 'admin'].forEach(t => {
                 document.getElementById(`view-${t}`).classList.add('hidden');
                 document.getElementById(`tab-${t}`).className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2";
             });
-
             document.getElementById(`view-${tabName}`).classList.remove('hidden');
             document.getElementById(`tab-${tabName}`).className = "flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-red-600 text-white shadow-sm transition-all flex items-center justify-center gap-2";
-
-            if (tabName === 'dashboard') {
-                fetchDashboardData();
-            } else if (tabName === 'admin' && currentUser) {
-                loadAdminData();
-            }
+            if (tabName === 'dashboard') { fetchDashboardData(); } 
+            else if (tabName === 'admin' && currentUser) { loadAdminData(); }
         }
 
-        // HANDLE KECAMATAN SELECTION CHANGE ON FORM
-        function handleKecamatanChange() {
-            updateKolektifPaymentInfo();
-        }
+        function handleKecamatanChange() { updateKolektifPaymentInfo(); }
 
-        // TOGGLE PENDAFTARAN TYPE (KOLEKTIF VS MANDIRI)
         function togglePendaftaranType() {
             const isMandiri = document.querySelector('input[name="jenisPendaftaran"]:checked').value === 'Mandiri';
-            
             if (isMandiri) {
                 document.getElementById('info-kolektif').classList.add('hidden');
                 document.getElementById('info-mandiri').classList.remove('hidden');
@@ -700,7 +664,6 @@
             }
         }
 
-        // UPDATE DYNAMIC KOLEKTIF PAYMENT INFO BOX
         function updateKolektifPaymentInfo() {
             const selectedKec = document.getElementById('asalKecamatan').value;
             const box = document.getElementById('kolektifDetailsBox');
@@ -708,17 +671,10 @@
 
             if (!selectedKec) {
                 box.innerHTML = `<p class="text-slate-500 text-xs italic"><i class="fa-solid fa-arrow-pointer mr-1"></i>Pilih Kecamatan di atas untuk menampilkan detail Koordinator Kecamatan Anda.</p>`;
-                btnContainer.innerHTML = '';
-                return;
+                btnContainer.innerHTML = ''; return;
             }
 
-            const coord = globalCoordinators[selectedKec] || {
-                namaKoordinator: `Koordinator ${selectedKec}`,
-                bank: "Bank Jateng",
-                noRekening: "-",
-                noWa: "-"
-            };
-
+            const coord = globalCoordinators[selectedKec] || { namaKoordinator: `Koordinator ${selectedKec}`, bank: "Bank Jateng", noRekening: "-", noWa: "-" };
             const cleanWa = formatWaNumber(coord.noWa);
 
             box.innerHTML = `
@@ -730,49 +686,38 @@
                     <div class="sm:col-span-2"><span class="text-slate-500">WhatsApp Koordinator:</span> <strong class="text-emerald-700">${coord.noWa}</strong></div>
                 </div>
             `;
-
             if (cleanWa) {
                 btnContainer.innerHTML = `
-                    <a href="https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(coord.namaKoordinator)},%20saya%20ingin%20mengirimkan%20bukti%20transfer%20pendaftaran%20Kolektif%20Gemari%20Menu%20Ibuku%20Kecamatan%20${encodeURIComponent(selectedKec)}." 
-                       target="_blank" 
-                       class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 inline-flex">
+                    <a href="https://wa.me/${cleanWa}?text=Halo..." target="_blank" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 inline-flex">
                         <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Transfer ke WA Koordinator ${selectedKec}
                     </a>
                 `;
-            } else {
-                btnContainer.innerHTML = '';
-            }
+            } else { btnContainer.innerHTML = ''; }
         }
 
-        // FETCH INITIAL CONFIG & COORDINATOR MASTER
         function fetchInitialConfig() {
-            fetch(`${SCRIPT_URL}?action=getPublicData`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success' && data.data) {
-                        if (data.data.settings) {
-                            if (data.data.settings.header_logo) document.getElementById('headerLogo').src = data.data.settings.header_logo;
-                            if (data.data.settings.footer_logo) document.getElementById('footerLogo').src = data.data.settings.footer_logo;
-                        }
-                        if (data.data.coordinators) {
-                            globalCoordinators = data.data.coordinators;
-                            updateKolektifPaymentInfo();
-                        }
-                    }
-                })
-                .catch(err => console.log('Menggunakan data default.'));
+            db.collection('settings').doc('config').get().then(doc => {
+                if(doc.exists) {
+                    systemSettings = doc.data();
+                    if (systemSettings.header_logo) document.getElementById('headerLogo').src = systemSettings.header_logo;
+                    if (systemSettings.footer_logo) document.getElementById('footerLogo').src = systemSettings.footer_logo;
+                }
+            }).catch(err => console.log('Menggunakan konfigurasi bawaan.'));
+
+            db.collection('coordinators').get().then(snapshot => {
+                snapshot.forEach(doc => { globalCoordinators[doc.id] = doc.data(); });
+                updateKolektifPaymentInfo();
+            }).catch(err => console.log('Gagal memuat koordinator.'));
         }
 
-        // HANDLE SUBMIT FORM PENDAFTARAN
         function handleFormSubmit(e) {
             e.preventDefault();
-            
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pendaftaran...`;
+            submitBtn.disabled = true; submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pendaftaran...`;
 
             const payload = {
-                action: 'register',
+                id: "GEMARI-" + Math.floor(100000 + Math.random() * 900000),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 namaSiswa: document.getElementById('namaSiswa').value.trim(),
                 asalSekolah: document.getElementById('asalSekolah').value.trim(),
                 kelas: document.getElementById('kelas').value,
@@ -780,198 +725,97 @@
                 namaGuru: document.getElementById('namaGuru').value.trim(),
                 emailGuru: document.getElementById('emailGuru').value.trim(),
                 waGuru: document.getElementById('waGuru').value.trim(),
-                jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value
+                jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value,
+                statusPembayaran: "Belum Lunas"
             };
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(res => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
-
-                if (res.status === 'success') {
-                    showSuccessModal(payload);
-                    document.getElementById('registrationForm').reset();
-                    togglePendaftaranType();
-                    fetchDashboardData();
-                } else {
-                    alert('Gagal pendaftaran: ' + (res.message || 'Terjadi kesalahan sistem.'));
-                }
-            })
-            .catch(err => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
-                alert('Gagal terhubung ke server. Pastikan URL Apps Script sudah dikonfigurasi.');
+            db.collection('registrations').add(payload).then((docRef) => {
+                submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                showSuccessModal(payload);
+                document.getElementById('registrationForm').reset();
+                togglePendaftaranType();
+                fetchDashboardData();
+            }).catch((error) => {
+                submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                alert('Gagal pendaftaran: ' + error.message);
             });
         }
 
-        // SHOW SUCCESS MODAL WITH DYNAMIC COORDINATOR INFO
         function showSuccessModal(data) {
             const modal = document.getElementById('successModal');
             const msgText = document.getElementById('modalMessageText');
             const actionContainer = document.getElementById('modalActionContainer');
 
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString('id-ID', dateOptions);
+
             if (data.jenisPendaftaran === 'Mandiri') {
-                msgText.innerHTML = `Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar sebagai peserta Mandiri! <br><br>Silakan transfer <strong>Rp350.000,-</strong> ke Bank Mandiri <strong>136-00-1125019-5</strong> a.n Farida Nurul Qomariah dan kirim bukti transfer via WhatsApp.`;
-                actionContainer.innerHTML = `
-                    <a href="https://wa.me/6281216725510?text=Halo%20Ibu%20Farida,%20saya%20sudah%20mendaftar%20Gemari%20Menu%20Ibuku%20a.n%20${encodeURIComponent(data.namaSiswa)}%20dari%20${encodeURIComponent(data.asalSekolah)}%20(${encodeURIComponent(data.asalKecamatan)}).%20Berikut%20bukti%20transfernya." 
-                       target="_blank" 
-                       class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mb-2">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Pembayaran Ke WA Bu Farida
-                    </a>
-                `;
+                msgText.innerHTML = `<strong>Terima kasih!</strong> Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar sebagai peserta Mandiri! <br><br>Silakan transfer <strong>Rp350.000,-</strong> ke Bank Mandiri <strong>136-00-1125019-5</strong> a.n Farida Nurul Qomariah.<br>Info WA Bendahara: <strong>081216725510</strong>`;
+                
+                const waText = encodeURIComponent(`Halo Ibu Farida, saya ingin konfirmasi pendaftaran Gemari Menu Ibuku (Mandiri).\n\nNama Siswa: ${data.namaSiswa}\nGuru Pendamping: ${data.namaGuru}\nHari/Tanggal: ${todayStr}\n\nBerikut saya lampirkan bukti transfer pendaftarannya.`);
+                actionContainer.innerHTML = `<a href="https://wa.me/6281216725510?text=${waText}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 mb-2"><i class="fa-brands fa-whatsapp text-lg"></i> Konfirmasi Pendaftaran (Kirim Bukti)</a>`;
             } else {
-                const coord = globalCoordinators[data.asalKecamatan] || {
-                    namaKoordinator: `Koordinator ${data.asalKecamatan}`,
-                    bank: "Bank Jateng",
-                    noRekening: "-",
-                    noWa: "-"
-                };
+                const coord = globalCoordinators[data.asalKecamatan] || { namaKoordinator: `Koordinator ${data.asalKecamatan}`, bank: "Bank Jateng", noRekening: "-", noWa: "-" };
                 const cleanWa = formatWaNumber(coord.noWa);
-
-                msgText.innerHTML = `
-                    Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar dalam pendaftaran Kolektif Kecamatan <strong>${data.asalKecamatan}</strong>! 
-                    <br><br>
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-left space-y-1 my-2">
-                        <div><strong>Koordinator:</strong> ${coord.namaKoordinator}</div>
-                        <div><strong>Bank:</strong> ${coord.bank}</div>
-                        <div><strong>No. Rekening:</strong> ${coord.noRekening}</div>
-                        <div><strong>No. WA Koordinator:</strong> ${coord.noWa}</div>
-                    </div>
-                    Silakan transfer <strong>Rp350.000,-</strong> dan kirimkan bukti pembayaran kepada Koordinator Kecamatan Anda.
-                `;
-
+                
+                msgText.innerHTML = `<strong>Terima kasih!</strong> Selamat <strong>${data.namaSiswa}</strong> (${data.asalSekolah}) berhasil terdaftar (Kolektif Kec. <strong>${data.asalKecamatan}</strong>)! <br><br><div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-left space-y-1 my-2"><div><strong>Koordinator:</strong> ${coord.namaKoordinator}</div><div><strong>Bank/Rek:</strong> ${coord.bank} - ${coord.noRekening}</div><div><strong>No WA Koordinator:</strong> ${coord.noWa}</div></div>Silakan transfer <strong>Rp350.000,-</strong> kepada Koordinator.`;
+                
                 if (cleanWa) {
-                    actionContainer.innerHTML = `
-                        <a href="https://wa.me/${cleanWa}?text=Halo%20${encodeURIComponent(coord.namaKoordinator)},%20saya%20sudah%20mendaftar%20Kolektif%20a.n%20${encodeURIComponent(data.namaSiswa)}%20(${encodeURIComponent(data.asalSekolah)}).%20Berikut%20bukti%20transfernya." 
-                           target="_blank" 
-                           class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mb-2">
-                            <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Bukti Transfer ke WA Koordinator ${data.asalKecamatan}
-                        </a>
-                    `;
-                } else {
-                    actionContainer.innerHTML = ``;
-                }
+                    const waText = encodeURIComponent(`Halo ${coord.namaKoordinator}, saya ingin konfirmasi pendaftaran Gemari Menu Ibuku (Kolektif).\n\nNama Siswa: ${data.namaSiswa}\nGuru Pendamping: ${data.namaGuru}\nHari/Tanggal: ${todayStr}\n\nBerikut saya lampirkan bukti transfer pendaftarannya.`);
+                    actionContainer.innerHTML = `<a href="https://wa.me/${cleanWa}?text=${waText}" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center gap-2 mb-2"><i class="fa-brands fa-whatsapp text-lg"></i> Konfirmasi Pendaftaran (Kirim Bukti)</a>`;
+                } else { actionContainer.innerHTML = ``; }
             }
-
             modal.classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('successModal').classList.add('hidden'); }
 
-        // FETCH DASHBOARD DATA & STATS
         function fetchDashboardData() {
-            fetch(`${SCRIPT_URL}?action=getPublicData`)
-                .then(res => res.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        const data = res.data;
-                        document.getElementById('statTotal').innerText = data.totalCount || 0;
-                        document.getElementById('statLunas').innerText = data.lunasCount || 0;
-                        document.getElementById('statBelumLunas').innerText = data.belumLunasCount || 0;
-
-                        const pct = Math.min(100, Math.round(((data.totalCount || 0) / 1000) * 100));
-                        document.getElementById('progressText').innerText = `${pct}% (${data.totalCount || 0} / 1000 Buku)`;
-                        document.getElementById('progressBar').style.width = `${pct}%`;
-
-                        if (data.coordinators) globalCoordinators = data.coordinators;
-
-                        renderKecamatanChart(data.kecamatanStats || {});
-                        renderRekapTable(data.kecamatanStats || {});
-                    }
-                })
-                .catch(err => console.log('Mengambil data dashboard...'));
+            db.collection('registrations').get().then(snapshot => {
+                let totalCount = 0, lunasCount = 0, belumLunasCount = 0; const kecamatanStats = {};
+                snapshot.forEach(doc => {
+                    const row = doc.data(); totalCount++;
+                    const kec = row.asalKecamatan || "Lainnya"; const status = row.statusPembayaran || "Belum Lunas";
+                    if (status.toLowerCase() === "lunas") { lunasCount++; } else { belumLunasCount++; }
+                    if (!kecamatanStats[kec]) { kecamatanStats[kec] = { total: 0, lunas: 0, belum: 0 }; }
+                    kecamatanStats[kec].total++;
+                    if (status.toLowerCase() === "lunas") { kecamatanStats[kec].lunas++; } else { kecamatanStats[kec].belum++; }
+                });
+                document.getElementById('statTotal').innerText = totalCount; document.getElementById('statLunas').innerText = lunasCount; document.getElementById('statBelumLunas').innerText = belumLunasCount;
+                const pct = Math.min(100, Math.round((totalCount / 1000) * 100));
+                document.getElementById('progressText').innerText = `${pct}% (${totalCount} / 1000 Buku)`;
+                document.getElementById('progressBar').style.width = `${pct}%`;
+                renderKecamatanChart(kecamatanStats); renderRekapTable(kecamatanStats);
+            }).catch(err => console.log('Mengambil data dashboard...'));
         }
 
-        // RENDER CHART JS
         function renderKecamatanChart(stats) {
             const ctx = document.getElementById('kecamatanChart').getContext('2d');
-            
-            const labels = KECAMATAN_LIST;
-            const dataCounts = labels.map(k => (stats[k] ? stats[k].total : 0));
-
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
+            const dataCounts = KECAMATAN_LIST.map(k => (stats[k] ? stats[k].total : 0));
+            if (chartInstance) chartInstance.destroy();
             chartInstance = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Jumlah Siswa Mendaftar',
-                        data: dataCounts,
-                        backgroundColor: '#dc2626',
-                        borderRadius: 6,
-                        hoverBackgroundColor: '#991b1b'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` Total: ${context.parsed.y} Siswa`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { precision: 0 }
-                        },
-                        x: {
-                            ticks: { font: { size: 10 }, autoSkip: false, maxRotation: 45, minRotation: 45 }
-                        }
-                    }
-                }
+                data: { labels: KECAMATAN_LIST, datasets: [{ label: 'Jumlah Siswa Mendaftar', data: dataCounts, backgroundColor: '#dc2626', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true }, x: { ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 } } } }
             });
         }
 
-        // RENDER REKAP TABLE
         function renderRekapTable(stats) {
-            const tbody = document.getElementById('rekapTableBody');
-            tbody.innerHTML = '';
-
+            const tbody = document.getElementById('rekapTableBody'); tbody.innerHTML = '';
             KECAMATAN_LIST.forEach(kec => {
                 const item = stats[kec] || { total: 0, lunas: 0, belum: 0 };
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="py-2.5 px-4 font-semibold text-slate-800">${kec}</td>
-                    <td class="py-2.5 px-4 text-center font-bold text-slate-900">${item.total}</td>
-                    <td class="py-2.5 px-4 text-center text-emerald-600 font-bold">${item.lunas}</td>
-                    <td class="py-2.5 px-4 text-center text-orange-500 font-semibold">${item.belum}</td>
-                `;
+                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `<td class="py-2.5 px-4 font-semibold text-slate-800">${kec}</td><td class="py-2.5 px-4 text-center font-bold text-slate-900">${item.total}</td><td class="py-2.5 px-4 text-center text-emerald-600 font-bold">${item.lunas}</td><td class="py-2.5 px-4 text-center text-orange-500 font-semibold">${item.belum}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        // HANDLE ROLE SELECTION IN LOGIN FORM
         function handleRoleSelectChange() {
             const role = document.getElementById('loginRole').value;
-            const kecContainer = document.getElementById('kecamatanSelectContainer');
-            const passLabel = document.getElementById('loginPassLabel');
-
-            if (role === 'Koordinator') {
-                kecContainer.classList.remove('hidden');
-                passLabel.innerText = "Password";
-            } else {
-                kecContainer.classList.add('hidden');
-                passLabel.innerText = "Kata Sandi / PIN";
-            }
+            if (role === 'Koordinator') { document.getElementById('kecamatanSelectContainer').classList.remove('hidden'); } 
+            else { document.getElementById('kecamatanSelectContainer').classList.add('hidden'); }
         }
 
-        // HANDLE LOGIN
         function handleLogin(e) {
             e.preventDefault();
             const role = document.getElementById('loginRole').value;
@@ -980,214 +824,187 @@
             
             const errDiv = document.getElementById('loginErrorMessage');
             const loginBtn = document.getElementById('loginBtn');
+            errDiv.classList.add('hidden'); loginBtn.disabled = true; loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...`;
 
-            errDiv.classList.add('hidden');
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...`;
+            let isValid = false;
+            if (role === "Bendahara") {
+                const masterPass = systemSettings.pass_bendahara || "bendahara123";
+                isValid = (password === masterPass);
+            } else if (role === "Koordinator") {
+                const masterPass = systemSettings["pass_koordinator_" + kecamatan] || "grobogan2027";
+                isValid = (password === masterPass);
+            } else if (role === "Pengurus AGPG") {
+                const masterPass = systemSettings.pass_pengurus || "agpg2027";
+                isValid = (password === masterPass);
+            }
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'login',
-                    role: role,
-                    password: password,
-                    kecamatan: kecamatan
-                })
-            })
-            .then(res => res.json())
-            .then(res => {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem`;
+            loginBtn.disabled = false; loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem`;
 
-                if (res.status === 'success') {
-                    currentUser = {
-                        role: role,
-                        kecamatan: kecamatan,
-                        password: password
-                    };
-                    localStorage.setItem('gemari_user_session_2027', JSON.stringify(currentUser));
-                    
-                    updateUserUI();
-                    loadAdminData();
-                } else {
-                    errDiv.innerText = res.message || 'Kata sandi atau hak akses salah.';
-                    errDiv.classList.remove('hidden');
-                }
-            })
-            .catch(err => {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem`;
-                errDiv.innerText = 'Gagal memverifikasi login. Periksa koneksi atau URL Apps Script.';
+            if (isValid) {
+                currentUser = { role: role, kecamatan: kecamatan, password: password };
+                localStorage.setItem('gemari_user_session_2027', JSON.stringify(currentUser));
+                updateUserUI(); loadAdminData();
+            } else {
+                errDiv.innerText = 'Kata sandi salah. Silakan periksa kembali peran, kecamatan, dan kata sandi Anda.';
                 errDiv.classList.remove('hidden');
-            });
+            }
         }
 
         function updateUserUI() {
             document.getElementById('loginSection').classList.add('hidden');
             document.getElementById('adminPanelSection').classList.remove('hidden');
-
             document.getElementById('adminNavLabel').innerText = currentUser.role;
             document.getElementById('userRoleBadge').innerText = `${currentUser.role} ${currentUser.kecamatan ? ' - Kec. ' + currentUser.kecamatan : ''}`;
             
             if (currentUser.role === 'Bendahara') {
                 document.getElementById('userScopeInfo').innerText = 'Akses Pendaftar Mandiri & Verifikasi Pembayaran';
                 document.getElementById('pengurusPasswordManagerSection').classList.add('hidden');
+                document.getElementById('selfPasswordManagerSection').classList.remove('hidden');
             } else if (currentUser.role === 'Koordinator') {
                 document.getElementById('userScopeInfo').innerText = `Akses Pendaftar Kolektif Kecamatan ${currentUser.kecamatan}`;
                 document.getElementById('pengurusPasswordManagerSection').classList.add('hidden');
+                document.getElementById('selfPasswordManagerSection').classList.remove('hidden');
             } else if (currentUser.role === 'Pengurus AGPG') {
-                document.getElementById('userScopeInfo').innerText = 'Akses Penuh Seluruh Pendaftar (Kolektif & Mandiri All Kecamatan)';
+                document.getElementById('userScopeInfo').innerText = 'Akses Penuh Seluruh Pendaftar';
+                document.getElementById('selfPasswordManagerSection').classList.add('hidden');
                 document.getElementById('pengurusPasswordManagerSection').classList.remove('hidden');
             }
         }
 
+        function handleSelfChangePassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('selfNewPassword').value.trim();
+            const btn = document.getElementById('selfChangePassBtn');
+            btn.disabled = true; btn.innerHTML = "Menyimpan...";
+
+            let updatePayload = {};
+            if (currentUser.role === 'Koordinator') { updatePayload = { ["pass_koordinator_" + currentUser.kecamatan]: newPass }; } 
+            else if (currentUser.role === 'Bendahara') { updatePayload = { pass_bendahara: newPass }; }
+
+            db.collection('settings').doc('config').set(updatePayload, { merge: true }).then(() => {
+                alert('Kata sandi Anda berhasil diperbarui!');
+                btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Sandi Baru`;
+                document.getElementById('selfNewPassword').value = '';
+                currentUser.password = newPass; 
+                localStorage.setItem('gemari_user_session_2027', JSON.stringify(currentUser));
+                fetchInitialConfig();
+            }).catch(err => {
+                alert('Gagal memperbarui sandi: ' + err.message);
+                btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Sandi Baru`;
+            });
+        }
+
         function handleChangePassRoleChange() {
             const role = document.getElementById('changePassTargetRole').value;
-            const container = document.getElementById('changePassKecamatanContainer');
-            const valLabel = document.getElementById('changePassValueLabel');
-
-            if (role === 'Koordinator') {
-                container.classList.remove('hidden');
-                valLabel.innerText = "Password Baru";
-            } else {
-                container.classList.add('hidden');
-                valLabel.innerText = "Kata Sandi Baru";
-            }
+            if (role === 'Koordinator') { document.getElementById('changePassKecamatanContainer').classList.remove('hidden'); } 
+            else { document.getElementById('changePassKecamatanContainer').classList.add('hidden'); }
         }
 
         function handleChangePasswordSubmit(e) {
             e.preventDefault();
             if (!currentUser || currentUser.role !== 'Pengurus AGPG') return;
-
             const targetRole = document.getElementById('changePassTargetRole').value;
             const targetKecamatan = targetRole === 'Koordinator' ? document.getElementById('changePassTargetKecamatan').value : '';
             const newPassword = document.getElementById('changePassNewValue').value.trim();
             const btn = document.getElementById('changePassBtn');
+            btn.disabled = true; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
 
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
-
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'changePassword',
-                    pengurusPassword: currentUser.password,
-                    targetRole: targetRole,
-                    targetKecamatan: targetKecamatan,
-                    newPassword: newPassword
-                })
-            })
-            .then(res => res.json())
-            .then(res => {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru`;
-
-                if (res.status === 'success') {
-                    alert(res.message || 'Berhasil diperbarui.');
-                    document.getElementById('changePassNewValue').value = '';
-                    fetchDashboardData();
-                } else {
-                    alert('Gagal: ' + (res.message || 'Terjadi kesalahan.'));
-                }
-            })
-            .catch(err => {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru`;
-                alert('Gagal memperbarui. Periksa jaringan.');
-            });
+            if (targetRole === "Koordinator" && targetKecamatan) {
+                db.collection('settings').doc('config').set({ ["pass_koordinator_" + targetKecamatan]: newPassword }, { merge: true }).then(() => {
+                    alert('Kata Sandi Koordinator berhasil diperbarui.');
+                    btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi`; document.getElementById('changePassNewValue').value = ''; fetchInitialConfig();
+                }).catch(err => { alert('Gagal: ' + err.message); btn.disabled = false; });
+            } else if (targetRole === "Bendahara") {
+                db.collection('settings').doc('config').set({ pass_bendahara: newPassword }, { merge: true }).then(() => {
+                    alert('Kata Sandi Bendahara berhasil diperbarui.');
+                    btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi`; document.getElementById('changePassNewValue').value = ''; fetchInitialConfig();
+                }).catch(err => { alert('Gagal: ' + err.message); btn.disabled = false; });
+            }
         }
 
         function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('gemari_user_session_2027');
+            currentUser = null; localStorage.removeItem('gemari_user_session_2027');
             document.getElementById('adminPanelSection').classList.add('hidden');
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('adminNavLabel').innerText = 'Login Pengurus';
             document.getElementById('loginPassword').value = '';
         }
 
-        // FETCH ADMIN DATA FROM APPS SCRIPT
         function loadAdminData() {
             if (!currentUser) return;
-
             const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data pendaftar...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data pendaftar...</td></tr>`;
 
-            const fetchUrl = `${SCRIPT_URL}?action=getAdminData&role=${encodeURIComponent(currentUser.role)}&kecamatan=${encodeURIComponent(currentUser.kecamatan || '')}`;
+            let query = db.collection('registrations');
+            if (currentUser.role === 'Koordinator') {
+                query = query.where("jenisPendaftaran", "==", "Kolektif").where("asalKecamatan", "==", currentUser.kecamatan);
+            } else if (currentUser.role === 'Bendahara') {
+                query = query.where("jenisPendaftaran", "==", "Mandiri");
+            } 
 
-            fetch(fetchUrl)
-                .then(res => res.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        globalRegistrations = res.data || [];
-                        renderAdminTable(globalRegistrations);
-                    } else {
-                        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-red-500">${res.message || 'Gagal memuat data.'}</td></tr>`;
-                    }
-                })
-                .catch(err => {
-                    tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-red-500">Gagal memuat data admin. Periksa tautan Apps Script.</td></tr>`;
+            query.get().then(snapshot => {
+                globalRegistrations = [];
+                snapshot.forEach(doc => {
+                    let data = doc.data(); data.docId = doc.id; globalRegistrations.push(data);
                 });
+                renderAdminTable(globalRegistrations);
+            }).catch(err => {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-red-500">Gagal memuat data.</td></tr>`;
+            });
         }
 
-        // RENDER DATA TABLE WITH CHECKLIST STATUS WITH STRICT ROLE VERIFICATION PERMISSION
         function renderAdminTable(data) {
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
-
+            const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Belum ada data pendaftar untuk kriteria akun Anda.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Belum ada data pendaftar untuk kriteria akun Anda.</td></tr>`;
                 return;
+            }
+
+            // DRAFT PESAN WA OTOMATIS ADMIN KE GURU
+            let senderName = currentUser.role;
+            if (currentUser.role === 'Koordinator') {
+                const coord = globalCoordinators[currentUser.kecamatan];
+                senderName = coord ? `Koordinator (${coord.namaKoordinator})` : `Koordinator Kec. ${currentUser.kecamatan}`;
+            } else if (currentUser.role === 'Bendahara') {
+                senderName = `Bendahara (Farida Nurul Qomariah)`;
+            } else if (currentUser.role === 'Pengurus AGPG') {
+                senderName = `Pengurus AGPG`;
             }
 
             data.forEach((row) => {
                 const isLunas = String(row.statusPembayaran).toLowerCase() === 'lunas';
-                
-                // Permission Check: Can this user verify/checklist this payment?
                 let canVerify = false;
-                if (currentUser.role === 'Pengurus AGPG') {
-                    canVerify = true;
-                } else if (currentUser.role === 'Bendahara' && String(row.jenisPendaftaran).toLowerCase() === 'mandiri') {
-                    canVerify = true;
-                } else if (currentUser.role === 'Koordinator' && 
-                           String(row.jenisPendaftaran).toLowerCase() === 'kolektif' && 
-                           String(row.asalKecamatan).toLowerCase() === String(currentUser.kecamatan).toLowerCase()) {
-                    canVerify = true;
-                }
+                if (currentUser.role === 'Pengurus AGPG') { canVerify = true; } 
+                else if (currentUser.role === 'Bendahara' && String(row.jenisPendaftaran).toLowerCase() === 'mandiri') { canVerify = true; } 
+                else if (currentUser.role === 'Koordinator' && String(row.jenisPendaftaran).toLowerCase() === 'kolektif' && String(row.asalKecamatan).toLowerCase() === String(currentUser.kecamatan).toLowerCase()) { canVerify = true; }
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 border-b border-slate-100";
+                const waMessageToGuru = encodeURIComponent(`Assalamualaikum, saya ${senderName}, apakah siswa atas nama ${row.namaSiswa} dari ${row.asalSekolah} sudah melakukan pembayaran?`);
 
+                const tr = document.createElement('tr'); tr.className = "hover:bg-slate-50 border-b border-slate-100";
                 tr.innerHTML = `
                     <td class="py-3 px-4">
                         ${canVerify ? `
                             <label class="inline-flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" ${isLunas ? 'checked' : ''} 
-                                    onchange="togglePaymentStatus(${row.rowIndex}, this.checked)"
-                                    class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
-                                <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">
-                                    ${isLunas ? 'LUNAS' : 'Belum Lunas'}
-                                </span>
+                                <input type="checkbox" ${isLunas ? 'checked' : ''} onchange="togglePaymentStatus('${row.docId}', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                                <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">${isLunas ? 'LUNAS' : 'Belum Lunas'}</span>
                             </label>
-                        ` : `
-                            <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">
-                                ${isLunas ? 'LUNAS' : 'Belum Lunas'}
-                            </span>
-                        `}
+                        ` : `<span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">${isLunas ? 'LUNAS' : 'Belum Lunas'}</span>`}
                     </td>
                     <td class="py-3 px-4 font-bold text-slate-900">${row.namaSiswa}</td>
                     <td class="py-3 px-4 text-slate-700">${row.asalSekolah} <br><span class="text-xs text-slate-500 font-medium">${row.kelas}</span></td>
                     <td class="py-3 px-4 font-semibold text-slate-800">${row.asalKecamatan}</td>
-                    <td class="py-3 px-4 text-slate-700">${row.namaGuru} <br><span class="text-xs text-slate-400">${row.emailGuru}</span></td>
-                    <td class="py-3 px-4">
-                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded ${row.jenisPendaftaran === 'Mandiri' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">
-                            ${row.jenisPendaftaran}
-                        </span>
+                    <td class="py-3 px-4 text-slate-700">
+                        ${row.namaGuru} <br>
+                        <a href="https://wa.me/${formatWaNumber(row.waGuru)}?text=${waMessageToGuru}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1 text-[11px] mt-1"><i class="fa-brands fa-whatsapp"></i> ${row.waGuru}</a>
                     </td>
                     <td class="py-3 px-4">
-                        <a href="https://wa.me/62${formatWaNumber(row.waGuru)}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1">
-                            <i class="fa-brands fa-whatsapp text-sm"></i> ${row.waGuru}
-                        </a>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded ${row.jenisPendaftaran === 'Mandiri' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'} block text-center mb-1.5">${row.jenisPendaftaran}</span>
+                        ${currentUser.role === 'Pengurus AGPG' ? `
+                            <div class="flex gap-1">
+                                <button onclick="openEditModal('${row.docId}')" class="flex-1 text-[10px] bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded border border-blue-200 font-bold transition-all"><i class="fa-solid fa-pen"></i> Edit</button>
+                                <button onclick="deleteParticipant('${row.docId}')" class="flex-1 text-[10px] bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded border border-red-200 font-bold transition-all"><i class="fa-solid fa-trash"></i> Hapus</button>
+                            </div>
+                        ` : ''}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1195,57 +1012,241 @@
         }
 
         function formatWaNumber(num) {
-            if (!num) return '';
-            let cleaned = String(num).replace(/\D/g, '');
-            if (cleaned.startsWith('0')) {
-                cleaned = '62' + cleaned.substring(1);
-            }
-            return cleaned;
+            if (!num) return ''; let cleaned = String(num).replace(/\D/g, '');
+            if (cleaned.startsWith('0')) { cleaned = '62' + cleaned.substring(1); } return cleaned;
         }
 
-        function togglePaymentStatus(rowIndex, isChecked) {
+        function togglePaymentStatus(docId, isChecked) {
             const newStatus = isChecked ? 'Lunas' : 'Belum Lunas';
+            db.collection('registrations').doc(docId).update({ statusPembayaran: newStatus }).then(() => {
+                const item = globalRegistrations.find(r => r.docId === docId);
+                if (item) item.statusPembayaran = newStatus;
+                renderAdminTable(globalRegistrations); fetchDashboardData(); 
+            }).catch(error => { alert('Gagal mengupdate status: ' + error.message); loadAdminData(); });
+        }
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    action: 'updatePaymentStatus',
-                    rowIndex: rowIndex,
-                    statusPembayaran: newStatus
-                })
-            })
-            .then(res => res.json())
-            .then(res => {
-                if (res.status === 'success') {
-                    const item = globalRegistrations.find(r => r.rowIndex === rowIndex);
-                    if (item) item.statusPembayaran = newStatus;
-                    renderAdminTable(globalRegistrations);
-                    fetchDashboardData();
-                } else {
-                    alert('Gagal mengupdate status pembayaran.');
-                    loadAdminData();
-                }
-            })
-            .catch(err => {
-                alert('Gagal terhubung ke server untuk update status.');
-                loadAdminData();
-            });
+        function deleteParticipant(docId) {
+            if (!confirm("Peringatan! Yakin ingin menghapus data peserta ini secara permanen?")) return;
+            db.collection('registrations').doc(docId).delete().then(() => {
+                alert("Data berhasil dihapus."); loadAdminData(); fetchDashboardData();
+            }).catch(err => { alert("Gagal menghapus: " + err.message); });
+        }
+
+        function openEditModal(docId) {
+            const row = globalRegistrations.find(r => r.docId === docId);
+            if(!row) return;
+            currentEditDocId = docId;
+            
+            document.getElementById('editNamaSiswa').value = row.namaSiswa;
+            document.getElementById('editAsalSekolah').value = row.asalSekolah;
+            document.getElementById('editKelas').value = row.kelas;
+            document.getElementById('editAsalKecamatan').value = row.asalKecamatan;
+            document.getElementById('editNamaGuru').value = row.namaGuru;
+            document.getElementById('editEmailGuru').value = row.emailGuru;
+            document.getElementById('editWaGuru').value = row.waGuru;
+            document.getElementById('editJenisPendaftaran').value = row.jenisPendaftaran;
+            document.getElementById('editStatusPembayaran').value = row.statusPembayaran;
+            
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            currentEditDocId = null;
+        }
+
+        function submitEditData(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitEditBtn');
+            btn.innerHTML = "Menyimpan..."; btn.disabled = true;
+            
+            const payload = {
+                namaSiswa: document.getElementById('editNamaSiswa').value.trim(),
+                asalSekolah: document.getElementById('editAsalSekolah').value.trim(),
+                kelas: document.getElementById('editKelas').value,
+                asalKecamatan: document.getElementById('editAsalKecamatan').value,
+                namaGuru: document.getElementById('editNamaGuru').value.trim(),
+                emailGuru: document.getElementById('editEmailGuru').value.trim(),
+                waGuru: document.getElementById('editWaGuru').value.trim(),
+                jenisPendaftaran: document.getElementById('editJenisPendaftaran').value,
+                statusPembayaran: document.getElementById('editStatusPembayaran').value
+            };
+            
+            db.collection('registrations').doc(currentEditDocId).update(payload)
+                .then(() => {
+                    alert("Data berhasil diperbarui.");
+                    closeEditModal(); loadAdminData(); fetchDashboardData();
+                    btn.innerHTML = `<i class="fa-solid fa-save"></i> Simpan Perubahan`; btn.disabled = false;
+                }).catch(err => {
+                    alert("Gagal memperbarui: " + err.message);
+                    btn.innerHTML = `<i class="fa-solid fa-save"></i> Simpan Perubahan`; btn.disabled = false;
+                });
         }
 
         function filterAdminTable() {
             const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
             const statusFilter = document.getElementById('adminStatusFilter').value;
-
             const filtered = globalRegistrations.filter(r => {
-                const matchesSearch = r.namaSiswa.toLowerCase().includes(searchText) || 
-                                      r.asalSekolah.toLowerCase().includes(searchText) ||
-                                      r.namaGuru.toLowerCase().includes(searchText);
+                const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
                 const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
+                return matchesSearch && matchesStatus;
+            });
+            renderAdminTable(filtered);
+        }
 
+        function downloadTemplateExcel() {
+            const headers = ["Nama Siswa", "Asal Sekolah", "Kelas", "Asal Kecamatan", "Nama Guru Pendamping", "Email Guru", "WA Guru", "Jenis Pendaftaran"];
+            const example = ["Anisa Rahmawati", "SD Negeri 1 Purwodadi", "Kelas 5 SD/MI", "Purwodadi", "Budi Santoso, S.Pd", "budi@gmail.com", "08123456789", "Kolektif"];
+            
+            const worksheet = XLSX.utils.aoa_to_sheet([headers, example]);
+            worksheet["!cols"] = [ { wch: 25 }, { wch: 25 }, { wch: 18 }, { wch: 18 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 20 } ];
+            
+            const refHeaders = ["Pilihan Kecamatan", "Pilihan Kelas", "Jenis Pendaftaran"];
+            const refData = [];
+            const kelasList = ["Kelas 1 SD/MI", "Kelas 2 SD/MI", "Kelas 3 SD/MI", "Kelas 4 SD/MI", "Kelas 5 SD/MI", "Kelas 7 SMP/MTs", "Kelas 8 SMP/MTs"];
+            const jenisList = ["Mandiri", "Kolektif"];
+            const maxRows = Math.max(KECAMATAN_LIST.length, kelasList.length);
+            
+            for(let i=0; i<maxRows; i++){
+                refData.push([ KECAMATAN_LIST[i] || "", kelasList[i] || "", jenisList[i] || "" ]);
+            }
+            const worksheetRef = XLSX.utils.aoa_to_sheet([refHeaders, ...refData]);
+            worksheetRef["!cols"] = [ { wch: 20 }, { wch: 20 }, { wch: 20 } ];
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Template_Import");
+            XLSX.utils.book_append_sheet(workbook, worksheetRef, "Referensi_Pilihan");
+            
+            XLSX.writeFile(workbook, "Template_Import_Peserta.xlsx");
+        }
+
+        function handleImportExcel(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet);
+                
+                if (rows.length === 0) {
+                    alert("File Excel kosong atau format tidak sesuai."); e.target.value = ""; return;
+                }
+
+                let hasError = false;
+                let errorMessage = "";
+
+                for (let i = 0; i < rows.length; i++) {
+                    let rawKec = rows[i]["Asal Kecamatan"] ? String(rows[i]["Asal Kecamatan"]).trim() : "";
+                    let formattedKec = toTitleCase(rawKec); 
+                    
+                    if (currentUser.role === 'Koordinator' && formattedKec.toLowerCase() !== currentUser.kecamatan.toLowerCase()) {
+                        hasError = true;
+                        errorMessage = `GAGAL IMPORT!\nAnda masuk sebagai Koordinator Kecamatan ${currentUser.kecamatan}, namun terdapat data untuk Kecamatan ${formattedKec} pada baris ke-${i+2} di file Excel.`;
+                        break;
+                    }
+                    rows[i]["Asal Kecamatan"] = formattedKec; 
+                }
+
+                if (hasError) {
+                    alert(errorMessage); e.target.value = ""; return;
+                }
+
+                if (!confirm(`Ditemukan ${rows.length} baris data peserta yang valid. Lanjutkan proses Import?`)) {
+                    e.target.value = ""; return;
+                }
+
+                const promises = rows.map(row => {
+                    const payload = {
+                        id: "GEMARI-" + Math.floor(100000 + Math.random() * 900000),
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        namaSiswa: row["Nama Siswa"] ? String(row["Nama Siswa"]).trim() : "",
+                        asalSekolah: row["Asal Sekolah"] ? String(row["Asal Sekolah"]).trim() : "",
+                        kelas: row["Kelas"] ? String(row["Kelas"]).trim() : "",
+                        asalKecamatan: row["Asal Kecamatan"], 
+                        namaGuru: row["Nama Guru Pendamping"] ? String(row["Nama Guru Pendamping"]).trim() : "",
+                        emailGuru: row["Email Guru"] ? String(row["Email Guru"]).trim() : "",
+                        waGuru: row["WA Guru"] ? String(row["WA Guru"]).trim() : "",
+                        jenisPendaftaran: row["Jenis Pendaftaran"] ? toTitleCase(String(row["Jenis Pendaftaran"]).trim()) : (currentUser.role === 'Koordinator' ? 'Kolektif' : 'Mandiri'),
+                        statusPembayaran: "Belum Lunas"
+                    };
+                    return db.collection('registrations').add(payload);
+                });
+
+                Promise.all(promises).then(() => {
+                    alert(`Selesai! Berhasil mengimport ${rows.length} data peserta.`);
+                    e.target.value = ""; loadAdminData(); fetchDashboardData();
+                }).catch(err => {
+                    alert("Terjadi kesalahan saat import data: " + err.message); e.target.value = "";
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportToExcel() {
+            if (!globalRegistrations || globalRegistrations.length === 0) {
+                alert("Tidak ada data untuk diekspor."); return;
+            }
+
+            const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('adminStatusFilter').value;
+            const filteredData = globalRegistrations.filter(r => {
+                const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
+                const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
                 return matchesSearch && matchesStatus;
             });
 
-            renderAdminTable(filtered);
+            if (filteredData.length === 0) { alert("Tidak ada data yang sesuai filter."); return; }
+
+            const roleStr = currentUser ? currentUser.role : "Admin";
+            let exporterName = roleStr;
+            let titleStr = `DATA PENDAFTAR GEMARI MENU IBUKU - ${roleStr.toUpperCase()}`;
+            if (roleStr === "Koordinator" && currentUser.kecamatan) {
+                exporterName = `Koordinator Kec. ${currentUser.kecamatan}`; titleStr += ` KECAMATAN ${currentUser.kecamatan.toUpperCase()}`;
+            }
+
+            const titleStyle = { font: { bold: true, sz: 14 }, alignment: { horizontal: "center" } };
+            const subtitleStyle = { font: { italic: true, sz: 11 }, alignment: { horizontal: "center" } };
+            const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "DC2626" } }, alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
+            const dataStyleCenter = { alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
+            const dataStyleLeft = { alignment: { horizontal: "left", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
+            const footerStyle = { font: { bold: true, italic: true } };
+
+            let aoa = [];
+            aoa.push([{ v: titleStr, s: titleStyle }, "", "", "", "", "", "", "", "", "", ""]);
+            aoa.push([{ v: "Dicetak pada: " + new Date().toLocaleString("id-ID"), s: subtitleStyle }, "", "", "", "", "", "", "", "", "", ""]);
+            aoa.push([]);
+
+            const headers = ["No", "ID Pendaftaran", "Nama Siswa", "Asal Sekolah", "Kelas", "Asal Kecamatan", "Nama Guru Pendamping", "Email Guru", "WA Guru", "Jenis Pendaftaran", "Status Pembayaran"];
+            aoa.push(headers.map(h => ({ v: h, s: headerStyle })));
+
+            filteredData.forEach((row, index) => {
+                aoa.push([
+                    { v: index + 1, s: dataStyleCenter }, { v: row.id || "-", s: dataStyleCenter },
+                    { v: row.namaSiswa || "-", s: dataStyleLeft }, { v: row.asalSekolah || "-", s: dataStyleLeft },
+                    { v: row.kelas || "-", s: dataStyleCenter }, { v: row.asalKecamatan || "-", s: dataStyleCenter },
+                    { v: row.namaGuru || "-", s: dataStyleLeft }, { v: row.emailGuru || "-", s: dataStyleLeft },
+                    { v: row.waGuru || "-", s: dataStyleCenter }, { v: row.jenisPendaftaran || "-", s: dataStyleCenter },
+                    { v: row.statusPembayaran || "-", s: dataStyleCenter }
+                ]);
+            });
+
+            aoa.push([]); aoa.push([{ v: "Diekspor oleh: " + exporterName, s: footerStyle }]);
+
+            const worksheet = XLSX.utils.aoa_to_sheet(aoa);
+            worksheet["!merges"] = [ { s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } } ];
+            worksheet["!cols"] = [ { wch: 5 }, { wch: 18 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 18 } ];
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Data_Peserta");
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            let fileName = `Data_Gemari_${roleStr}_${dateStr}.xlsx`;
+            if (roleStr === "Koordinator" && currentUser.kecamatan) { fileName = `Data_Gemari_Kecamatan_${currentUser.kecamatan}_${dateStr}.xlsx`; }
+
+            XLSX.writeFile(workbook, fileName);
         }
     </script>
 </body>
