@@ -438,7 +438,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1" id="loginPassLabel">Kata Sandi / PIN</label>
-                        <input type="password" id="loginPassword" required placeholder="Masukkan kata sandi / No. HP Koordinator"
+                        <input type="password" id="loginPassword" required placeholder="Masukkan kata sandi"
                             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
                     </div>
 
@@ -475,10 +475,10 @@
                 <div id="pengurusPasswordManagerSection" class="hidden bg-white rounded-2xl shadow-xl border border-red-100 p-6 space-y-4">
                     <div class="flex items-center gap-2 text-slate-900 font-bold text-base border-b border-slate-100 pb-3">
                         <i class="fa-solid fa-key text-red-600 text-lg"></i>
-                        <h3>Pengaturan Kata Sandi & Nomor HP (Khusus Pengurus AGPG)</h3>
+                        <h3>Pengaturan Kata Sandi</h3>
                     </div>
                     
-                    <p class="text-xs text-slate-500">Atur atau perbarui kata sandi Bendahara atau Nomor HP Login Koordinator Kecamatan.</p>
+                    <p class="text-xs text-slate-500">Atur atau perbarui kata sandi Bendahara atau  Koordinator Kecamatan.</p>
 
                     <form onsubmit="handleChangePasswordSubmit(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                         <div>
@@ -516,12 +516,12 @@
 
                         <div>
                             <label class="block font-bold text-slate-700 mb-1" id="changePassValueLabel">Kata Sandi Baru</label>
-                            <input type="text" id="changePassNewValue" required placeholder="Sandi / No. HP Baru..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
+                            <input type="text" id="changePassNewValue" required placeholder="Sandi Baru..." class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">
                         </div>
 
                         <div class="md:col-span-3 flex justify-end pt-2">
                             <button type="submit" id="changePassBtn" class="bg-slate-900 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru
                             </button>
                         </div>
                     </form>
@@ -964,7 +964,7 @@
 
             if (role === 'Koordinator') {
                 kecContainer.classList.remove('hidden');
-                passLabel.innerText = "Nomor HP Koordinator Kecamatan";
+                passLabel.innerText = "Password";
             } else {
                 kecContainer.classList.add('hidden');
                 passLabel.innerText = "Kata Sandi / PIN";
@@ -1048,7 +1048,7 @@
 
             if (role === 'Koordinator') {
                 container.classList.remove('hidden');
-                valLabel.innerText = "Nomor HP Koordinator Baru";
+                valLabel.innerText = "Password Baru";
             } else {
                 container.classList.add('hidden');
                 valLabel.innerText = "Kata Sandi Baru";
@@ -1080,7 +1080,7 @@
             .then(res => res.json())
             .then(res => {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru`;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru`;
 
                 if (res.status === 'success') {
                     alert(res.message || 'Berhasil diperbarui.');
@@ -1092,7 +1092,7 @@
             })
             .catch(err => {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi / No HP Baru`;
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Kata Sandi Baru`;
                 alert('Gagal memperbarui. Periksa jaringan.');
             });
         }
