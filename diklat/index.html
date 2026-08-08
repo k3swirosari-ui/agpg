@@ -77,8 +77,236 @@
     <!-- KONTEN UTAMA -->
     <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
 
-        <!-- ================= TAB 1: FORMULIR PENDAFTARAN ================= -->
-        <div id="view-form" class="space-y-6">
+        <!-- ================= TAB 1: FORMULIR PENDAFTARAN & INFO ================= -->
+        <div id="view-form" class="space-y-8">
+
+            <!-- 1. VIDEO PANDUAN PESERTA & KOORDINATOR -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-play text-red-600"></i> Video Panduan
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Saksikan panduan langkah pendaftaran bagi Peserta dan Koordinator.</p>
+                    </div>
+                    <span class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5">
+                        <i class="fa-solid fa-video"></i> Tutorial Resmi
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Video Panduan Peserta -->
+                    <div class="bg-slate-900 text-white rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between border border-slate-800">
+                        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-user-graduate text-amber-400 text-lg"></i>
+                                <h3 class="font-bold text-sm">Panduan untuk Peserta</h3>
+                            </div>
+                            <span class="text-[10px] bg-red-600 px-2 py-0.5 rounded font-bold uppercase">Siswa / Guru</span>
+                        </div>
+                        
+                        <!-- PEMUTAR DRIVE IFRAME HANDAL -->
+                        <div class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+                            <iframe id="iframePeserta" src="https://drive.google.com/file/d/1DQXSGmlVam3k1JOLj4fOy-36nnN45Bnn/preview" class="w-full h-full border-0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+
+                        <!-- KONTROL PUTAR (PLAY) / JEDA (PAUSE) -->
+                        <div class="p-3 bg-slate-900 flex items-center justify-between gap-2 flex-wrap border-t border-slate-800">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="playVideoDrive('peserta')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-play"></i> Putar (Play)
+                                </button>
+                                <button type="button" onclick="pauseVideoDrive('peserta')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-pause"></i> Jeda (Pause)
+                                </button>
+                            </div>
+                            <a href="https://drive.google.com/file/d/1DQXSGmlVam3k1JOLj4fOy-36nnN45Bnn/view?usp=drivesdk" target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Drive
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Video Panduan Koordinator -->
+                    <div class="bg-slate-900 text-white rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between border border-slate-800">
+                        <div class="p-4 bg-slate-800/80 border-b border-slate-700 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-user-tie text-amber-400 text-lg"></i>
+                                <h3 class="font-bold text-sm">Panduan untuk Koordinator</h3>
+                            </div>
+                            <span class="text-[10px] bg-blue-600 px-2 py-0.5 rounded font-bold uppercase">Kecamatan</span>
+                        </div>
+                        
+                        <!-- PEMUTAR DRIVE IFRAME HANDAL -->
+                        <div class="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+                            <iframe id="iframeKoordinator" src="https://drive.google.com/file/d/1MjUfpOwzgpPvRyqhSxNH9QRT_JdVFIwa/preview" class="w-full h-full border-0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+
+                        <!-- KONTROL PUTAR (PLAY) / JEDA (PAUSE) -->
+                        <div class="p-3 bg-slate-900 flex items-center justify-between gap-2 flex-wrap border-t border-slate-800">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="playVideoDrive('koordinator')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-play"></i> Putar (Play)
+                                </button>
+                                <button type="button" onclick="pauseVideoDrive('koordinator')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-pause"></i> Jeda (Pause)
+                                </button>
+                            </div>
+                            <a href="https://drive.google.com/file/d/1MjUfpOwzgpPvRyqhSxNH9QRT_JdVFIwa/view?usp=drivesdk" target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shrink-0">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Drive
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. INFORMASI KEGIATAN & LINI MASA (TIMELINE) FLYER -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden space-y-6">
+                <!-- Banner Header Informasi -->
+                <div class="bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 text-white p-6 sm:p-8 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-white text-9xl font-black pointer-events-none">
+                        AGPG
+                    </div>
+                    
+                    <div class="max-w-4xl mx-auto space-y-6 relative z-10">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-red-900/60 pb-6">
+                            <div class="space-y-3 text-center md:text-left">
+                                <span class="bg-amber-400 text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+                                    <i class="fa-solid fa-star mr-1"></i> Program Utama Literasi
+                                </span>
+                                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                                    Gemari Menu Ibuku
+                                </h2>
+                                <div class="bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold px-4 py-2 rounded-xl text-sm sm:text-base inline-block">
+                                    Gerakan Bersama Murid Menulis Seribu Buku
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                                    Gerakan inspiratif untuk menumbuhkan budaya literasi dan karya di kalangan murid. Bersama menulis, bersama menginspirasi, wujudkan ribuan buku dari Grobogan untuk Indonesia!
+                                </p>
+                            </div>
+
+                            <!-- Kadisdik Card (DENGAN FOTO ASLI DRS. H. PURNYOMO, M.PD) -->
+                            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center min-w-[240px] shrink-0 space-y-3 shadow-xl">
+                                <div class="w-24 h-24 rounded-full border-2 border-amber-400 overflow-hidden mx-auto shadow-md relative bg-slate-800">
+                                    <img src="1000081986.png" alt="Drs. H. Purnyomo, M.Pd" class="w-full h-full object-cover object-[82%_15%] scale-[2.3]" onerror="this.onerror=null; this.src='https://i.ibb.co.com/SXPW8vzQ/Desain-tanpa-judul-3.png'">
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-white">Drs. H. Purnyomo, M.Pd</h4>
+                                    <p class="text-[11px] text-amber-300 font-medium">Kepala Dinas Pendidikan Kab. Grobogan</p>
+                                </div>
+                                <div class="pt-2 border-t border-white/10">
+                                    <span class="text-[11px] font-extrabold text-red-400 bg-red-950/80 px-3 py-1 rounded-full block border border-red-500/30">
+                                        AYO MENULIS!
+                                    </span>
+                                    <p class="text-[10px] text-slate-300 italic mt-1 font-serif">"Karyamu Inspirasi Duniamu"</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lini Masa Kegiatan (Timeline Visual) -->
+                        <div class="pt-2">
+                            <div class="text-center md:text-left mb-6">
+                                <h3 class="text-lg sm:text-xl font-extrabold text-white flex items-center justify-center md:justify-start gap-2 uppercase tracking-wide">
+                                    <i class="fa-solid fa-timeline text-amber-400"></i> Lini Masa Kegiatan
+                                </h3>
+                                <p class="text-xs text-slate-400">Jadwal resmi pelaksanaan program Rekor MURI HARDIKNAS 2027</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Step 1 -->
+                                <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl flex items-start gap-3 hover:border-amber-400 transition-all">
+                                    <div class="w-10 h-10 bg-amber-500 text-slate-900 rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-rocket"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Tahap 1</span>
+                                        <h4 class="font-bold text-sm text-white">LAUNCHING</h4>
+                                        <p class="text-xs text-amber-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>20 Agustus 2026</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2 -->
+                                <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl flex items-start gap-3 hover:border-amber-400 transition-all">
+                                    <div class="w-10 h-10 bg-amber-500 text-slate-900 rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-laptop-code"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Tahap 2</span>
+                                        <h4 class="font-bold text-sm text-white">PELATIHAN DARING</h4>
+                                        <p class="text-xs text-amber-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>26–27 Agustus 2026</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3 -->
+                                <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl flex items-start gap-3 hover:border-amber-400 transition-all">
+                                    <div class="w-10 h-10 bg-emerald-500 text-slate-900 rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-users-rectangle"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Tahap 3</span>
+                                        <h4 class="font-bold text-sm text-white">PELATIHAN LURING</h4>
+                                        <p class="text-xs text-emerald-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>1 s.d. 3 September 2026</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 4 -->
+                                <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl flex items-start gap-3 hover:border-amber-400 transition-all">
+                                    <div class="w-10 h-10 bg-emerald-500 text-slate-900 rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-user-check"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Tahap 4</span>
+                                        <h4 class="font-bold text-sm text-white">PENDAMPINGAN INTENSIF</h4>
+                                        <p class="text-xs text-emerald-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>September s.d. Oktober 2026</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 5 -->
+                                <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-xl flex items-start gap-3 hover:border-amber-400 transition-all">
+                                    <div class="w-10 h-10 bg-purple-500 text-white rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-book-open"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-purple-300 tracking-wider">Tahap 5</span>
+                                        <h4 class="font-bold text-sm text-white">PENGIRIMAN NASKAH, PENERBITAN & PERCETAKAN</h4>
+                                        <p class="text-xs text-purple-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>November 2026 s.d. Maret 2027</p>
+                                    </div>
+                                </div>
+
+                                <!-- Step 6 -->
+                                <div class="bg-gradient-to-r from-red-600 to-amber-600 border border-amber-400 p-4 rounded-xl flex items-start gap-3 shadow-lg">
+                                    <div class="w-10 h-10 bg-white text-red-600 rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                        <i class="fa-solid fa-trophy"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-amber-200 tracking-wider">PUNCAK ACARA</span>
+                                        <h4 class="font-bold text-sm text-white">PEMECAHAN REKOR MURI</h4>
+                                        <p class="text-xs text-white font-extrabold mt-1"><i class="fa-solid fa-calendar-check mr-1"></i>2 Mei 2027 (HARDIKNAS)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Banner Rekor MURI -->
+                        <div class="bg-amber-400 text-slate-900 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 font-bold">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 bg-slate-900 text-amber-400 rounded-full flex items-center justify-center text-2xl shrink-0">
+                                    <i class="fa-solid fa-award"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-800 uppercase tracking-wider font-extrabold">Target Utama Rekor MURI</span>
+                                    <h4 class="text-base sm:text-lg font-extrabold leading-tight">Bersama Kita Pecahkan REKOR MURI</h4>
+                                    <p class="text-xs text-slate-700 font-medium">Menulis Seribu Buku oleh Murid Grobogan</p>
+                                </div>
+                            </div>
+                            <button onclick="document.getElementById('registrationForm').scrollIntoView({behavior: 'smooth'})" class="bg-slate-900 hover:bg-red-700 text-white px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all shrink-0 flex items-center gap-2">
+                                <i class="fa-solid fa-file-signature"></i> Daftar Sekarang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. FORMULIR PENDAFTARAN PESERTA -->
             <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
                 <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
                     <div>
@@ -310,7 +538,7 @@
             </div>
         </div>
 
-        <!-- ================= TAB 3: LOGIN PESERTA (BARU) ================= -->
+        <!-- ================= TAB 3: LOGIN PESERTA ================= -->
         <div id="view-peserta" class="hidden space-y-6">
             <!-- Box Login Peserta -->
             <div id="pesertaLoginSection" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 space-y-6">
@@ -545,7 +773,6 @@
                                 <i class="fa-solid fa-file-excel"></i> Export Semua
                             </button>
 
-                            <!-- TOMBOL BARU: EXPORT PESERTA YANG SUDAH LUNAS -->
                             <button onclick="exportLunasToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-2 rounded-xl font-bold flex items-center gap-1 shrink-0">
                                 <i class="fa-solid fa-file-excel"></i> Export Lunas
                             </button>
@@ -701,8 +928,8 @@
         let globalRegistrations = [];
         let globalCoordinators = {};
         let currentUser = null; 
-        let currentPesertaDocs = []; // Menyimpan dokumen siswa di sesi login nomor WA peserta
-        let pesertaWaSession = ""; // Menyimpan sesi login nomor WA peserta
+        let currentPesertaDocs = []; 
+        let pesertaWaSession = ""; 
         let systemSettings = {};
         let currentEditDocId = null;
 
@@ -719,6 +946,35 @@
             restoreSavedSession();
             restorePesertaSession();
         });
+
+        // FUNGSI KONTROL VIDEO DRIVE (PUTAR/PLAY & JEDA/PAUSE)
+        function playVideoDrive(type) {
+            if (type === 'peserta') {
+                const iframe = document.getElementById('iframePeserta');
+                if (iframe) {
+                    iframe.src = "https://drive.google.com/file/d/1DQXSGmlVam3k1JOLj4fOy-36nnN45Bnn/preview?autoplay=1";
+                }
+            } else if (type === 'koordinator') {
+                const iframe = document.getElementById('iframeKoordinator');
+                if (iframe) {
+                    iframe.src = "https://drive.google.com/file/d/1MjUfpOwzgpPvRyqhSxNH9QRT_JdVFIwa/preview?autoplay=1";
+                }
+            }
+        }
+
+        function pauseVideoDrive(type) {
+            if (type === 'peserta') {
+                const iframe = document.getElementById('iframePeserta');
+                if (iframe) {
+                    iframe.src = "https://drive.google.com/file/d/1DQXSGmlVam3k1JOLj4fOy-36nnN45Bnn/preview";
+                }
+            } else if (type === 'koordinator') {
+                const iframe = document.getElementById('iframeKoordinator');
+                if (iframe) {
+                    iframe.src = "https://drive.google.com/file/d/1MjUfpOwzgpPvRyqhSxNH9QRT_JdVFIwa/preview";
+                }
+            }
+        }
 
         function toTitleCase(str) {
             return str.replace(/\w\S*/g, function(txt) {
@@ -842,7 +1098,7 @@
                 waGuru: document.getElementById('waGuru').value.trim(),
                 jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value,
                 statusPembayaran: "Belum Lunas",
-                passwordPeserta: "" // Default password pendaftar baru kosong
+                passwordPeserta: ""
             };
 
             db.collection('registrations').add(payload).then((docRef) => {
@@ -927,7 +1183,7 @@
         }
 
         // =========================================================================
-        // JAVASCRIPT LOGIC UNTUK PORTAL PESERTA (BARU)
+        // JAVASCRIPT LOGIC UNTUK PORTAL PESERTA
         // =========================================================================
         function initPesertaTab() {
             if (pesertaWaSession) {
@@ -979,7 +1235,6 @@
                         isValid = true;
                     }
                 } else {
-                    // Jika belum menyetel password, harus mengosongkannya untuk masuk pertama kali
                     if (enteredPassword === "") {
                         isValid = true;
                     } else {
@@ -1045,7 +1300,6 @@
             currentPesertaDocs.forEach((row, idx) => {
                 const isLunas = String(row.statusPembayaran).toLowerCase() === 'lunas';
 
-                // Menambahkan blok identitas murid
                 const studentCard = document.createElement('div');
                 studentCard.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 mb-3";
                 studentCard.innerHTML = `
@@ -1063,7 +1317,6 @@
                 `;
                 identityDiv.appendChild(studentCard);
 
-                // Menambahkan blok status pembayaran & tombol konfirmasi
                 const statusCard = document.createElement('div');
                 statusCard.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 mb-3 text-xs sm:text-sm";
 
@@ -1153,7 +1406,6 @@
 
             const batch = db.batch();
 
-            // Memperbarui passwordPeserta di seluruh dokumen murid yang menggunakan nomor WA Guru ini
             db.collection('registrations').where('waGuru', '==', pesertaWaSession).get().then(snapshot => {
                 snapshot.forEach(doc => {
                     batch.update(doc.ref, { passwordPeserta: newPass });
@@ -1333,7 +1585,6 @@
                 return;
             }
 
-            // DRAFT PESAN WA OTOMATIS ADMIN KE GURU
             let senderName = currentUser.role;
             if (currentUser.role === 'Koordinator') {
                 const coord = globalCoordinators[currentUser.kecamatan];
@@ -1623,7 +1874,6 @@
             XLSX.writeFile(workbook, fileName);
         }
 
-        // FUNGSI BARU: EKSPORT DATA EXCEL KHUSUS PESERTA YANG SUDAH LUNAS
         function exportLunasToExcel() {
             if (!globalRegistrations || globalRegistrations.length === 0) {
                 alert("Tidak ada data untuk diekspor."); return;
@@ -1645,7 +1895,6 @@
 
             const titleStyle = { font: { bold: true, sz: 14 }, alignment: { horizontal: "center" } };
             const subtitleStyle = { font: { italic: true, sz: 11 }, alignment: { horizontal: "center" } };
-            // Menggunakan warna hijau (rgb: 10B981 / 16A34A) sebagai tema Lunas
             const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "16A34A" } }, alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
             const dataStyleCenter = { alignment: { horizontal: "center", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
             const dataStyleLeft = { alignment: { horizontal: "left", vertical: "center" }, border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } } };
@@ -1688,3 +1937,4 @@
     </script>
 </body>
 </html>
+
