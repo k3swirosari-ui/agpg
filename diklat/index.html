@@ -184,10 +184,10 @@
                                 </p>
                             </div>
 
-                            <!-- Kadisdik Card (DENGAN FOTO ASLI DRS. H. PURNYOMO, M.PD) -->
+                            <!-- Kadisdik Card (DENGAN FOTO DRS. H. PURNYOMO, M.PD) -->
                             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center min-w-[240px] shrink-0 space-y-3 shadow-xl">
                                 <div class="w-24 h-24 rounded-full border-2 border-amber-400 overflow-hidden mx-auto shadow-md relative bg-slate-800">
-                                    <img src="1000081986.png" alt="Drs. H. Purnyomo, M.Pd" class="w-full h-full object-cover object-[82%_15%] scale-[2.3]" onerror="this.onerror=null; this.src='https://i.ibb.co.com/SXPW8vzQ/Desain-tanpa-judul-3.png'">
+                                    <img src="https://i.ibb.co.com/WNcsNSN4/Desain-tanpa-judul-2.png" alt="Drs. H. Purnyomo, M.Pd" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://i.ibb.co.com/k2S8w3vg/logo-agpg-1.png'">
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-sm text-white">Drs. H. Purnyomo, M.Pd</h4>
@@ -756,6 +756,14 @@
                                 <option value="Belum Lunas">Belum Lunas</option>
                             </select>
 
+                            <select id="adminSortBy" onchange="filterAdminTable()" class="w-full sm:w-auto px-3 py-2 rounded-xl border border-slate-300 text-xs bg-white font-medium text-slate-700">
+                                <option value="default">Urutkan: Terbaru</option>
+                                <option value="nama_asc">Nama Siswa (A - Z)</option>
+                                <option value="nama_desc">Nama Siswa (Z - A)</option>
+                                <option value="sekolah_asc">Sekolah (A - Z)</option>
+                                <option value="kecamatan_asc">Kecamatan (A - Z)</option>
+                            </select>
+
                             <button onclick="loadAdminData()" title="Refresh Data" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-xl font-bold flex items-center shrink-0">
                                 <i class="fa-solid fa-rotate"></i>
                             </button>
@@ -781,14 +789,44 @@
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider text-[11px] select-none">
                                 <tr>
-                                    <th class="py-3 px-4">Verifikasi Pembayaran</th>
-                                    <th class="py-3 px-4">Nama Siswa</th>
-                                    <th class="py-3 px-4">Sekolah / Kelas</th>
-                                    <th class="py-3 px-4">Kecamatan</th>
-                                    <th class="py-3 px-4">Guru Pendamping</th>
-                                    <th class="py-3 px-4">Jenis & Aksi</th>
+                                    <th onclick="sortTableByHeader('statusPembayaran')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Verifikasi Pembayaran</span>
+                                            <i id="sort-icon-statusPembayaran" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
+                                    <th onclick="sortTableByHeader('namaSiswa')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Nama Siswa</span>
+                                            <i id="sort-icon-namaSiswa" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
+                                    <th onclick="sortTableByHeader('asalSekolah')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Sekolah / Kelas</span>
+                                            <i id="sort-icon-asalSekolah" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
+                                    <th onclick="sortTableByHeader('asalKecamatan')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Kecamatan</span>
+                                            <i id="sort-icon-asalKecamatan" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
+                                    <th onclick="sortTableByHeader('namaGuru')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Guru Pendamping</span>
+                                            <i id="sort-icon-namaGuru" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
+                                    <th onclick="sortTableByHeader('jenisPendaftaran')" class="py-3 px-4 cursor-pointer hover:bg-slate-200 transition-all">
+                                        <div class="flex items-center justify-between gap-1">
+                                            <span>Jenis & Aksi</span>
+                                            <i id="sort-icon-jenisPendaftaran" class="fa-solid fa-sort text-slate-400"></i>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="adminTableBody" class="divide-y divide-slate-100 text-slate-700">
@@ -932,6 +970,10 @@
         let pesertaWaSession = ""; 
         let systemSettings = {};
         let currentEditDocId = null;
+
+        // STATE SORTING HEADER TABEL
+        let currentSortColumn = 'default';
+        let currentSortDirection = 'asc';
 
         const KECAMATAN_LIST = [
             "Brati", "Gabus", "Geyer", "Godong", "Grobogan", "Gubug", 
@@ -1084,33 +1126,54 @@
         function handleFormSubmit(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true; submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses Pendaftaran...`;
+            submitBtn.disabled = true; submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa & Memproses...`;
 
-            const payload = {
-                id: "GEMARI-" + Math.floor(100000 + Math.random() * 900000),
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                namaSiswa: document.getElementById('namaSiswa').value.trim(),
-                asalSekolah: document.getElementById('asalSekolah').value.trim(),
-                kelas: document.getElementById('kelas').value,
-                asalKecamatan: document.getElementById('asalKecamatan').value,
-                namaGuru: document.getElementById('namaGuru').value.trim(),
-                emailGuru: document.getElementById('emailGuru').value.trim(),
-                waGuru: document.getElementById('waGuru').value.trim(),
-                jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value,
-                statusPembayaran: "Belum Lunas",
-                passwordPeserta: ""
-            };
+            const inputNamaSiswa = document.getElementById('namaSiswa').value.trim();
+            const inputAsalSekolah = document.getElementById('asalSekolah').value.trim();
 
-            db.collection('registrations').add(payload).then((docRef) => {
-                submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
-                showSuccessModal(payload);
-                document.getElementById('registrationForm').reset();
-                togglePendaftaranType();
-                fetchDashboardData();
-            }).catch((error) => {
-                submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
-                alert('Gagal pendaftaran: ' + error.message);
-            });
+            // CEK PENDAFTARAN DUPLIKAT (NAMA SISWA SAMA + ASAL SEKOLAH SAMA)
+            db.collection('registrations')
+                .where('namaSiswa', '==', inputNamaSiswa)
+                .where('asalSekolah', '==', inputAsalSekolah)
+                .get()
+                .then(snapshot => {
+                    if (!snapshot.empty) {
+                        submitBtn.disabled = false; 
+                        submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                        alert(`PENDAFTARAN DITOLAK!\n\nSiswa bernama "${inputNamaSiswa}" dari "${inputAsalSekolah}" sudah terdaftar dalam sistem.\n\nSatu siswa dari sekolah yang sama tidak dapat mendaftar dua kali.`);
+                        return;
+                    }
+
+                    const payload = {
+                        id: "GEMARI-" + Math.floor(100000 + Math.random() * 900000),
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        namaSiswa: inputNamaSiswa,
+                        asalSekolah: inputAsalSekolah,
+                        kelas: document.getElementById('kelas').value,
+                        asalKecamatan: document.getElementById('asalKecamatan').value,
+                        namaGuru: document.getElementById('namaGuru').value.trim(),
+                        emailGuru: document.getElementById('emailGuru').value.trim(),
+                        waGuru: document.getElementById('waGuru').value.trim(),
+                        jenisPendaftaran: document.querySelector('input[name="jenisPendaftaran"]:checked').value,
+                        statusPembayaran: "Belum Lunas",
+                        passwordPeserta: ""
+                    };
+
+                    db.collection('registrations').add(payload).then((docRef) => {
+                        submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                        showSuccessModal(payload);
+                        document.getElementById('registrationForm').reset();
+                        togglePendaftaranType();
+                        fetchDashboardData();
+                    }).catch((error) => {
+                        submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                        alert('Gagal pendaftaran: ' + error.message);
+                    });
+                })
+                .catch(err => {
+                    submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
+                    alert('Gagal mengecek validasi duplikasi data: ' + err.message);
+                });
         }
 
         function showSuccessModal(data) {
@@ -1572,10 +1635,71 @@
                 snapshot.forEach(doc => {
                     let data = doc.data(); data.docId = doc.id; globalRegistrations.push(data);
                 });
-                renderAdminTable(globalRegistrations);
+                filterAdminTable();
             }).catch(err => {
                 tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-red-500">Gagal memuat data.</td></tr>`;
             });
+        }
+
+        // FUNGSI SORT KETIKA HEADER TABEL DIKLIK
+        function sortTableByHeader(columnKey) {
+            if (currentSortColumn === columnKey) {
+                currentSortDirection = (currentSortDirection === 'asc') ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = columnKey;
+                currentSortDirection = 'asc';
+            }
+            updateSortHeaderIcons();
+            filterAdminTable();
+        }
+
+        function updateSortHeaderIcons() {
+            const columns = ['statusPembayaran', 'namaSiswa', 'asalSekolah', 'asalKecamatan', 'namaGuru', 'jenisPendaftaran'];
+            columns.forEach(col => {
+                const icon = document.getElementById(`sort-icon-${col}`);
+                if (icon) {
+                    if (col === currentSortColumn) {
+                        icon.className = currentSortDirection === 'asc' 
+                            ? 'fa-solid fa-sort-up text-red-600' 
+                            : 'fa-solid fa-sort-down text-red-600';
+                    } else {
+                        icon.className = 'fa-solid fa-sort text-slate-400';
+                    }
+                }
+            });
+        }
+
+        function filterAdminTable() {
+            const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('adminStatusFilter').value;
+            const dropdownSort = document.getElementById('adminSortBy').value;
+
+            let filtered = globalRegistrations.filter(r => {
+                const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
+                const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
+                return matchesSearch && matchesStatus;
+            });
+
+            // LOGIKA PENGURUTAN (HEADER DIKLIK ATAU DROPDOWN)
+            if (currentSortColumn !== 'default') {
+                filtered.sort((a, b) => {
+                    let valA = (a[currentSortColumn] || "").toString().toLowerCase();
+                    let valB = (b[currentSortColumn] || "").toString().toLowerCase();
+                    if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            } else if (dropdownSort !== 'default') {
+                filtered.sort((a, b) => {
+                    if (dropdownSort === 'nama_asc') return (a.namaSiswa || "").localeCompare(b.namaSiswa || "");
+                    if (dropdownSort === 'nama_desc') return (b.namaSiswa || "").localeCompare(a.namaSiswa || "");
+                    if (dropdownSort === 'sekolah_asc') return (a.asalSekolah || "").localeCompare(b.asalSekolah || "");
+                    if (dropdownSort === 'kecamatan_asc') return (a.asalKecamatan || "").localeCompare(b.asalKecamatan || "");
+                    return 0;
+                });
+            }
+
+            renderAdminTable(filtered);
         }
 
         function renderAdminTable(data) {
@@ -1645,7 +1769,7 @@
             db.collection('registrations').doc(docId).update({ statusPembayaran: newStatus }).then(() => {
                 const item = globalRegistrations.find(r => r.docId === docId);
                 if (item) item.statusPembayaran = newStatus;
-                renderAdminTable(globalRegistrations); fetchDashboardData(); 
+                filterAdminTable(); fetchDashboardData(); 
             }).catch(error => { alert('Gagal mengupdate status: ' + error.message); loadAdminData(); });
         }
 
@@ -1705,17 +1829,6 @@
                     alert("Gagal memperbarui: " + err.message);
                     btn.innerHTML = `<i class="fa-solid fa-save"></i> Simpan Perubahan`; btn.disabled = false;
                 });
-        }
-
-        function filterAdminTable() {
-            const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('adminStatusFilter').value;
-            const filtered = globalRegistrations.filter(r => {
-                const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
-                const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
-                return matchesSearch && matchesStatus;
-            });
-            renderAdminTable(filtered);
         }
 
         function downloadTemplateExcel() {
@@ -1937,4 +2050,3 @@
     </script>
 </body>
 </html>
-
