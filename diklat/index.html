@@ -50,7 +50,6 @@
                 <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-chart-pie"></i> Dashboard
                 </button>
-                <!-- TAB BARU: LOGIN PESERTA -->
                 <button onclick="switchTab('peserta')" id="tab-peserta" class="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user-graduate"></i> <span id="pesertaNavLabel">Login Peserta</span>
                 </button>
@@ -184,7 +183,7 @@
                                 </p>
                             </div>
 
-                            <!-- Kadisdik Card (DENGAN FOTO DRS. H. PURNYOMO, M.PD) -->
+                            <!-- Kadisdik Card -->
                             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center min-w-[240px] shrink-0 space-y-3 shadow-xl">
                                 <div class="w-24 h-24 rounded-full border-2 border-amber-400 overflow-hidden mx-auto shadow-md relative bg-slate-800">
                                     <img src="https://i.ibb.co.com/WNcsNSN4/Desain-tanpa-judul-2.png" alt="Drs. H. Purnyomo, M.Pd" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://i.ibb.co.com/k2S8w3vg/logo-agpg-1.png'">
@@ -220,7 +219,7 @@
                                     <div>
                                         <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Tahap 1</span>
                                         <h4 class="font-bold text-sm text-white">LAUNCHING</h4>
-                                        <p class="text-xs text-amber-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>20 Agustus 2026</p>
+                                        <p class="text-xs text-amber-200 font-semibold mt-1"><i class="fa-solid fa-calendar-day mr-1"></i>21 Agustus 2026</p>
                                     </div>
                                 </div>
 
@@ -348,7 +347,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tingkat Kelas <span class="text-red-500">*</span></label>
-                            <select id="kelas" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
+                            <select id="kelas" required onchange="handleKelasChange()" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm transition-all bg-white">
                                 <option value="">-- Pilih Kelas --</option>
                                 <optgroup label="Tingkat SD / MI">
                                     <option value="Kelas 1 SD/MI">Kelas 1 SD/MI</option>
@@ -356,13 +355,15 @@
                                     <option value="Kelas 3 SD/MI">Kelas 3 SD/MI</option>
                                     <option value="Kelas 4 SD/MI">Kelas 4 SD/MI</option>
                                     <option value="Kelas 5 SD/MI">Kelas 5 SD/MI</option>
+                                    <option value="Kelas 6 SD/MI">Kelas 6 SD/MI</option>
                                 </optgroup>
                                 <optgroup label="Tingkat SMP / MTs">
                                     <option value="Kelas 7 SMP/MTs">Kelas 7 SMP/MTs</option>
                                     <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option>
+                                    <option value="Kelas 9 SMP/MTs">Kelas 9 SMP/MTs</option>
                                 </optgroup>
                             </select>
-                            <p class="text-[11px] text-slate-500 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Sesuai ketentuan, pendaftaran khusus untuk Kelas 1-5 (SD/MI) dan Kelas 7-8 (SMP/MTs).</p>
+                            <p class="text-[11px] text-slate-500 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Pendaftaran siswa kelas 6 dan 9 wajib melampirkan izin orang tua.</p>
                         </div>
 
                         <div>
@@ -377,6 +378,13 @@
                                 <option value="Tawangharjo">Tawangharjo</option><option value="Tegowanu">Tegowanu</option><option value="Toroh">Toroh</option>
                                 <option value="Wirosari">Wirosari</option>
                             </select>
+                        </div>
+
+                        <div id="persetujuanContainer" class="hidden md:col-span-2 bg-red-50 border border-red-200 p-4 rounded-xl">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="izinOrangTua" class="mt-1 w-4 h-4 text-red-600 focus:ring-red-500 border-slate-300 rounded">
+                                <span class="text-xs text-red-900 font-medium leading-relaxed">Saya menyatakan bahwa siswa kelas akhir (Kelas 6 / Kelas 9) telah mendapatkan <strong>persetujuan dari orang tua/wali murid</strong> untuk mengikuti kegiatan ini. <span class="text-red-600 font-bold">*</span></span>
+                            </label>
                         </div>
 
                         <div>
@@ -906,8 +914,9 @@
                         <select id="editKelas" required class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 bg-white">
                             <option value="Kelas 1 SD/MI">Kelas 1 SD/MI</option><option value="Kelas 2 SD/MI">Kelas 2 SD/MI</option>
                             <option value="Kelas 3 SD/MI">Kelas 3 SD/MI</option><option value="Kelas 4 SD/MI">Kelas 4 SD/MI</option>
-                            <option value="Kelas 5 SD/MI">Kelas 5 SD/MI</option><option value="Kelas 7 SMP/MTs">Kelas 7 SMP/MTs</option>
-                            <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option>
+                            <option value="Kelas 5 SD/MI">Kelas 5 SD/MI</option><option value="Kelas 6 SD/MI">Kelas 6 SD/MI</option>
+                            <option value="Kelas 7 SMP/MTs">Kelas 7 SMP/MTs</option>
+                            <option value="Kelas 8 SMP/MTs">Kelas 8 SMP/MTs</option><option value="Kelas 9 SMP/MTs">Kelas 9 SMP/MTs</option>
                         </select>
                     </div>
                     <div>
@@ -1004,6 +1013,22 @@
             restoreSavedSession();
             restorePesertaSession();
         });
+
+        // FUNGSI HANDLE KELAS 6 & 9 (WAJIB PERSETUJUAN ORTU)
+        function handleKelasChange() {
+            const kelasVal = document.getElementById('kelas').value;
+            const container = document.getElementById('persetujuanContainer');
+            const checkbox = document.getElementById('izinOrangTua');
+            
+            if (kelasVal === 'Kelas 6 SD/MI' || kelasVal === 'Kelas 9 SMP/MTs') {
+                container.classList.remove('hidden');
+                checkbox.required = true;
+            } else {
+                container.classList.add('hidden');
+                checkbox.required = false;
+                checkbox.checked = false;
+            }
+        }
 
         // FUNGSI KONTROL VIDEO DRIVE (PUTAR/PLAY & JEDA/PAUSE)
         function playVideoDrive(type) {
@@ -1179,6 +1204,7 @@
                         submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Pendaftaran`;
                         showSuccessModal(payload);
                         document.getElementById('registrationForm').reset();
+                        document.getElementById('persetujuanContainer').classList.add('hidden'); // Sembunyikan ulang
                         togglePendaftaranType();
                         fetchDashboardData();
                     }).catch((error) => {
@@ -1686,7 +1712,8 @@
 
             let query = db.collection('registrations');
             if (currentUser.role === 'Koordinator') {
-                query = query.where("jenisPendaftaran", "==", "Kolektif").where("asalKecamatan", "==", currentUser.kecamatan);
+                // MODIFIKASI: Menampilkan semua pendaftar (Kolektif/Mandiri) berdasarkan kecamatan
+                query = query.where("asalKecamatan", "==", currentUser.kecamatan);
             } else if (currentUser.role === 'Bendahara') {
                 query = query.where("jenisPendaftaran", "==", "Mandiri");
             } 
@@ -1783,9 +1810,17 @@
             data.forEach((row) => {
                 const isLunas = String(row.statusPembayaran).toLowerCase() === 'lunas';
                 let canVerify = false;
-                if (currentUser.role === 'Pengurus AGPG') { canVerify = true; } 
-                else if (currentUser.role === 'Bendahara' && String(row.jenisPendaftaran).toLowerCase() === 'mandiri') { canVerify = true; } 
-                else if (currentUser.role === 'Koordinator' && String(row.jenisPendaftaran).toLowerCase() === 'kolektif' && String(row.asalKecamatan).toLowerCase() === String(currentUser.kecamatan).toLowerCase()) { canVerify = true; }
+                
+                // LOGIKA HAK AKSES PENGURUS
+                if (currentUser.role === 'Pengurus AGPG') { 
+                    canVerify = true; 
+                } 
+                else if (currentUser.role === 'Bendahara' && String(row.jenisPendaftaran).toLowerCase() === 'mandiri') { 
+                    canVerify = true; 
+                } 
+                else if (currentUser.role === 'Koordinator' && String(row.jenisPendaftaran).toLowerCase() === 'kolektif' && String(row.asalKecamatan).toLowerCase() === String(currentUser.kecamatan).toLowerCase()) { 
+                    canVerify = true; 
+                }
 
                 const waMessageToGuru = encodeURIComponent(`Assalamualaikum, saya ${senderName}, apakah siswa atas nama ${row.namaSiswa} dari ${row.asalSekolah} sudah melakukan pembayaran?`);
 
@@ -1797,7 +1832,8 @@
                                 <input type="checkbox" ${isLunas ? 'checked' : ''} onchange="togglePaymentStatus('${row.docId}', this.checked)" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
                                 <span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">${isLunas ? 'LUNAS' : 'Belum Lunas'}</span>
                             </label>
-                        ` : `<span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">${isLunas ? 'LUNAS' : 'Belum Lunas'}</span>`}
+                        ` : `<span class="text-xs font-bold ${isLunas ? 'text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'}">${isLunas ? 'LUNAS' : 'Belum Lunas'}</span>
+                             ${currentUser.role === 'Koordinator' ? `<div class="text-[9px] text-amber-600 font-bold mt-1 uppercase tracking-wide"><i class="fa-solid fa-lock"></i> Mode Baca</div>` : ''}`}
                     </td>
                     <td class="py-3 px-4 font-bold text-slate-900">${row.namaSiswa}</td>
                     <td class="py-3 px-4 text-slate-700">${row.asalSekolah} <br><span class="text-xs text-slate-500 font-medium">${row.kelas}</span></td>
@@ -1892,39 +1928,6 @@
                 });
         }
 
-        function filterAdminTable() {
-            const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('adminStatusFilter').value;
-            const dropdownSort = document.getElementById('adminSortBy').value;
-
-            let filtered = globalRegistrations.filter(r => {
-                const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
-                const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
-                return matchesSearch && matchesStatus;
-            });
-
-            // LOGIKA PENGURUTAN (HEADER DIKLIK ATAU DROPDOWN)
-            if (currentSortColumn !== 'default') {
-                filtered.sort((a, b) => {
-                    let valA = (a[currentSortColumn] || "").toString().toLowerCase();
-                    let valB = (b[currentSortColumn] || "").toString().toLowerCase();
-                    if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-                    if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            } else if (dropdownSort !== 'default') {
-                filtered.sort((a, b) => {
-                    if (dropdownSort === 'nama_asc') return (a.namaSiswa || "").localeCompare(b.namaSiswa || "");
-                    if (dropdownSort === 'nama_desc') return (b.namaSiswa || "").localeCompare(a.namaSiswa || "");
-                    if (dropdownSort === 'sekolah_asc') return (a.asalSekolah || "").localeCompare(b.asalSekolah || "");
-                    if (dropdownSort === 'kecamatan_asc') return (a.asalKecamatan || "").localeCompare(b.asalKecamatan || "");
-                    return 0;
-                });
-            }
-
-            renderAdminTable(filtered);
-        }
-
         function downloadTemplateExcel() {
             const headers = ["Nama Siswa", "Asal Sekolah", "Kelas", "Asal Kecamatan", "Nama Guru Pendamping", "Email Guru", "WA Guru", "Jenis Pendaftaran"];
             const example = ["Anisa Rahmawati", "SD Negeri 1 Purwodadi", "Kelas 5 SD/MI", "Purwodadi", "Budi Santoso, S.Pd", "budi@gmail.com", "08123456789", "Kolektif"];
@@ -1934,7 +1937,7 @@
             
             const refHeaders = ["Pilihan Kecamatan", "Pilihan Kelas", "Jenis Pendaftaran"];
             const refData = [];
-            const kelasList = ["Kelas 1 SD/MI", "Kelas 2 SD/MI", "Kelas 3 SD/MI", "Kelas 4 SD/MI", "Kelas 5 SD/MI", "Kelas 7 SMP/MTs", "Kelas 8 SMP/MTs"];
+            const kelasList = ["Kelas 1 SD/MI", "Kelas 2 SD/MI", "Kelas 3 SD/MI", "Kelas 4 SD/MI", "Kelas 5 SD/MI", "Kelas 6 SD/MI", "Kelas 7 SMP/MTs", "Kelas 8 SMP/MTs", "Kelas 9 SMP/MTs"];
             const jenisList = ["Mandiri", "Kolektif"];
             const maxRows = Math.max(KECAMATAN_LIST.length, kelasList.length);
             
@@ -2024,7 +2027,9 @@
 
             const searchText = document.getElementById('adminSearchInput').value.toLowerCase();
             const statusFilter = document.getElementById('adminStatusFilter').value;
-            const filteredData = globalRegistrations.filter(r => {
+            const dropdownSort = document.getElementById('adminSortBy').value;
+
+            let filteredData = globalRegistrations.filter(r => {
                 const matchesSearch = (r.namaSiswa || "").toLowerCase().includes(searchText) || (r.asalSekolah || "").toLowerCase().includes(searchText) || (r.namaGuru || "").toLowerCase().includes(searchText);
                 const matchesStatus = (statusFilter === 'ALL') || (String(r.statusPembayaran).toLowerCase() === statusFilter.toLowerCase());
                 return matchesSearch && matchesStatus;
