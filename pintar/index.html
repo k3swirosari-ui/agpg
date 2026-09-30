@@ -173,6 +173,11 @@
             karyaList: [],
             informasiList: [],
             pengaturan: { nama_aplikasi: 'Pintar Grobogan', logo_url: '' },
+            diskusiList: [],
+            raporList: [],
+            pesanList: [],
+            dash: { tab: 'karya', q: '', kat: 'Semua', userCount: null },
+            liveDb: false,
             dbReady: false
         };
 
@@ -200,6 +205,8 @@
         };
 
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
+
+        const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
         const formatDate = (timestamp) => {
             if (!timestamp) return '-';
@@ -293,31 +300,60 @@
         }
 
         let unsubs = [];
+
+        // Render ulang bagian halaman yang sedang dibuka tanpa menghapus isian form
+        function refreshView() {
+            const v = window.appState.currentView;
+            if(v === 'kelola_informasi') renderKelolaInfoList();
+            else if(v === 'diskusi') renderDiskusiList();
+            else if(v === 'kotak_masuk') renderKotakMasukList();
+            else if(v === 'pantau_karya') { if(document.getElementById('dash-table')) renderDashAll(); else renderCurrentView(); }
+            else if(['beranda', 'galeri', 'informasi', 'karya_saya'].includes(v)) renderCurrentView();
+        }
+
         function startDataListeners() {
             unsubs.forEach(unsub => unsub()); unsubs = [];
+            const st = window.appState;
+            const listen = (name, key, sorter, after) => {
+                try {
+                    unsubs.push(onSnapshot(getCol(name), (snapshot) => {
+                        const arr = [];
+                        snapshot.forEach(d => arr.push({ id: d.id, ...d.data() }));
+                        arr.sort(sorter);
+                        st[key] = arr;
+                        if(after) after();
+                        refreshView();
+                    }, (err) => console.warn('Listener "' + name + '" gagal (cek Security Rules):', err.message)));
+                } catch(e) { console.warn(e); }
+            };
+            const asc = (a, b) => (a.timestamp || 0) - (b.timestamp || 0);
+            const desc = (a, b) => (b.timestamp || 0) - (a.timestamp || 0);
+
             try {
                 unsubs.push(onSnapshot(getDocRef('pengaturan', 'app_settings'), (docSnap) => {
-                    if (docSnap.exists()) {
-                        window.appState.pengaturan = docSnap.data();
-                        updateAppIdentity();
-                    }
-                }));
-
-                unsubs.push(onSnapshot(getCol('karya'), (snapshot) => {
-                    window.appState.karyaList = [];
-                    snapshot.forEach(doc => window.appState.karyaList.push({ id: doc.id, ...doc.data() }));
-                    const v = window.appState.currentView;
-                    if(['galeri', 'beranda', 'pantau_karya', 'karya_saya'].includes(v)) renderCurrentView();
-                }));
-
-                unsubs.push(onSnapshot(getCol('informasi'), (snapshot) => {
-                    window.appState.informasiList = [];
-                    snapshot.forEach(doc => window.appState.informasiList.push({ id: doc.id, ...doc.data() }));
-                    window.appState.informasiList.sort((a,b) => b.timestamp - a.timestamp);
-                    const v = window.appState.currentView;
-                    if(['informasi', 'kelola_informasi'].includes(v)) renderCurrentView();
-                }));
+                    if (docSnap.exists()) { st.pengaturan = docSnap.data(); updateAppIdentity(); }
+                }, (err) => console.warn('Listener pengaturan gagal:', err.message)));
             } catch(e) {}
+
+            listen('karya', 'karyaList', asc);
+            listen('informasi', 'informasiList', desc);
+            listen('diskusi', 'diskusiList', asc);
+            listen('rapor_pendidikan', 'raporList', desc);
+            listen('pesan_pengawas', 'pesanList', desc, () => renderNavigation());
+            st.liveDb = true;
+        }
+
+        // --- Helper database (mendukung mode offline/preview) ---
+        async function dbAdd(col, listKey, data) {
+            if(window.appState.liveDb) return addDoc(getCol(col), data);
+            window.appState[listKey].push({ id: 'local_' + Date.now(), ...data });
+            refreshView();
+        }
+        async function dbUpdate(col, listKey, id, data) {
+            if(window.appState.liveDb) return updateDoc(getDocRef(col, id), data);
+            const item = window.appState[listKey].find(x => x.id === id);
+            if(item) Object.assign(item, data);
+            refreshView();
         }
 
         // --- NAVIGASI & MENU ---
@@ -327,6 +363,12 @@
             renderCurrentView();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
+
+        function menuBadge(id) {
+            if(id !== 'kotak_masuk' || window.appState.role !== 'admin') return '';
+            const n = window.appState.pesanList.filter(p => !p.dibaca).length;
+            return n ? `<span class="ml-auto bg-secondary text-white text-[10px] font-black px-2 py-0.5 rounded-full">${n}</span>` : '';
+        }
 
         function renderNavigation() {
             const role = window.appState.role;
@@ -356,6 +398,7 @@
             ];
 
             const filteredMenus = menus.filter(m => m.roles.includes(role));
+            window.appState.visibleMenus = filteredMenus;
             
             // Sidebar Desktop
             let deskHTML = `<ul class="space-y-1.5">`;
@@ -364,7 +407,7 @@
                 deskHTML += `
                     <li>
                         <button onclick="window.navigateTo('${m.id}')" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${active}">
-                            <i class="fas ${m.icon} w-5 text-center text-lg"></i><span class="text-sm">${m.title}</span>
+                            <i class="fas ${m.icon} w-5 text-center text-lg"></i><span class="text-sm">${m.title}</span>${menuBadge(m.id)}
                         </button>
                     </li>
                 `;
@@ -418,11 +461,21 @@
         }
 
         window.toggleMobileMenu = () => {
-            const role = window.appState.role;
-            if(role === 'admin') window.navigateTo('pantau_karya');
-            else if(role === 'user') window.navigateTo('profil');
-            else window.navigateTo('sapa');
-        }
+            const menus = window.appState.visibleMenus || [];
+            const cur = window.appState.currentView;
+            let html = `<div class="grid grid-cols-3 gap-3 w-full max-h-[55vh] overflow-y-auto">`;
+            menus.forEach(m => {
+                const active = cur === m.id ? 'bg-primary text-white' : 'bg-rose-50 text-slate-700 hover:bg-rose-100';
+                html += `<button onclick="window.closeModal(); window.navigateTo('${m.id}')" class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl ${active} transition-all active:scale-95">
+                    <i class="fas ${m.icon} text-2xl"></i><span class="text-[11px] font-bold leading-tight text-center">${m.title}</span>${menuBadge(m.id)}</button>`;
+            });
+            if(window.appState.role !== 'guest') {
+                html += `<button onclick="window.closeModal(); window.handleLogout()" class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl bg-slate-100 text-slate-600 active:scale-95"><i class="fas fa-sign-out-alt text-2xl"></i><span class="text-[11px] font-bold">Keluar</span></button>`;
+            }
+            html += `</div>`;
+            window.showModal("Semua Menu", "", false, html);
+            document.getElementById('modal-icon').innerHTML = '<i class="fas fa-th-large text-primary"></i>';
+        };
 
         function renderCurrentView() {
             const container = document.getElementById('view-container');
@@ -968,11 +1021,17 @@
 
         window.eksekusiHapusDoc = async (col, id, redirectView) => {
             try {
-                await deleteDoc(getDocRef(col, id));
+                if(window.appState.liveDb || col === 'users') await deleteDoc(getDocRef(col, id));
+                else {
+                    const map = { karya: 'karyaList', informasi: 'informasiList', diskusi: 'diskusiList', rapor_pendidikan: 'raporList', pesan_pengawas: 'pesanList' };
+                    const key = map[col];
+                    if(key) window.appState[key] = window.appState[key].filter(x => x.id !== id);
+                }
                 window.closeModal();
                 if(redirectView && redirectView !== 'null') window.navigateTo(redirectView);
+                else if(!window.appState.liveDb) refreshView();
                 setTimeout(() => window.showModal("Berhasil", "Data telah dihapus dari sistem."), 300);
-            } catch(err) { window.showModal("Error", "Gagal menghapus data.", true); }
+            } catch(err) { window.showModal("Error", "Gagal menghapus data. Periksa koneksi atau Security Rules Firestore.", true); }
         };
 
         function viewPengaturan() {
@@ -1022,11 +1081,11 @@
                     html += `
                         <div class="glass-card p-6 md:p-8 border-l-8 border-l-secondary bg-white">
                             <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-black text-slate-800 leading-snug">${info.judul}</h3>
-                                <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap ml-4 bg-slate-50 px-2 py-1 rounded"><i class="far fa-clock mr-1"></i>${formatDate(info.timestamp)}</span>
+                                <h3 class="text-xl font-black text-slate-800 leading-snug">${esc(info.judul)}</h3>
+                                <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap ml-4 bg-slate-50 px-2 py-1 rounded"><i class="far fa-clock mr-1"></i>${formatDate(info.timestamp)}${info.diedit ? " • diperbarui" : ""}</span>
                             </div>
-                            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed text-sm md:text-base">${info.isi}</p>
-                            ${info.link_gambar ? `<img src="${info.link_gambar}" class="mt-6 rounded-xl max-h-80 object-cover w-full shadow-sm border border-slate-100" onerror="this.style.display='none'">` : ''}
+                            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed text-sm md:text-base">${esc(info.isi)}</p>
+                            ${info.link_gambar ? `<img src="${esc(info.link_gambar)}" class="mt-6 rounded-xl max-h-80 object-cover w-full shadow-sm border border-slate-100" onerror="this.style.display='none'">` : ''}
                         </div>
                     `;
                 });
@@ -1034,13 +1093,693 @@
             html += `</div></div>`; return html;
         }
 
-        function viewProfil() { return `<div class="fade-in text-center p-10"><i class="fas fa-id-card text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Profil Pengguna</h3><p class="text-sm text-slate-500">Fitur ini tersedia dan berfungsi penuh di dalam koneksi Firestore.</p></div>`; }
-        function viewKaryaSaya() { return `<div class="fade-in text-center p-10"><i class="fas fa-folder-open text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Karya Saya</h3><p class="text-sm text-slate-500">Daftar karya Anda akan tampil di sini.</p></div>`; }
-        function viewSapa() { return `<div class="fade-in text-center p-10"><i class="fas fa-envelope-open-text text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Sapa Pengawas</h3><p class="text-sm text-slate-500">Kirim pesan langsung ke Ibu Pengawas Lilik Rahmawati, M.Pd.</p></div>`; }
-        function viewDiskusi(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-comments text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Ruang Diskusi</h3><p class="text-sm text-slate-500">Forum obrolan interaktif publik antar guru dan siswa.</p></div>`; }
-        function viewKelolaInformasi() { return `<div class="fade-in text-center p-10"><i class="fas fa-edit text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Kelola Informasi</h3><p class="text-sm text-slate-500">Admin memposting berita di sini.</p></div>`; }
-        function viewPantauKarya(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-chart-pie text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Dasbor Pantauan</h3><p class="text-sm text-slate-500">Admin melihat statistik semua karya dan rapor yang masuk.</p></div>`; }
-        function viewKotakMasuk(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-inbox text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Kotak Masuk</h3><p class="text-sm text-slate-500">Membaca pesan dari form Sapa Pengawas.</p></div>`; }
+
+        // =====================================================
+        // RUANG DISKUSI
+        // =====================================================
+        const KATEGORI_LABEL = { guru: 'Guru', kepala_sekolah: 'Kepala Sekolah', siswa: 'Siswa', pengawas: 'Pengawas' };
+
+        function viewDiskusi(c) {
+            const canPost = window.appState.role !== 'guest';
+            c.innerHTML = `
+                <div class="fade-in max-w-3xl mx-auto pb-6">
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-1 flex items-center"><i class="fas fa-comments text-primary mr-3"></i> Ruang Diskusi</h2>
+                    <p class="text-sm text-slate-500 mb-4">Forum terbuka untuk berbagi ide, bertanya, dan berdiskusi seputar inovasi pendidikan.</p>
+                    <div class="glass-card bg-white overflow-hidden flex flex-col shadow-md" style="height: calc(100vh - 16rem); min-height: 380px;">
+                        <div id="diskusi-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-rose-50/40"></div>
+                        ${canPost ? `
+                            <form onsubmit="window.kirimDiskusi(event)" class="p-3 border-t border-rose-100 bg-white flex gap-2 items-end">
+                                <textarea id="diskusi-input" rows="1" maxlength="1000" required placeholder="Tulis pesan..." onkeydown="window.diskusiKey(event)" class="flex-1 px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-primary outline-none resize-none text-sm max-h-32"></textarea>
+                                <button type="submit" id="diskusi-send" class="w-12 h-12 shrink-0 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-red-900 active:scale-95 transition-all"><i class="fas fa-paper-plane"></i></button>
+                            </form>
+                        ` : `
+                            <div class="p-4 border-t border-rose-100 bg-white text-center text-sm text-slate-600">
+                                <i class="fas fa-lock text-slate-400 mr-1"></i> Anda hanya bisa membaca.
+                                <button onclick="window.navigateTo('auth')" class="text-primary font-black underline ml-1">Masuk / Daftar</button> untuk ikut berdiskusi.
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            renderDiskusiList(true);
+        }
+
+        function renderDiskusiList(forceScroll = false) {
+            const el = document.getElementById('diskusi-list');
+            if(!el) return;
+            const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+            const { user, role, diskusiList } = window.appState;
+            const myId = role === 'admin' ? 'admin' : user?.id;
+
+            if(diskusiList.length === 0) {
+                el.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-slate-400 text-center"><i class="far fa-comment-dots text-5xl mb-3 text-rose-200"></i><p class="font-semibold text-sm">Belum ada percakapan.<br>Jadilah yang pertama menyapa!</p></div>`;
+                return;
+            }
+
+            let html = '';
+            diskusiList.slice(-150).forEach(m => {
+                const mine = myId && m.id_user === myId;
+                const isPengawas = m.kategori === 'pengawas';
+                const canDelete = mine || role === 'admin';
+                const badge = KATEGORI_LABEL[m.kategori] || 'Anggota';
+                const badgeCls = isPengawas ? 'bg-accent text-slate-900' : 'bg-rose-100 text-primary';
+                html += `
+                    <div class="flex ${mine ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2.5 shadow-sm ${mine ? 'bg-primary text-white rounded-br-sm' : 'bg-white border border-rose-100 rounded-bl-sm'}">
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                <span class="text-xs font-black ${mine ? 'text-rose-100' : 'text-slate-800'}">${esc(m.nama)}</span>
+                                <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${badgeCls}">${esc(badge)}</span>
+                            </div>
+                            <p class="text-sm leading-relaxed whitespace-pre-wrap break-words ${mine ? 'text-white' : 'text-slate-700'}">${esc(m.isi)}</p>
+                            <div class="flex items-center justify-end gap-3 mt-1">
+                                <span class="text-[10px] ${mine ? 'text-rose-200' : 'text-slate-400'}">${formatDate(m.timestamp)}</span>
+                                ${canDelete ? `<button onclick="window.tampilkanKonfirmasiHapus('diskusi', '${esc(m.id)}', 'null')" class="text-[11px] ${mine ? 'text-rose-200 hover:text-white' : 'text-slate-400 hover:text-red-600'}" title="Hapus"><i class="fas fa-trash-alt"></i></button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            el.innerHTML = html;
+            if(forceScroll || nearBottom) el.scrollTop = el.scrollHeight;
+        }
+
+        window.diskusiKey = (e) => {
+            // Enter = kirim, Shift+Enter = baris baru
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                e.target.form.requestSubmit();
+            }
+        };
+
+        window.kirimDiskusi = async (e) => {
+            e.preventDefault();
+            const { role, user } = window.appState;
+            if(role === 'guest') return window.navigateTo('auth');
+            const input = document.getElementById('diskusi-input');
+            const isi = input.value.trim();
+            if(!isi) return;
+
+            const data = {
+                id_user: role === 'admin' ? 'admin' : user.id,
+                nama: role === 'admin' ? 'Lilik Rahmawati, M.Pd' : user.nama,
+                kategori: role === 'admin' ? 'pengawas' : (user.kategori || 'guru'),
+                isi, timestamp: Date.now()
+            };
+            const btn = document.getElementById('diskusi-send');
+            btn.disabled = true;
+            try {
+                if(window.appState.liveDb) {
+                    await addDoc(getCol('diskusi'), data);   // listener realtime akan merender ulang
+                } else {
+                    window.appState.diskusiList.push({ id: 'local_' + Date.now(), ...data });
+                    renderDiskusiList(true);
+                }
+                input.value = '';
+                input.style.height = 'auto';
+                input.focus();
+                const el = document.getElementById('diskusi-list'); if(el) el.scrollTop = el.scrollHeight;
+            } catch(err) {
+                window.showModal("Gagal Mengirim", "Pesan tidak terkirim. Periksa koneksi internet atau aturan (Security Rules) Firestore Anda.", true);
+            } finally { btn.disabled = false; }
+        };
+
+        // =====================================================
+        // SAPA PENGAWAS
+        // =====================================================
+        function viewSapa() {
+            const u = window.appState.user || {};
+            const kategori = KATEGORI_LABEL[u.kategori] || '';
+            return `
+                <div class="fade-in max-w-2xl mx-auto pb-10">
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-envelope-open-text text-primary mr-3"></i> Sapa Pengawas</h2>
+                    <div class="glass-card p-5 mb-5 bg-white flex items-center gap-4 border-l-8 border-accent">
+                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-3xl text-primary border-4 border-white shadow-md shrink-0"><i class="fas fa-user-tie"></i></div>
+                        <div>
+                            <h3 class="font-black text-slate-800">Lilik Rahmawati, M.Pd</h3>
+                            <p class="text-xs font-bold text-primary uppercase tracking-wide">Pengawas Sekolah Kabupaten Grobogan</p>
+                            <p class="text-xs text-slate-500 mt-1">Sampaikan pertanyaan, saran, atau kendala Anda. Pesan akan diterima langsung oleh Pengawas.</p>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <form id="form-sapa" onsubmit="window.kirimSapa(event)" class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap</label>
+                                    <input type="text" id="sp-nama" required value="${esc(u.nama || '')}" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Asal Sekolah / Instansi</label>
+                                    <input type="text" id="sp-sekolah" required value="${esc(u.sekolah || '')}" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Kontak Balasan (WhatsApp / Email) <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="text" id="sp-kontak" placeholder="08xxxxxxxxxx atau nama@email.com" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Topik</label>
+                                <select id="sp-topik" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                                    <option>Pertanyaan Umum</option>
+                                    <option>Konsultasi Inovasi / Karya</option>
+                                    <option>Rapor Pendidikan</option>
+                                    <option>Kendala Akun / Aplikasi</option>
+                                    <option>Saran & Masukan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Pesan</label>
+                                <textarea id="sp-pesan" required rows="5" maxlength="2000" placeholder="Tuliskan pesan Anda di sini..." class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none resize-none text-sm bg-slate-50"></textarea>
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" id="sp-submit" class="w-full bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95 flex justify-center items-center gap-2"><i class="fas fa-paper-plane"></i> Kirim Pesan ke Pengawas</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.kirimSapa = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('sp-submit');
+            const data = {
+                id_user: window.appState.user?.id || null,
+                nama: document.getElementById('sp-nama').value.trim(),
+                sekolah: document.getElementById('sp-sekolah').value.trim(),
+                kontak: document.getElementById('sp-kontak').value.trim(),
+                topik: document.getElementById('sp-topik').value,
+                pesan: document.getElementById('sp-pesan').value.trim(),
+                dibaca: false, timestamp: Date.now()
+            };
+            if(!data.nama || !data.pesan) return window.showModal("Data Belum Lengkap", "Nama dan pesan wajib diisi.", true);
+
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            try {
+                if(!window.appState.liveDb) throw new Error('offline');
+                await addDoc(getCol('pesan_pengawas'), data);
+                window.showModal("Pesan Terkirim", "Terima kasih, pesan Anda sudah diteruskan kepada Ibu Pengawas.");
+                document.getElementById('sp-pesan').value = '';
+                document.getElementById('sp-kontak').value = '';
+            } catch(err) {
+                window.showModal("Gagal Mengirim", "Pesan tidak dapat dikirim. Periksa koneksi internet atau aturan (Security Rules) Firestore Anda.", true);
+            } finally {
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Pesan ke Pengawas';
+            }
+        };
+
+        // =====================================================
+        // PROFIL SAYA
+        // =====================================================
+        function viewProfil() {
+            const u = window.appState.user;
+            if(!u || window.appState.role !== 'user') {
+                return `<div class="fade-in text-center p-10"><i class="fas fa-id-card text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold mb-2">Profil</h3><p class="text-sm text-slate-500 mb-4">Silakan masuk untuk melihat profil Anda.</p><button onclick="window.navigateTo('auth')" class="px-6 py-3 bg-primary text-white rounded-full font-bold">Masuk</button></div>`;
+            }
+            const jumlahKarya = window.appState.karyaList.filter(k => k.id_user === u.id).length;
+            const idLabel = u.kategori === 'siswa' ? 'NISN' : 'NIP';
+            const avatar = u.foto_profil
+                ? `<img src="${esc(u.foto_profil)}" class="w-full h-full object-cover" onerror="this.parentNode.innerHTML='<i class=&quot;fas fa-user&quot;></i>'">`
+                : '<i class="fas fa-user"></i>';
+            const input = 'w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50';
+
+            return `
+                <div class="fade-in max-w-3xl mx-auto pb-10 space-y-6">
+                    <div class="relative bg-gradient-to-br from-primary to-[#7f1d1d] rounded-3xl p-6 md:p-8 text-white shadow-xl overflow-hidden">
+                        <div class="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                        <div class="relative z-10 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+                            <div class="w-24 h-24 rounded-full bg-rose-100 text-primary text-4xl flex items-center justify-center overflow-hidden border-4 border-white shadow-lg shrink-0">${avatar}</div>
+                            <div class="min-w-0">
+                                <h2 class="text-2xl font-black leading-tight break-words">${esc(u.nama)}</h2>
+                                <p class="text-rose-200 text-sm font-semibold mt-1">${esc(u.sekolah || '-')}</p>
+                                <div class="flex flex-wrap gap-2 mt-3 justify-center sm:justify-start">
+                                    <span class="text-[10px] font-black uppercase tracking-wider bg-accent text-slate-900 px-3 py-1 rounded-full">${esc(KATEGORI_LABEL[u.kategori] || u.kategori)}</span>
+                                    <span class="text-[10px] font-bold bg-black/20 px-3 py-1 rounded-full font-mono">@${esc(u.username)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="window.navigateTo('karya_saya')" class="glass-card bg-white p-5 text-center hover:-translate-y-1 transition-transform">
+                            <div class="text-3xl font-black text-primary">${jumlahKarya}</div>
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Karya Saya</div>
+                        </button>
+                        <button onclick="window.navigateTo('unggah_karya')" class="glass-card bg-white p-5 text-center hover:-translate-y-1 transition-transform">
+                            <div class="text-3xl text-secondary"><i class="fas fa-cloud-upload-alt"></i></div>
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-2">Unggah Karya</div>
+                        </button>
+                    </div>
+
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <h3 class="text-lg font-black text-slate-800 mb-5 flex items-center"><i class="fas fa-user-edit text-primary mr-2"></i> Data Diri</h3>
+                        <form onsubmit="window.simpanProfil(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap & Gelar</label>
+                                <input type="text" id="pf-nama" required value="${esc(u.nama)}" class="${input}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Asal Sekolah</label>
+                                <input type="text" id="pf-sekolah" required value="${esc(u.sekolah || '')}" class="${input}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">${idLabel} <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="text" id="pf-nip" value="${esc(u.nip || '')}" class="${input} font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">URL Foto Profil <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="url" id="pf-foto" value="${esc(u.foto_profil || '')}" placeholder="https://contoh.com/foto.jpg" class="${input}">
+                                <p class="text-xs text-slate-500 mt-1.5">Tempel tautan langsung gambar (berakhiran .jpg / .png). Kosongkan untuk ikon default.</p>
+                            </div>
+                            <button type="submit" id="pf-submit" class="w-full bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95"><i class="fas fa-save mr-2"></i> Simpan Perubahan</button>
+                        </form>
+                    </div>
+
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <h3 class="text-lg font-black text-slate-800 mb-5 flex items-center"><i class="fas fa-key text-accent mr-2"></i> Ganti Password</h3>
+                        <form onsubmit="window.gantiPasswordSendiri(event)" class="space-y-5">
+                            <input type="password" id="pw-lama" required placeholder="Password lama" class="${input}">
+                            <input type="password" id="pw-baru" required minlength="4" placeholder="Password baru (min. 4 karakter)" class="${input}">
+                            <input type="password" id="pw-konfirmasi" required minlength="4" placeholder="Ulangi password baru" class="${input}">
+                            <button type="submit" class="w-full bg-accent text-slate-900 py-4 rounded-xl font-black shadow-md hover:bg-yellow-500 transition-colors active:scale-95"><i class="fas fa-lock mr-2"></i> Ubah Password</button>
+                        </form>
+                    </div>
+
+                    <button onclick="window.handleLogout()" class="w-full py-3.5 rounded-xl border border-slate-300 text-slate-600 font-bold hover:bg-slate-100 transition-all"><i class="fas fa-sign-out-alt mr-2"></i> Keluar Akun</button>
+                </div>
+            `;
+        }
+
+        window.simpanProfil = async (e) => {
+            e.preventDefault();
+            const u = window.appState.user;
+            const data = {
+                nama: document.getElementById('pf-nama').value.trim(),
+                sekolah: document.getElementById('pf-sekolah').value.trim(),
+                nip: document.getElementById('pf-nip').value.trim(),
+                foto_profil: document.getElementById('pf-foto').value.trim()
+            };
+            if(!data.nama || !data.sekolah) return window.showModal("Data Belum Lengkap", "Nama dan asal sekolah wajib diisi.", true);
+            if(data.foto_profil && !/^https?:\/\//i.test(data.foto_profil)) return window.showModal("URL Tidak Valid", "URL foto harus diawali http:// atau https://", true);
+
+            const btn = document.getElementById('pf-submit');
+            btn.disabled = true;
+            try {
+                await updateDoc(getDocRef('users', u.id), data);
+                window.appState.user = { ...u, ...data };
+                renderNavigation();
+                renderCurrentView();
+                window.showModal("Tersimpan", "Profil Anda berhasil diperbarui.");
+            } catch(err) {
+                btn.disabled = false;
+                window.showModal("Gagal", "Profil tidak dapat disimpan. Periksa koneksi atau aturan (Security Rules) Firestore Anda.", true);
+            }
+        };
+
+        window.gantiPasswordSendiri = async (e) => {
+            e.preventDefault();
+            const u = window.appState.user;
+            const lama = document.getElementById('pw-lama').value;
+            const baru = document.getElementById('pw-baru').value;
+            const konf = document.getElementById('pw-konfirmasi').value;
+
+            if(lama !== u.password) return window.showModal("Password Lama Salah", "Password lama yang Anda masukkan tidak sesuai.", true);
+            if(baru.length < 4) return window.showModal("Terlalu Pendek", "Password baru minimal 4 karakter.", true);
+            if(baru !== konf) return window.showModal("Tidak Cocok", "Konfirmasi password baru tidak sama.", true);
+            if(baru === lama) return window.showModal("Tidak Berubah", "Password baru harus berbeda dari password lama.", true);
+
+            try {
+                await updateDoc(getDocRef('users', u.id), { password: baru });
+                window.appState.user = { ...u, password: baru };
+                ['pw-lama','pw-baru','pw-konfirmasi'].forEach(id => document.getElementById(id).value = '');
+                window.showModal("Berhasil", "Password Anda telah diubah.");
+            } catch(err) {
+                window.showModal("Gagal", "Password tidak dapat diubah. Periksa koneksi Anda.", true);
+            }
+        };
+
+
+
+        // =====================================================
+        // UTIL
+        // =====================================================
+        const KATEGORI_KARYA = ['Modul Ajar', 'Karya Guru (Digital)', 'Karya Guru (Non Digital)', 'Karya Kepala Sekolah', 'Karya Siswa'];
+        const safeUrl = (u) => /^https?:\/\//i.test(u || '') ? esc(u) : '#';
+        const INPUT_CLS = 'w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50';
+
+        // =====================================================
+        // KELOLA INFORMASI (ADMIN)
+        // =====================================================
+        function viewKelolaInformasi() {
+            return `
+                <div class="fade-in max-w-3xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-edit text-primary mr-3"></i> Kelola Informasi</h2>
+
+                    <div id="ki-form-card" class="glass-card p-6 md:p-8 bg-white mb-8 border-t-4 border-t-primary">
+                        <h3 id="ki-form-title" class="text-lg font-black text-slate-800 mb-5"><i class="fas fa-plus-circle text-primary mr-2"></i> Tulis Informasi Baru</h3>
+                        <form onsubmit="window.simpanInformasi(event)" class="space-y-5">
+                            <input type="hidden" id="ki-id">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Judul</label>
+                                <input type="text" id="ki-judul" required maxlength="150" placeholder="Judul pengumuman" class="${INPUT_CLS}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Isi Informasi</label>
+                                <textarea id="ki-isi" required rows="6" placeholder="Tulis isi pengumuman di sini..." class="${INPUT_CLS} resize-y"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">URL Gambar <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="url" id="ki-gambar" placeholder="https://contoh.com/gambar.jpg" class="${INPUT_CLS}">
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                                <button type="submit" id="ki-submit" class="flex-1 bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95"><i class="fas fa-paper-plane mr-2"></i> Publikasikan</button>
+                                <button type="button" id="ki-batal" onclick="window.batalEditInformasi()" class="hidden sm:w-40 bg-slate-200 text-slate-700 py-4 rounded-xl font-bold hover:bg-slate-300">Batal</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center"><i class="fas fa-list text-primary mr-2"></i> Informasi Terpublikasi</h3>
+                    <div id="ki-list" class="space-y-4">${kelolaInfoListHtml()}</div>
+                </div>
+            `;
+        }
+
+        function kelolaInfoListHtml() {
+            const list = window.appState.informasiList;
+            if(list.length === 0) return `<div class="text-center py-10 glass-card bg-white text-slate-500 font-bold"><i class="far fa-newspaper text-4xl mb-3"></i><br>Belum ada informasi.</div>`;
+            return list.map(info => `
+                <div class="glass-card p-5 bg-white border-l-8 border-l-secondary">
+                    <div class="flex justify-between items-start gap-3 mb-2">
+                        <h4 class="font-black text-slate-800 leading-snug">${esc(info.judul)}</h4>
+                        <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded">${formatDate(info.timestamp)}</span>
+                    </div>
+                    <p class="text-sm text-slate-600 line-clamp-3 whitespace-pre-wrap mb-4">${esc(info.isi)}</p>
+                    <div class="flex gap-2 justify-end">
+                        <button onclick="window.editInformasi('${esc(info.id)}')" class="px-4 py-2 rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 text-sm font-bold transition-colors"><i class="fas fa-pen mr-1"></i> Edit</button>
+                        <button onclick="window.tampilkanKonfirmasiHapus('informasi', '${esc(info.id)}', 'null')" class="px-4 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 text-sm font-bold transition-colors"><i class="fas fa-trash mr-1"></i> Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderKelolaInfoList() {
+            const el = document.getElementById('ki-list');
+            if(el) el.innerHTML = kelolaInfoListHtml();
+        }
+
+        function resetFormInformasi() {
+            ['ki-id', 'ki-judul', 'ki-isi', 'ki-gambar'].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+            const t = document.getElementById('ki-form-title'); if(t) t.innerHTML = '<i class="fas fa-plus-circle text-primary mr-2"></i> Tulis Informasi Baru';
+            const b = document.getElementById('ki-batal'); if(b) b.classList.add('hidden');
+            const s = document.getElementById('ki-submit'); if(s) s.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Publikasikan';
+        }
+
+        window.editInformasi = (id) => {
+            const info = window.appState.informasiList.find(i => i.id === id);
+            if(!info) return;
+            document.getElementById('ki-id').value = info.id;
+            document.getElementById('ki-judul').value = info.judul || '';
+            document.getElementById('ki-isi').value = info.isi || '';
+            document.getElementById('ki-gambar').value = info.link_gambar || '';
+            document.getElementById('ki-form-title').innerHTML = '<i class="fas fa-pen text-amber-600 mr-2"></i> Edit Informasi';
+            document.getElementById('ki-batal').classList.remove('hidden');
+            document.getElementById('ki-submit').innerHTML = '<i class="fas fa-save mr-2"></i> Simpan Perubahan';
+            document.getElementById('ki-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('ki-judul').focus();
+        };
+
+        window.batalEditInformasi = () => resetFormInformasi();
+
+        window.simpanInformasi = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('ki-id').value;
+            const judul = document.getElementById('ki-judul').value.trim();
+            const isi = document.getElementById('ki-isi').value.trim();
+            const gambar = document.getElementById('ki-gambar').value.trim();
+            if(!judul || !isi) return window.showModal("Data Belum Lengkap", "Judul dan isi informasi wajib diisi.", true);
+            if(gambar && !/^https?:\/\//i.test(gambar)) return window.showModal("URL Tidak Valid", "URL gambar harus diawali http:// atau https://", true);
+
+            const btn = document.getElementById('ki-submit'); btn.disabled = true;
+            try {
+                if(id) {
+                    await dbUpdate('informasi', 'informasiList', id, { judul, isi, link_gambar: gambar, diedit: Date.now() });
+                    window.showModal("Tersimpan", "Informasi berhasil diperbarui.");
+                } else {
+                    await dbAdd('informasi', 'informasiList', { judul, isi, link_gambar: gambar, timestamp: Date.now() });
+                    window.showModal("Terpublikasi", "Informasi baru berhasil dipublikasikan dan langsung tampil di menu Informasi.");
+                }
+                resetFormInformasi();
+            } catch(err) {
+                window.showModal("Gagal", "Informasi tidak dapat disimpan. Pastikan Anda login sebagai admin dan Security Rules Firestore mengizinkan tulis.", true);
+            } finally { btn.disabled = false; }
+        };
+
+        // =====================================================
+        // DASBOR DATA (ADMIN)
+        // =====================================================
+        function viewPantauKarya(c) {
+            const d = window.appState.dash;
+            const katOpts = ['Semua', ...KATEGORI_KARYA].map(o => `<option value="${o}" ${o === d.kat ? 'selected' : ''}>${o === 'Semua' ? 'Semua Kategori' : o}</option>`).join('');
+            c.innerHTML = `
+                <div class="fade-in max-w-6xl mx-auto pb-10 space-y-6">
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 flex items-center"><i class="fas fa-chart-pie text-primary mr-3"></i> Dasbor Data</h2>
+                    <div id="dash-stats"></div>
+                    <div class="glass-card bg-white overflow-hidden shadow-md">
+                        <div id="dash-tabs" class="flex border-b border-rose-100 bg-slate-50"></div>
+                        <div class="p-4 flex flex-col sm:flex-row gap-3 border-b border-slate-100">
+                            <div class="relative flex-1">
+                                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="search" id="dash-q" value="${esc(d.q)}" oninput="window.dashSet('q', this.value)" placeholder="Cari judul, nama, sekolah..." class="w-full pl-11 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                            </div>
+                            <select id="dash-kat" onchange="window.dashSet('kat', this.value)" class="sm:w-64 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">${katOpts}</select>
+                        </div>
+                        <div id="dash-table" class="overflow-x-auto"></div>
+                    </div>
+                </div>
+            `;
+            renderDashAll();
+            getDocs(getCol('users')).then(snap => { d.userCount = snap.size; renderDashStats(); }).catch(() => {});
+        }
+
+        window.dashSet = (key, val) => {
+            window.appState.dash[key] = val;
+            if(key === 'tab') renderDashTabs();
+            renderDashTable();
+        };
+
+        function renderDashAll() { renderDashStats(); renderDashTabs(); renderDashTable(); }
+
+        function renderDashStats() {
+            const el = document.getElementById('dash-stats'); if(!el) return;
+            const { karyaList, raporList, pesanList, dash } = window.appState;
+            const unread = pesanList.filter(p => !p.dibaca).length;
+            const card = (icon, color, val, label, onclick = '') => `
+                <div ${onclick ? `onclick="${onclick}"` : ''} class="glass-card bg-white p-5 text-center border-t-4 ${color} ${onclick ? 'cursor-pointer hover:-translate-y-1 transition-transform' : ''}">
+                    <div class="text-2xl mb-2 text-slate-400"><i class="fas ${icon}"></i></div>
+                    <div class="text-3xl font-black text-slate-800 leading-none mb-1">${val}</div>
+                    <div class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">${label}</div>
+                </div>`;
+            const counts = KATEGORI_KARYA.map(k => ({ k, n: karyaList.filter(x => x.kategori_karya === k).length }));
+            const max = Math.max(1, ...counts.map(x => x.n));
+            const bars = counts.map(x => `
+                <div class="flex items-center gap-3 text-xs">
+                    <div class="w-40 md:w-48 shrink-0 font-semibold text-slate-600 truncate">${x.k}</div>
+                    <div class="flex-1 bg-rose-50 rounded-full h-3 overflow-hidden"><div class="h-3 bg-gradient-to-r from-secondary to-primary rounded-full transition-all" style="width:${(x.n / max) * 100}%"></div></div>
+                    <div class="w-8 text-right font-black text-slate-700">${x.n}</div>
+                </div>`).join('');
+            el.innerHTML = `
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    ${card('fa-file-invoice', 'border-t-secondary', karyaList.length, 'Total Karya')}
+                    ${card('fa-users', 'border-t-accent', dash.userCount ?? '-', 'Pengguna')}
+                    ${card('fa-file-signature', 'border-t-green-500', raporList.length, 'Rapor Masuk')}
+                    ${card('fa-inbox', 'border-t-primary', unread, 'Pesan Baru', "window.navigateTo('kotak_masuk')")}
+                </div>
+                <div class="glass-card bg-white p-5 md:p-6">
+                    <h3 class="font-black text-slate-800 mb-4 text-sm uppercase tracking-wider"><i class="fas fa-layer-group text-primary mr-2"></i> Karya per Kategori</h3>
+                    <div class="space-y-3">${bars}</div>
+                </div>`;
+        }
+
+        function renderDashTabs() {
+            const el = document.getElementById('dash-tabs'); if(!el) return;
+            const { tab } = window.appState.dash;
+            const { karyaList, raporList } = window.appState;
+            const btn = (id, label, n) => `<button onclick="window.dashSet('tab','${id}')" class="flex-1 py-3.5 text-sm font-black transition-all border-b-2 ${tab === id ? 'text-primary border-primary bg-white' : 'text-slate-400 border-transparent hover:text-slate-600'}">${label} <span class="ml-1 text-[10px] bg-rose-100 text-primary px-2 py-0.5 rounded-full">${n}</span></button>`;
+            el.innerHTML = btn('karya', 'Data Karya', karyaList.length) + btn('rapor', 'Rapor Pendidikan', raporList.length);
+            const sel = document.getElementById('dash-kat'); if(sel) sel.classList.toggle('hidden', tab !== 'karya');
+        }
+
+        function renderDashTable() {
+            const el = document.getElementById('dash-table'); if(!el) return;
+            const { tab, q, kat } = window.appState.dash;
+            const term = (q || '').toLowerCase().trim();
+            const has = (...f) => !term || f.some(x => String(x || '').toLowerCase().includes(term));
+            const th = 'p-4 font-black text-xs uppercase tracking-wider';
+            let html = '';
+
+            if(tab === 'karya') {
+                const rows = window.appState.karyaList.filter(k => (kat === 'Semua' || k.kategori_karya === kat) && has(k.judul, k.nama_pembuat, k.deskripsi))
+                    .slice().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                html = `<table class="w-full text-left border-collapse"><thead><tr class="bg-rose-50 text-slate-700 border-b border-rose-200">
+                    <th class="${th}">Karya</th><th class="${th}">Kategori</th><th class="${th}">Pembuat</th><th class="${th}">Tanggal</th><th class="${th} text-center">Aksi</th></tr></thead><tbody>`;
+                if(!rows.length) html += `<tr><td colspan="5" class="p-10 text-center text-slate-500 font-medium">Tidak ada data karya.</td></tr>`;
+                rows.forEach(k => {
+                    html += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors align-top">
+                        <td class="p-4 min-w-[220px]"><div class="font-bold text-slate-800">${esc(k.judul)}</div><div class="text-xs text-slate-500 line-clamp-2 mt-0.5">${esc(k.deskripsi)}</div></td>
+                        <td class="p-4"><span class="text-[10px] font-black uppercase tracking-wide bg-rose-50 text-secondary border border-rose-100 px-2 py-1 rounded whitespace-nowrap">${esc(k.kategori_karya)}</span></td>
+                        <td class="p-4 text-sm font-semibold text-slate-700">${esc(k.nama_pembuat)}</td>
+                        <td class="p-4 text-xs text-slate-500 whitespace-nowrap">${formatDate(k.timestamp)}</td>
+                        <td class="p-4 text-center whitespace-nowrap space-x-1">
+                            <a href="${safeUrl(k.link_file)}" target="_blank" rel="noopener" class="inline-flex w-8 h-8 rounded bg-blue-100 text-blue-600 hover:bg-blue-200 items-center justify-center" title="Buka file"><i class="fas fa-external-link-alt"></i></a>
+                            <button onclick="window.tampilkanKonfirmasiHapus('karya', '${esc(k.id)}', 'null')" class="w-8 h-8 rounded bg-red-100 text-red-600 hover:bg-red-200" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </td></tr>`;
+                });
+            } else {
+                const rows = window.appState.raporList.filter(r => has(r.nama_pengunggah, r.asal_sekolah, r.tahun_ajaran, r.catatan));
+                html = `<table class="w-full text-left border-collapse"><thead><tr class="bg-rose-50 text-slate-700 border-b border-rose-200">
+                    <th class="${th}">Pengunggah</th><th class="${th}">Periode</th><th class="${th}">Catatan</th><th class="${th}">Tanggal</th><th class="${th} text-center">Aksi</th></tr></thead><tbody>`;
+                if(!rows.length) html += `<tr><td colspan="5" class="p-10 text-center text-slate-500 font-medium">Belum ada rapor yang masuk.</td></tr>`;
+                rows.forEach(r => {
+                    html += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors align-top">
+                        <td class="p-4 min-w-[180px]"><div class="font-bold text-slate-800">${esc(r.nama_pengunggah)}</div><div class="text-xs text-slate-500">${esc(r.asal_sekolah || '-')}</div></td>
+                        <td class="p-4 text-sm font-semibold text-slate-700 whitespace-nowrap">${esc(r.tahun_ajaran)}</td>
+                        <td class="p-4 text-sm text-slate-600 min-w-[200px] whitespace-pre-wrap">${esc(r.catatan || '-')}</td>
+                        <td class="p-4 text-xs text-slate-500 whitespace-nowrap">${formatDate(r.timestamp)}</td>
+                        <td class="p-4 text-center whitespace-nowrap space-x-1">
+                            <a href="${safeUrl(r.link_rapor)}" target="_blank" rel="noopener" class="inline-flex w-8 h-8 rounded bg-blue-100 text-blue-600 hover:bg-blue-200 items-center justify-center" title="Buka rapor"><i class="fas fa-external-link-alt"></i></a>
+                            <button onclick="window.tampilkanKonfirmasiHapus('rapor_pendidikan', '${esc(r.id)}', 'null')" class="w-8 h-8 rounded bg-red-100 text-red-600 hover:bg-red-200" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </td></tr>`;
+                });
+            }
+            el.innerHTML = html + `</tbody></table>`;
+        }
+
+        // =====================================================
+        // KOTAK MASUK (ADMIN)
+        // =====================================================
+        function viewKotakMasuk(c) {
+            c.innerHTML = `
+                <div class="fade-in max-w-3xl mx-auto pb-10">
+                    <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+                        <h2 class="text-2xl font-black text-slate-800 flex items-center"><i class="fas fa-inbox text-primary mr-3"></i> Pesan Masuk</h2>
+                        <button onclick="window.tandaiSemuaDibaca()" class="text-xs font-bold text-primary bg-rose-50 hover:bg-rose-100 px-4 py-2 rounded-full transition-colors"><i class="fas fa-check-double mr-1"></i> Tandai semua dibaca</button>
+                    </div>
+                    <div id="km-list" class="space-y-4"></div>
+                </div>`;
+            renderKotakMasukList();
+        }
+
+        function kontakLink(kontak) {
+            const k = (kontak || '').trim();
+            if(!k) return '';
+            if(k.includes('@')) return `<a href="mailto:${esc(k)}" class="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 text-sm font-bold"><i class="fas fa-envelope mr-1"></i> Balas Email</a>`;
+            let d = k.replace(/\D/g, '');
+            if(d.length < 9) return '';
+            if(d.startsWith('0')) d = '62' + d.slice(1);
+            return `<a href="https://wa.me/${d}" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 text-sm font-bold"><i class="fab fa-whatsapp mr-1"></i> Balas WhatsApp</a>`;
+        }
+
+        function renderKotakMasukList() {
+            const el = document.getElementById('km-list'); if(!el) return;
+            const list = window.appState.pesanList;
+            if(!list.length) { el.innerHTML = `<div class="text-center py-14 glass-card bg-white text-slate-500 font-bold"><i class="far fa-envelope-open text-5xl text-rose-200 mb-3"></i><br>Belum ada pesan masuk.</div>`; return; }
+            el.innerHTML = list.map(p => `
+                <div class="glass-card bg-white p-5 border-l-8 ${p.dibaca ? 'border-l-slate-200' : 'border-l-secondary'}">
+                    <div class="flex justify-between items-start gap-3 mb-2">
+                        <div class="min-w-0">
+                            <div class="font-black text-slate-800 flex items-center gap-2 flex-wrap">${esc(p.nama)} ${p.dibaca ? '' : '<span class="text-[9px] bg-secondary text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Baru</span>'}</div>
+                            <div class="text-xs text-slate-500">${esc(p.sekolah || '-')}${p.kontak ? ' • ' + esc(p.kontak) : ''}</div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded">${formatDate(p.timestamp)}</span>
+                    </div>
+                    <div class="text-[10px] font-black uppercase tracking-wider text-primary bg-rose-50 inline-block px-2 py-1 rounded mb-3">${esc(p.topik || 'Umum')}</div>
+                    <p class="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words mb-4">${esc(p.pesan)}</p>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        ${kontakLink(p.kontak)}
+                        ${p.dibaca ? '' : `<button onclick="window.tandaiDibaca('${esc(p.id)}')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-bold"><i class="fas fa-check mr-1"></i> Tandai dibaca</button>`}
+                        <button onclick="window.tampilkanKonfirmasiHapus('pesan_pengawas', '${esc(p.id)}', 'null')" class="px-4 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 text-sm font-bold"><i class="fas fa-trash mr-1"></i> Hapus</button>
+                    </div>
+                </div>`).join('');
+        }
+
+        window.tandaiDibaca = async (id) => {
+            try { await dbUpdate('pesan_pengawas', 'pesanList', id, { dibaca: true }); renderNavigation(); }
+            catch(e) { window.showModal("Gagal", "Tidak dapat memperbarui pesan.", true); }
+        };
+
+        window.tandaiSemuaDibaca = async () => {
+            const unread = window.appState.pesanList.filter(p => !p.dibaca);
+            if(!unread.length) return;
+            try { await Promise.all(unread.map(p => dbUpdate('pesan_pengawas', 'pesanList', p.id, { dibaca: true }))); renderNavigation(); }
+            catch(e) { window.showModal("Gagal", "Tidak dapat memperbarui pesan.", true); }
+        };
+
+        // =====================================================
+        // KARYA SAYA
+        // =====================================================
+        function viewKaryaSaya() {
+            const u = window.appState.user;
+            const list = window.appState.karyaList.filter(k => u && k.id_user === u.id).slice().sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            const header = `
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+                    <h2 class="text-2xl font-black text-slate-800 flex items-center"><i class="fas fa-folder-open text-primary mr-3"></i> Karya Saya</h2>
+                    <button onclick="window.navigateTo('unggah_karya')" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:bg-red-900 active:scale-95 transition-all"><i class="fas fa-plus mr-1"></i> Unggah Baru</button>
+                </div>`;
+            if(!list.length) return `<div class="fade-in max-w-3xl mx-auto pb-10">${header}<div class="text-center py-14 glass-card bg-white text-slate-500 font-bold"><i class="fas fa-box-open text-5xl text-rose-200 mb-3"></i><br>Anda belum mengunggah karya.</div></div>`;
+
+            return `<div class="fade-in max-w-3xl mx-auto pb-10">${header}<div class="space-y-4">` + list.map(k => `
+                <div class="glass-card bg-white p-5 border-l-8 border-l-secondary">
+                    <div class="flex justify-between items-start gap-3 mb-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-secondary bg-rose-50 border border-rose-100 px-2 py-1 rounded">${esc(k.kategori_karya)}</span>
+                        <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDate(k.timestamp)}</span>
+                    </div>
+                    <h4 class="font-black text-slate-800 text-lg leading-snug mb-1">${esc(k.judul)}</h4>
+                    <p class="text-sm text-slate-600 mb-4 whitespace-pre-wrap">${esc(k.deskripsi)}</p>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        <a href="${safeUrl(k.link_file)}" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 text-sm font-bold"><i class="fas fa-external-link-alt mr-1"></i> Buka</a>
+                        <button onclick="window.editKarya('${esc(k.id)}')" class="px-4 py-2 rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 text-sm font-bold"><i class="fas fa-pen mr-1"></i> Edit</button>
+                        <button onclick="window.tampilkanKonfirmasiHapus('karya', '${esc(k.id)}', 'karya_saya')" class="px-4 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 text-sm font-bold"><i class="fas fa-trash mr-1"></i> Hapus</button>
+                    </div>
+                </div>`).join('') + `</div></div>`;
+        }
+
+        window.editKarya = (id) => {
+            const k = window.appState.karyaList.find(x => x.id === id);
+            const u = window.appState.user;
+            if(!k || !u || k.id_user !== u.id) return;
+            const opts = KATEGORI_KARYA.map(o => `<option value="${o}" ${o === k.kategori_karya ? 'selected' : ''}>${o}</option>`).join('');
+            const cls = 'w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm';
+            const html = `
+                <div class="w-full text-left space-y-3 max-h-[55vh] overflow-y-auto px-1">
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Kategori</label><select id="ek-kategori" class="${cls}">${opts}</select></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Judul</label><input type="text" id="ek-judul" value="${esc(k.judul)}" class="${cls}"></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi</label><textarea id="ek-deskripsi" rows="4" class="${cls} resize-none">${esc(k.deskripsi)}</textarea></div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1">Link Google Drive</label><input type="url" id="ek-link" value="${esc(k.link_file)}" class="${cls} font-mono"></div>
+                    <p id="ek-error" class="text-red-500 text-xs font-bold"></p>
+                    <div class="flex gap-2 justify-end pt-1">
+                        <button onclick="window.closeModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold hover:bg-slate-300">Batal</button>
+                        <button onclick="window.simpanEditKarya('${esc(id)}')" class="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-red-900 shadow-md">Simpan</button>
+                    </div>
+                </div>`;
+            window.showModal("Edit Karya", "", false, html);
+            document.getElementById('modal-icon').innerHTML = '<i class="fas fa-pen text-amber-500"></i>';
+        };
+
+        window.simpanEditKarya = async (id) => {
+            const data = {
+                kategori_karya: document.getElementById('ek-kategori').value,
+                judul: document.getElementById('ek-judul').value.trim(),
+                deskripsi: document.getElementById('ek-deskripsi').value.trim(),
+                link_file: document.getElementById('ek-link').value.trim()
+            };
+            const err = document.getElementById('ek-error');
+            if(!data.judul || !data.deskripsi) { err.textContent = "Judul dan deskripsi wajib diisi."; return; }
+            if(!/^https?:\/\/(drive|docs)\.google\.com\//.test(data.link_file)) { err.textContent = "Link harus dari Google Drive / Google Docs."; return; }
+            try {
+                await dbUpdate('karya', 'karyaList', id, data);
+                window.closeModal();
+                setTimeout(() => window.showModal("Tersimpan", "Karya berhasil diperbarui."), 300);
+            } catch(e) { err.textContent = "Gagal menyimpan. Periksa koneksi Anda."; }
+        };
 
         // Start App
         window.onload = () => { initFirebaseAuth(); };
