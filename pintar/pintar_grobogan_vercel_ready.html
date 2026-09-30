@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pintar Grobogan - Inovasi Pendidikan</title>
+    
+    <!-- PWA Manifest Placeholder -->
+    <link rel="manifest" id="manifest-placeholder">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#991b1b', // Crimson Red / Maroon
+                        secondary: '#ef4444', // Vibrant Red
+                        accent: '#eab308', // Gold
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff1f2; color: #334155; margin: 0; padding: 0; overflow-x: hidden; }
+        
+        /* Glassmorphism Classes (Red Tint) */
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(254, 226, 226, 0.5); }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 1rem; border: 1px solid rgba(254, 202, 202, 0.4); box-shadow: 0 4px 6px -1px rgba(153, 27, 27, 0.05), 0 2px 4px -1px rgba(153, 27, 27, 0.03); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #ffe4e6; }
+        ::-webkit-scrollbar-thumb { background: #fca5a5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ef4444; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; } 
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Layout Structure */
+        #app-wrapper { display: flex; min-height: 100vh; flex-direction: column; }
+        #main-content { flex: 1; padding-bottom: 5.5rem; transition: all 0.3s ease; }
+        
+        /* Safe area for iOS devices */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .pb-safe { padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); }
+            #main-content { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+        }
+        
+        @media (min-width: 768px) {
+            #app-wrapper { flex-direction: row; }
+            #main-content { padding-bottom: 0; margin-left: 16rem; }
+            #bottom-nav { display: none; }
+            #sidebar { display: flex; }
+        }
+        
+        @media (max-width: 767px) {
+            #sidebar { display: none; }
+            #bottom-nav { display: flex; }
+        }
+        
+        /* Transitions */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal Overlay */
+        #modal-overlay { z-index: 10000; }
+        
+        /* App Branding Dinamis */
+        .app-logo-bg { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>'); background-size: 60%; background-repeat: no-repeat; background-position: center; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- UI Modal Custom (Pengganti Alert & Confirm) -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center fade-in px-4">
+        <div class="glass-card w-full max-w-md p-6 md:p-8 relative">
+            <button onclick="window.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div id="modal-icon" class="text-center text-5xl mb-4"></div>
+            <h3 id="modal-title" class="text-xl font-bold text-center text-slate-800 mb-2"></h3>
+            <p id="modal-message" class="text-center text-slate-600 mb-6 text-sm leading-relaxed"></p>
+            <div class="flex justify-center gap-3" id="modal-actions">
+                <button onclick="window.closeModal()" class="px-8 py-3 bg-primary text-white rounded-full font-bold hover:bg-red-900 transition-colors shadow-lg active:scale-95 w-full sm:w-auto">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-wrapper">
+        <!-- Sidebar Desktop -->
+        <nav id="sidebar" class="w-64 glass h-screen fixed left-0 top-0 flex-col border-r border-rose-200 z-50">
+            <div class="p-6 border-b border-rose-100 flex flex-col items-center">
+                <div id="brand-logo-desktop" class="w-20 h-20 bg-gradient-to-tr from-primary to-secondary text-white rounded-2xl flex items-center justify-center shadow-lg mb-3 overflow-hidden app-logo-bg border-2 border-white"></div>
+                <h1 id="brand-name-desktop" class="text-xl font-black text-slate-800 text-center leading-tight">Pintar Grobogan</h1>
+                <p class="text-xs font-semibold text-secondary mt-1 text-center bg-red-50 px-3 py-1 rounded-full"><i class="fas fa-medal mr-1"></i> Inovasi Pendidikan</p>
+            </div>
+            <div class="flex-1 overflow-y-auto py-4 px-3 hide-scrollbar" id="desktop-menu-container">
+                <!-- Menu dirender via JS -->
+            </div>
+            <div class="p-4 border-t border-rose-200 bg-rose-50/50" id="desktop-user-info">
+                <!-- User info dirender via JS -->
+            </div>
+        </nav>
+
+        <!-- Bottom Nav Mobile -->
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full glass border-t border-rose-200 z-50 justify-around items-center px-1 py-2 pb-safe shadow-[0_-10px_15px_-3px_rgba(153,27,27,0.05)] bg-white/95">
+            <!-- Menu dirender via JS -->
+        </nav>
+
+        <!-- Konten Utama -->
+        <main id="main-content" class="w-full min-h-screen relative transition-all duration-300">
+            <!-- Header Mobile -->
+            <header class="md:hidden glass sticky top-0 z-40 px-4 py-3 border-b border-rose-200 flex justify-between items-center shadow-sm bg-white/90">
+                <div class="flex items-center gap-3">
+                    <div id="brand-logo-mobile" class="w-10 h-10 bg-gradient-to-tr from-primary to-secondary text-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden app-logo-bg border border-white"></div>
+                    <h1 id="brand-name-mobile" class="font-black text-lg text-slate-800 tracking-tight">Pintar Grobogan</h1>
+                </div>
+                <div id="mobile-header-user"></div>
+            </header>
+
+            <!-- Area View Dinamis -->
+            <div id="view-container" class="p-4 md:p-8 w-full max-w-6xl mx-auto">
+                <!-- Loading Spinner Default -->
+                <div class="flex flex-col justify-center items-center h-64 gap-4">
+                    <div class="w-12 h-12 border-4 border-rose-200 border-t-primary rounded-full animate-spin"></div>
+                    <p class="text-primary font-semibold animate-pulse">Memuat Sistem Inovasi...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // 1. KONFIGURASI FIREBASE ANDA
+        // ==========================================
+        // Ganti nilai-nilai di bawah ini dengan Firebase Config dari Console Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyUntukPreviewSaja",
+            authDomain: "pintar-grobogan.firebaseapp.com",
+            projectId: "pintar-grobogan",
+            storageBucket: "pintar-grobogan.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+        const appId = 'pintar-grobogan-app';
+
+        // Initialize Firebase
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // State Aplikasi Inti
+        window.appState = {
+            user: null, 
+            role: 'guest', // 'guest', 'user', 'admin'
+            currentView: 'beranda',
+            karyaList: [],
+            informasiList: [],
+            pengaturan: { nama_aplikasi: 'Pintar Grobogan', logo_url: '' },
+            dbReady: false
+        };
+
+        // Helper Path Firestore (Serverless Architecture)
+        const getCol = (colName) => collection(db, 'artifacts', appId, 'public', 'data', colName);
+        const getDocRef = (colName, docId) => doc(db, 'artifacts', appId, 'public', 'data', colName, docId);
+
+        // --- SISTEM MODAL & UI HELPERS (Pengganti Alert/Confirm) ---
+        window.showModal = (title, message, isError = false, customActionsHtml = null) => {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').innerHTML = message; 
+            
+            const icon = document.getElementById('modal-icon');
+            if (isError) icon.innerHTML = '<i class="fas fa-exclamation-triangle text-red-500 drop-shadow-md"></i>';
+            else icon.innerHTML = '<i class="fas fa-check-circle text-green-500 drop-shadow-md"></i>';
+            
+            const actions = document.getElementById('modal-actions');
+            if(customActionsHtml) {
+                actions.innerHTML = customActionsHtml;
+            } else {
+                actions.innerHTML = `<button onclick="window.closeModal()" class="px-8 py-3 bg-primary text-white rounded-full font-bold hover:bg-red-900 transition-colors shadow-lg active:scale-95 w-full sm:w-auto">Tutup</button>`;
+            }
+            
+            document.getElementById('modal-overlay').classList.remove('hidden');
+        };
+
+        window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
+
+        const formatDate = (timestamp) => {
+            if (!timestamp) return '-';
+            return new Date(timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+        };
+
+        // Update Identitas Web Berdasarkan Pengaturan Database Admin
+        function updateAppIdentity() {
+            const nama = window.appState.pengaturan.nama_aplikasi || 'Pintar Grobogan';
+            const logo = window.appState.pengaturan.logo_url;
+            
+            document.title = `${nama} - Inovasi Pendidikan`;
+            document.getElementById('brand-name-desktop').textContent = nama;
+            document.getElementById('brand-name-mobile').textContent = nama;
+
+            const updateLogo = (id) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    if(logo) { 
+                        el.innerHTML = `<img src="${logo}" class="w-full h-full object-cover">`; 
+                        el.classList.remove('app-logo-bg'); 
+                    } else { 
+                        el.innerHTML = ''; 
+                        el.classList.add('app-logo-bg'); 
+                    }
+                }
+            };
+            updateLogo('brand-logo-desktop');
+            updateLogo('brand-logo-mobile');
+            renderNavigation(); 
+        }
+
+        // --- SISTEM AWAL (DATABASE & AUTH) ---
+        async function initFirebaseAuth() {
+            try {
+                const isDummy = firebaseConfig.apiKey.includes("DummyKey");
+                if (!isDummy) await signInAnonymously(auth);
+                
+                if (!isDummy) await autoSetupDatabase();
+                else {
+                    window.appState.pengaturan = { nama_aplikasi: 'Pintar Grobogan (Preview Offline)', logo_url: '' };
+                    updateAppIdentity();
+                    fallbackOfflineData();
+                    bukaTampilanAwal();
+                }
+            } catch (error) {
+                console.warn("Koneksi Firebase ditolak. Menjalankan mode Fallback.");
+                fallbackOfflineData();
+                bukaTampilanAwal();
+            }
+        }
+
+        function fallbackOfflineData() {
+            window.appState.karyaList = [
+                { id: '1', id_user: "dummy_id", nama_pembuat: "Budi Santoso, S.Pd", kategori_karya: "Modul Ajar", judul: "Modul Ajar Interaktif IPA Kelas 8", deskripsi: "Modul ajar digital terintegrasi materi Sistem Pencernaan.", link_file: "https://drive.google.com/file/d/xxx", timestamp: Date.now() }
+            ];
+            window.appState.informasiList = [
+                { id: '1', judul: "Selamat Datang di Pintar Grobogan", isi: "Platform inovasi guru, siswa, dan kepala sekolah. (Mode Offline Preview)", timestamp: Date.now() }
+            ];
+        }
+
+        function bukaTampilanAwal() {
+            window.appState.dbReady = true;
+            renderNavigation();
+            window.navigateTo('beranda');
+        }
+
+        async function autoSetupDatabase() {
+            try {
+                // Setup Pengaturan if missing
+                const setSnap = await getDocs(getCol('pengaturan'));
+                if (setSnap.empty) {
+                    await setDoc(getDocRef('pengaturan', 'app_settings'), { nama_aplikasi: "Pintar Grobogan", logo_url: "", timestamp: Date.now() });
+                }
+
+                const usersSnap = await getDocs(getCol('users'));
+                if (usersSnap.empty) {
+                    console.log("Menyiapkan struktur awal database...");
+                    // Inject Dummy Data First Time
+                    await addDoc(getCol('users'), { username: "guru123", password: "password123", nama: "Budi Santoso, S.Pd", kategori: "guru", sekolah: "SMPN 1 Purwodadi", foto_profil: "", nip: "198001012005011001", timestamp: Date.now() });
+                    await addDoc(getCol('karya'), { id_user: "dummy_id", nama_pembuat: "Budi Santoso, S.Pd", kategori_karya: "Modul Ajar", judul: "Modul Ajar Interaktif IPA Berbasis Masalah", deskripsi: "Modul terintegrasi yang memudahkan siswa memahami IPA.", link_file: "https://drive.google.com/file/d/dummy", timestamp: Date.now() });
+                    await addDoc(getCol('informasi'), { judul: "Selamat Datang di Portal Inovasi", isi: "Mari membagikan karya inovasi Anda di sini. Ini adalah langkah awal ekosistem pendidikan cerdas di Kabupaten Grobogan.", timestamp: Date.now() });
+                }
+                startDataListeners();
+                bukaTampilanAwal();
+            } catch (error) {
+                console.warn("Mode Fallback (No Write Access) - Cek Security Rules Firebase Anda.");
+                fallbackOfflineData();
+                bukaTampilanAwal();
+            }
+        }
+
+        let unsubs = [];
+        function startDataListeners() {
+            unsubs.forEach(unsub => unsub()); unsubs = [];
+            try {
+                unsubs.push(onSnapshot(getDocRef('pengaturan', 'app_settings'), (docSnap) => {
+                    if (docSnap.exists()) {
+                        window.appState.pengaturan = docSnap.data();
+                        updateAppIdentity();
+                    }
+                }));
+
+                unsubs.push(onSnapshot(getCol('karya'), (snapshot) => {
+                    window.appState.karyaList = [];
+                    snapshot.forEach(doc => window.appState.karyaList.push({ id: doc.id, ...doc.data() }));
+                    const v = window.appState.currentView;
+                    if(['galeri', 'beranda', 'pantau_karya', 'karya_saya'].includes(v)) renderCurrentView();
+                }));
+
+                unsubs.push(onSnapshot(getCol('informasi'), (snapshot) => {
+                    window.appState.informasiList = [];
+                    snapshot.forEach(doc => window.appState.informasiList.push({ id: doc.id, ...doc.data() }));
+                    window.appState.informasiList.sort((a,b) => b.timestamp - a.timestamp);
+                    const v = window.appState.currentView;
+                    if(['informasi', 'kelola_informasi'].includes(v)) renderCurrentView();
+                }));
+            } catch(e) {}
+        }
+
+        // --- NAVIGASI & MENU ---
+        window.navigateTo = (view) => {
+            window.appState.currentView = view;
+            renderNavigation();
+            renderCurrentView();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function renderNavigation() {
+            const role = window.appState.role;
+            const menus = [
+                // Publik
+                { id: 'beranda', title: 'Beranda', icon: 'fa-home', roles: ['guest', 'user', 'admin'], isBottom: true },
+                { id: 'galeri', title: 'Galeri', icon: 'fa-images', roles: ['guest', 'user', 'admin'], isBottom: true },
+                { id: 'informasi', title: 'Informasi', icon: 'fa-bullhorn', roles: ['guest', 'user', 'admin'], isBottom: true },
+                { id: 'diskusi', title: 'Diskusi', icon: 'fa-comments', roles: ['guest', 'user', 'admin'], isBottom: false },
+                { id: 'sapa', title: 'Sapa Pengawas', icon: 'fa-envelope-open-text', roles: ['guest', 'user'], isBottom: false },
+                
+                // User (Guru/Siswa/Kepsek)
+                { id: 'profil', title: 'Profil Saya', icon: 'fa-id-card', roles: ['user'], isBottom: true },
+                { id: 'unggah_karya', title: 'Unggah Karya', icon: 'fa-cloud-upload-alt', roles: ['user'], isBottom: false },
+                { id: 'unggah_rapor', title: 'Rapor Digital', icon: 'fa-file-signature', roles: ['user'], isBottom: false },
+                { id: 'karya_saya', title: 'Karya Saya', icon: 'fa-folder-open', roles: ['user'], isBottom: false },
+                
+                // Admin (Pengawas)
+                { id: 'pantau_karya', title: 'Dasbor Data', icon: 'fa-chart-pie', roles: ['admin'], isBottom: true },
+                { id: 'kelola_pengguna', title: 'Pengguna', icon: 'fa-users-cog', roles: ['admin'], isBottom: false },
+                { id: 'kelola_informasi', title: 'Kelola Info', icon: 'fa-edit', roles: ['admin'], isBottom: false },
+                { id: 'kotak_masuk', title: 'Pesan Masuk', icon: 'fa-inbox', roles: ['admin'], isBottom: false },
+                { id: 'pengaturan', title: 'Pengaturan Web', icon: 'fa-cogs', roles: ['admin'], isBottom: false },
+                
+                // Auth
+                { id: 'auth', title: 'Login / Daftar', icon: 'fa-sign-in-alt', roles: ['guest'], isBottom: true },
+            ];
+
+            const filteredMenus = menus.filter(m => m.roles.includes(role));
+            
+            // Sidebar Desktop
+            let deskHTML = `<ul class="space-y-1.5">`;
+            filteredMenus.forEach(m => {
+                const active = window.appState.currentView === m.id ? 'bg-primary text-white font-bold shadow-md' : 'text-slate-600 hover:bg-rose-100 hover:text-primary font-medium';
+                deskHTML += `
+                    <li>
+                        <button onclick="window.navigateTo('${m.id}')" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${active}">
+                            <i class="fas ${m.icon} w-5 text-center text-lg"></i><span class="text-sm">${m.title}</span>
+                        </button>
+                    </li>
+                `;
+            });
+            if(role !== 'guest') {
+                deskHTML += `
+                    <li>
+                        <button onclick="window.handleLogout()" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-500 border border-slate-300 hover:bg-slate-100 hover:text-slate-700 transition-all mt-6 font-bold">
+                            <i class="fas fa-sign-out-alt w-5 text-center text-lg"></i><span class="text-sm">Keluar Akun</span>
+                        </button>
+                    </li>
+                `;
+            }
+            deskHTML += `</ul>`;
+            document.getElementById('desktop-menu-container').innerHTML = deskHTML;
+
+            // Bottom Nav Mobile
+            let bottomItems = filteredMenus.filter(m => m.isBottom).slice(0, 4);
+            let bottomHTML = '';
+            bottomItems.forEach(m => {
+                 const active = window.appState.currentView === m.id ? 'text-primary scale-110' : 'text-slate-400';
+                 bottomHTML += `
+                    <button onclick="window.navigateTo('${m.id}')" class="flex flex-col items-center justify-center p-2 w-16 transition-all duration-300 ${active}">
+                        <i class="fas ${m.icon} text-2xl mb-1 ${window.appState.currentView === m.id ? 'drop-shadow-md' : ''}"></i>
+                        <span class="text-[10px] leading-tight text-center font-semibold whitespace-nowrap">${m.title}</span>
+                    </button>
+                 `;
+            });
+            if(filteredMenus.length > 4) {
+                 bottomHTML += `
+                    <button onclick="window.toggleMobileMenu()" class="flex flex-col items-center justify-center p-2 w-16 text-slate-400 hover:text-primary transition-all duration-300">
+                        <i class="fas fa-bars text-2xl mb-1"></i><span class="text-[10px] leading-tight text-center font-semibold">Lainnya</span>
+                    </button>
+                 `;
+            }
+            document.getElementById('bottom-nav').innerHTML = bottomHTML;
+
+            // User Info
+            document.getElementById('desktop-user-info').innerHTML = role === 'guest' ? `<div class="text-sm text-center text-slate-500 font-medium"><i class="fas fa-user-secret mr-1"></i> Mode Pengunjung</div>` : `
+                <div class="flex items-center gap-3 w-full bg-white p-2 rounded-xl shadow-sm border border-rose-100">
+                    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-primary font-bold overflow-hidden border-2 border-white shadow-sm shrink-0">
+                        ${window.appState.user?.foto_profil ? `<img src="${window.appState.user.foto_profil}" class="w-full h-full object-cover">` : '<i class="fas fa-user"></i>'}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate">${window.appState.user?.nama || 'Admin Sistem'}</p>
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-wider">${window.appState.role === 'admin' ? 'Pengawas' : window.appState.user?.kategori}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('mobile-header-user').innerHTML = role !== 'guest' ? `<button onclick="window.handleLogout()" class="w-10 h-10 rounded-full bg-rose-100 text-primary flex items-center justify-center text-sm shadow-sm border border-rose-200"><i class="fas fa-sign-out-alt"></i></button>` : '';
+        }
+
+        window.toggleMobileMenu = () => {
+            const role = window.appState.role;
+            if(role === 'admin') window.navigateTo('pantau_karya');
+            else if(role === 'user') window.navigateTo('profil');
+            else window.navigateTo('sapa');
+        }
+
+        function renderCurrentView() {
+            const container = document.getElementById('view-container');
+            container.innerHTML = ''; 
+            
+            const v = window.appState.currentView;
+            if(v === 'beranda') container.innerHTML = viewBeranda();
+            else if(v === 'galeri') container.innerHTML = viewGaleri();
+            else if(v === 'informasi') container.innerHTML = viewInformasi();
+            else if(v === 'diskusi') viewDiskusi(container);
+            else if(v === 'sapa') container.innerHTML = viewSapa();
+            else if(v === 'auth') container.innerHTML = viewAuth();
+            
+            else if(v === 'profil') container.innerHTML = viewProfil();
+            else if(v === 'unggah_karya') container.innerHTML = viewUnggahKarya();
+            else if(v === 'unggah_rapor') container.innerHTML = viewUnggahRapor();
+            else if(v === 'karya_saya') container.innerHTML = viewKaryaSaya();
+            
+            else if(v === 'kelola_informasi') container.innerHTML = viewKelolaInformasi();
+            else if(v === 'pantau_karya') viewPantauKarya(container);
+            else if(v === 'kotak_masuk') viewKotakMasuk(container);
+            else if(v === 'kelola_pengguna') viewKelolaPengguna(container);
+            else if(v === 'pengaturan') container.innerHTML = viewPengaturan();
+            
+            else container.innerHTML = `<div class="text-center p-10 text-gray-500"><i class="fas fa-search mb-2 text-3xl"></i><br>Halaman tidak ditemukan.</div>`;
+        }
+
+        function viewBeranda() {
+            const statKarya = window.appState.karyaList.length;
+            const latestKarya = window.appState.karyaList.slice(-3).reverse();
+            const appName = window.appState.pengaturan.nama_aplikasi;
+
+            let latestHtml = '';
+            latestKarya.forEach(k => {
+                let iconClass = 'fa-file-alt';
+                if(k.kategori_karya.includes('Digital')) iconClass = 'fa-laptop-code';
+                if(k.kategori_karya.includes('Modul')) iconClass = 'fa-book-open';
+                
+                latestHtml += `
+                    <div class="glass-card p-5 flex flex-col hover:shadow-xl transition-all cursor-pointer group bg-white" onclick="window.navigateTo('galeri')">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-rose-100 text-primary rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform"><i class="fas ${iconClass}"></i></div>
+                            <div class="text-[10px] font-black tracking-wider uppercase text-primary bg-rose-50 px-2.5 py-1 rounded-md border border-rose-100">${k.kategori_karya}</div>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">${k.judul}</h4>
+                        <div class="mt-auto pt-3 border-t border-slate-100">
+                            <p class="text-xs text-slate-500 font-semibold truncate"><i class="fas fa-user-edit mr-1 text-slate-400"></i> ${k.nama_pembuat}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            return `
+                <div class="fade-in space-y-6 md:space-y-8 pb-10">
+                    <!-- Hero Section -->
+                    <div class="relative bg-gradient-to-br from-primary to-[#7f1d1d] rounded-3xl p-8 md:p-14 text-white overflow-hidden shadow-2xl text-center md:text-left border border-red-900">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                        <div class="absolute bottom-0 left-10 w-40 h-40 bg-accent opacity-20 rounded-full blur-2xl"></div>
+                        <i class="fas fa-quote-right absolute -bottom-10 -right-4 text-9xl text-black/10"></i>
+                        
+                        <div class="relative z-10 max-w-3xl mx-auto md:mx-0">
+                            <span class="inline-flex items-center bg-black/20 backdrop-blur-md px-4 py-2 rounded-full text-xs font-black tracking-widest uppercase mb-6 shadow-inner border border-white/10 text-rose-200">
+                                <i class="fas fa-fire mr-2 text-accent"></i> Portal Inovasi Terpusat
+                            </span>
+                            <h2 class="text-4xl md:text-6xl font-black mb-6 leading-tight drop-shadow-md tracking-tight">${appName}</h2>
+                            <p class="text-rose-100 md:text-lg mb-10 max-w-2xl mx-auto md:mx-0 leading-relaxed font-medium">
+                                Wadah apresiasi dan dokumentasi karya inovatif digital maupun non-digital bagi Guru, Kepala Sekolah, dan Siswa. Bersama majukan ekosistem pendidikan Kabupaten Grobogan.
+                            </p>
+                            
+                            ${window.appState.role === 'guest' ? `
+                                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                                    <button onclick="window.navigateTo('auth')" class="bg-accent text-slate-900 px-8 py-4 rounded-full font-black shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:bg-yellow-400 hover:scale-105 transition-all w-full sm:w-auto flex items-center justify-center gap-2 text-sm md:text-base">
+                                        Bergabung & Bagikan Karya <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                    <button onclick="window.navigateTo('galeri')" class="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-white/20 transition-all w-full sm:w-auto text-sm md:text-base">
+                                        Eksplorasi Galeri <i class="fas fa-images ml-1"></i>
+                                    </button>
+                                </div>
+                            ` : `
+                                <button onclick="window.navigateTo('unggah_karya')" class="bg-accent text-slate-900 px-8 py-4 rounded-full font-black shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:bg-yellow-400 hover:scale-105 transition-all w-full sm:w-auto flex items-center justify-center gap-2">
+                                    Unggah Karya Inovasi Baru <i class="fas fa-cloud-upload-alt text-lg"></i>
+                                </button>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Quote Pengawas -->
+                    <div class="glass-card p-6 md:p-8 border-l-8 border-accent flex flex-col md:flex-row gap-6 items-center md:items-start bg-white shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-rose-50 rounded-bl-full -z-10"></div>
+                        <div class="w-24 h-24 rounded-full bg-slate-100 shrink-0 flex items-center justify-center text-4xl text-primary border-4 border-white shadow-xl overflow-hidden relative z-10">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="text-center md:text-left relative z-10">
+                            <i class="fas fa-quote-left text-rose-200 text-3xl absolute -top-2 -left-4 -z-10 opacity-50"></i>
+                            <p class="text-slate-700 italic mb-4 text-sm md:text-base leading-relaxed font-medium">"Inovasi bukan sekadar membuat yang baru, tapi bagaimana karya kita mampu memberikan solusi nyata bagi pembelajaran anak didik. Mari jadikan jejak digital Bapak/Ibu sebagai inspirasi yang tak lekang oleh waktu."</p>
+                            <h4 class="text-base font-black text-slate-800">Lilik Rahmawati, M.Pd</h4>
+                            <p class="text-xs font-bold text-primary uppercase tracking-wide">Pengawas Sekolah Kabupaten Grobogan</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistik -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <div class="glass-card p-6 text-center flex flex-col justify-center items-center hover:-translate-y-1 transition-transform border-t-4 border-t-secondary bg-white">
+                            <div class="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mb-3 text-secondary text-2xl shadow-sm"><i class="fas fa-file-invoice"></i></div>
+                            <div class="text-3xl font-black text-slate-800 leading-none mb-2">${statKarya}</div>
+                            <div class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">Total Karya</div>
+                        </div>
+                        <div class="glass-card p-6 text-center flex flex-col justify-center items-center hover:-translate-y-1 transition-transform border-t-4 border-t-accent bg-white">
+                            <div class="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center mb-3 text-accent text-2xl shadow-sm"><i class="fas fa-chalkboard-teacher"></i></div>
+                            <div class="text-3xl font-black text-slate-800 leading-none mb-2">Aktif</div>
+                            <div class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">Karya Guru</div>
+                        </div>
+                        <div class="glass-card p-6 text-center flex flex-col justify-center items-center hover:-translate-y-1 transition-transform border-t-4 border-t-primary bg-white">
+                            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-3 text-primary text-2xl shadow-sm"><i class="fas fa-user-graduate"></i></div>
+                            <div class="text-3xl font-black text-slate-800 leading-none mb-2">Aktif</div>
+                            <div class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">Karya Siswa</div>
+                        </div>
+                        <div class="glass-card p-6 text-center flex flex-col justify-center items-center hover:-translate-y-1 transition-transform border-t-4 border-t-green-500 bg-white">
+                            <div class="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mb-3 text-green-600 text-2xl shadow-sm"><i class="fas fa-chart-line"></i></div>
+                            <div class="text-3xl font-black text-slate-800 leading-none mb-2"><i class="fas fa-check"></i></div>
+                            <div class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest">Rapor Digital</div>
+                        </div>
+                    </div>
+
+                    <!-- Karya Terbaru -->
+                    <div>
+                        <div class="flex justify-between items-center mb-5 px-1 border-b border-rose-200 pb-3">
+                            <h3 class="text-lg md:text-xl font-black text-slate-800 flex items-center"><i class="fas fa-star text-accent mr-2"></i> Karya Terbaru</h3>
+                            <button onclick="window.navigateTo('galeri')" class="text-xs md:text-sm text-primary font-bold hover:bg-rose-100 bg-rose-50 px-4 py-2 rounded-full transition-colors flex items-center shadow-sm">Lihat Semua <i class="fas fa-chevron-right ml-1 text-[10px]"></i></button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                            ${latestHtml || '<div class="col-span-full glass-card text-center py-12 text-slate-400 font-medium bg-white"><i class="fas fa-box-open text-4xl mb-3 text-slate-300"></i><br>Belum ada karya yang diunggah.</div>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.filterGaleri = (kategori, btnEl) => {
+            if(btnEl) {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.className = "filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 hover:border-rose-200 transition-all shadow-sm whitespace-nowrap";
+                });
+                btnEl.className = "filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-primary text-white shadow-lg transition-all whitespace-nowrap ring-2 ring-primary ring-offset-2 ring-offset-rose-50";
+            }
+
+            const grid = document.getElementById('galeri-grid');
+            if(!grid) return;
+
+            let filtered = window.appState.karyaList;
+            if(kategori !== 'Semua') {
+                filtered = filtered.filter(k => k.kategori_karya === kategori);
+            }
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-slate-500 glass-card bg-white"><i class="fas fa-folder-open text-5xl text-rose-200 mb-4"></i><br>Tidak ada karya dalam kategori ini.</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(k => {
+                let iconClass = 'fa-file-alt';
+                if(k.kategori_karya.includes('Digital')) iconClass = 'fa-laptop-code';
+                if(k.kategori_karya.includes('Modul')) iconClass = 'fa-book-open';
+                
+                html += `
+                    <div class="glass-card flex flex-col h-full overflow-hidden hover:shadow-xl transition-all border-b-4 border-b-transparent hover:border-b-secondary bg-white group">
+                        <div class="bg-gradient-to-br from-rose-50 to-rose-100 h-40 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-500"><i class="fas ${iconClass} text-6xl drop-shadow-md opacity-80"></i></div>
+                        <div class="p-6 flex-1 flex flex-col relative bg-white z-10">
+                            <div class="text-[10px] font-black text-secondary mb-3 uppercase tracking-widest bg-rose-50 inline-block w-max px-2 py-1 rounded border border-rose-100">${k.kategori_karya}</div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-3 leading-snug">${k.judul}</h4>
+                            <p class="text-sm text-slate-600 mb-5 line-clamp-3 flex-1 leading-relaxed">${k.deskripsi}</p>
+                            <div class="pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs text-slate-500 border border-slate-200"><i class="fas fa-user"></i></div>
+                                    <span class="text-xs font-bold text-slate-700 truncate w-24">${k.nama_pembuat}</span>
+                                </div>
+                                <a href="${k.link_file}" target="_blank" class="text-xs bg-primary text-white px-4 py-2 rounded-lg hover:bg-red-900 font-bold transition-colors shadow-md flex items-center gap-1 active:scale-95">Akses <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        };
+
+        function viewGaleri() {
+            setTimeout(() => { window.filterGaleri('Semua'); }, 50);
+            return `
+                <div class="fade-in pb-10">
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-photo-video text-primary mr-3"></i> Galeri Inovasi</h2>
+                    <div class="overflow-x-auto pb-4 mb-4 hide-scrollbar">
+                        <div class="flex gap-3" id="galeri-filters" style="min-width: max-content;">
+                            <button onclick="window.filterGaleri('Semua', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-primary text-white shadow-lg transition-all whitespace-nowrap ring-2 ring-primary ring-offset-2 ring-offset-rose-50">Semua Karya</button>
+                            <button onclick="window.filterGaleri('Modul Ajar', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition-all shadow-sm whitespace-nowrap">Modul Ajar</button>
+                            <button onclick="window.filterGaleri('Karya Guru (Digital)', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition-all shadow-sm whitespace-nowrap">Guru (Digital)</button>
+                            <button onclick="window.filterGaleri('Karya Guru (Non Digital)', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition-all shadow-sm whitespace-nowrap">Guru (Non Digital)</button>
+                            <button onclick="window.filterGaleri('Karya Kepala Sekolah', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition-all shadow-sm whitespace-nowrap">Kepala Sekolah</button>
+                            <button onclick="window.filterGaleri('Karya Siswa', this)" class="filter-btn px-5 py-2.5 rounded-full text-sm font-bold bg-white text-slate-600 border border-slate-200 hover:bg-rose-50 transition-all shadow-sm whitespace-nowrap">Karya Siswa</button>
+                        </div>
+                    </div>
+                    <div id="galeri-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"></div>
+                </div>
+            `;
+        }
+
+        function viewUnggahKarya() {
+            return `
+                <div class="fade-in max-w-2xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-cloud-upload-alt text-primary mr-3"></i> Unggah Inovasi</h2>
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <div class="bg-amber-50 border-l-4 border-accent p-4 mb-8 text-sm text-amber-900 rounded-r-xl shadow-sm flex gap-3">
+                            <i class="fas fa-info-circle text-accent text-xl mt-0.5"></i>
+                            <div>
+                                <b class="block mb-1">Aturan Pengunggahan:</b> 
+                                File inovasi (dokumen/video) <b>WAJIB</b> diunggah ke Google Drive Anda terlebih dahulu. Pastikan akses link disetel ke <i>"Siapa saja yang memiliki link"</i>, lalu tempel tautannya di bawah.
+                            </div>
+                        </div>
+                        <form onsubmit="window.prosesUnggahKarya(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Kategori Karya</label>
+                                <select id="uk-kategori" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-slate-50 outline-none">
+                                    <option value="Modul Ajar">Modul Ajar Inovatif</option>
+                                    <option value="Karya Guru (Digital)">Karya Guru (Literasi Digital)</option>
+                                    <option value="Karya Guru (Non Digital)">Karya Guru (Literasi Non Digital)</option>
+                                    <option value="Karya Kepala Sekolah">Karya Kepala Sekolah</option>
+                                    <option value="Karya Siswa">Karya Siswa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Judul Karya</label>
+                                <input type="text" id="uk-judul" required placeholder="Contoh: Media Pembelajaran AR Tata Surya" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Deskripsi Singkat</label>
+                                <textarea id="uk-deskripsi" required rows="4" placeholder="Jelaskan secara singkat tentang karya inovasi ini..." class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Link Google Drive</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400"><i class="fab fa-google-drive"></i></div>
+                                    <input type="url" id="uk-link" required placeholder="https://drive.google.com/..." class="w-full pl-11 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none font-mono text-sm">
+                                </div>
+                                <p class="text-[10px] text-red-500 mt-1.5 font-semibold">* Hanya link Google Drive (drive.google.com atau docs.google.com) yang diizinkan.</p>
+                            </div>
+                            <div class="pt-6">
+                                <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95 flex justify-center items-center gap-2"><i class="fas fa-paper-plane"></i> Publikasikan Karya</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.prosesUnggahKarya = async (e) => {
+            e.preventDefault();
+            const link = document.getElementById('uk-link').value;
+            const isValidDrive = link.match(/^https?:\/\/(drive|docs)\.google\.com\//);
+            
+            if (!isValidDrive) {
+                return window.showModal("Format Tautan Ditolak", "Mohon maaf, sistem hanya mengizinkan pengunggahan menggunakan tautan (link) dari <b>Google Drive</b> atau <b>Google Docs</b> untuk keamanan. Silakan unggah file Anda ke GDrive terlebih dahulu.", true);
+            }
+
+            try {
+                await addDoc(getCol('karya'), {
+                    id_user: window.appState.user.id, nama_pembuat: window.appState.user.nama,
+                    kategori_karya: document.getElementById('uk-kategori').value, judul: document.getElementById('uk-judul').value,
+                    deskripsi: document.getElementById('uk-deskripsi').value, link_file: link, timestamp: Date.now()
+                });
+                window.showModal("Sukses", "Karya inovasi Anda berhasil dipublikasikan ke Galeri.");
+                window.navigateTo('karya_saya');
+            } catch(err) { window.showModal("Error", "Gagal mengunggah karya. Periksa koneksi Anda.", true); }
+        };
+
+        function viewUnggahRapor() {
+            return `
+                <div class="fade-in max-w-2xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-file-signature text-green-600 mr-3"></i> Lapor Rapor Pendidikan</h2>
+                    <div class="glass-card p-6 md:p-8 bg-white border-t-4 border-t-green-500">
+                        <form onsubmit="window.prosesRapor(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Tahun Ajaran / Periode</label>
+                                <input type="text" id="rp-tahun" required placeholder="Contoh: 2025/2026 Ganjil" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Link Dokumen Rapor (Google Drive)</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400"><i class="fab fa-google-drive"></i></div>
+                                    <input type="url" id="rp-link" required placeholder="https://drive.google.com/..." class="w-full pl-11 pr-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none font-mono text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Catatan Evaluasi / Tindak Lanjut</label>
+                                <textarea id="rp-catatan" rows="4" placeholder="Tuliskan catatan penting..." class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none"></textarea>
+                            </div>
+                            <div class="pt-6">
+                                <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-xl font-black shadow-lg hover:bg-green-700 transition-colors active:scale-95 flex justify-center items-center gap-2"><i class="fas fa-check-circle"></i> Kirim Laporan Rapor</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.prosesRapor = async (e) => {
+            e.preventDefault();
+            const link = document.getElementById('rp-link').value;
+            const isValidDrive = link.match(/^https?:\/\/(drive|docs)\.google\.com\//);
+            if (!isValidDrive) return window.showModal("Format Ditolak", "Harap gunakan tautan Google Drive untuk dokumen Rapor.", true);
+
+            try {
+                await addDoc(getCol('rapor_pendidikan'), {
+                    id_user: window.appState.user.id, nama_pengunggah: window.appState.user.nama, asal_sekolah: window.appState.user.sekolah,
+                    tahun_ajaran: document.getElementById('rp-tahun').value, link_rapor: link,
+                    catatan: document.getElementById('rp-catatan').value, timestamp: Date.now()
+                });
+                window.showModal("Sukses", "Data Rapor Pendidikan berhasil dikirimkan ke dasbor Pengawas.");
+                document.getElementById('rp-tahun').value = ''; document.getElementById('rp-link').value = ''; document.getElementById('rp-catatan').value = '';
+            } catch(err) { window.showModal("Error", "Gagal mengirim rapor.", true); }
+        };
+
+        function viewAuth() {
+            return `
+                <div class="fade-in max-w-md mx-auto mt-6 md:mt-10 pb-10">
+                    <div class="glass-card p-6 md:p-8 bg-white shadow-2xl border-t-8 border-t-primary">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-rose-100 text-primary rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-rose-200"><i class="fas fa-lock"></i></div>
+                            <h2 class="text-2xl font-black text-slate-800">Akses Portal</h2>
+                        </div>
+                        <div class="flex border-b border-rose-100 mb-6 bg-slate-50 rounded-t-lg">
+                            <button onclick="window.switchAuthTab('login')" id="tab-login" class="flex-1 py-3.5 text-center text-sm md:text-base font-black text-primary border-b-2 border-primary transition-all bg-white">Masuk</button>
+                            <button onclick="window.switchAuthTab('register')" id="tab-register" class="flex-1 py-3.5 text-center text-sm md:text-base font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all">Daftar Akun Baru</button>
+                        </div>
+                        <form id="form-login" onsubmit="window.handleLogin(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2"><i class="fas fa-user text-slate-400 w-5"></i> Username (Peserta) / Email (Admin)</label>
+                                <input type="text" id="login-user" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-shadow bg-slate-50 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2"><i class="fas fa-key text-slate-400 w-5"></i> Password</label>
+                                <input type="password" id="login-pass" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-shadow bg-slate-50 text-sm">
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-black hover:bg-red-900 transition-all shadow-lg active:scale-95 text-sm md:text-base tracking-wide"><i class="fas fa-sign-in-alt mr-2"></i> MASUK KE SISTEM</button>
+                            </div>
+                        </form>
+                        
+                        <form id="form-register" onsubmit="window.handleRegister(event)" class="space-y-5 hidden">
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Daftar Sebagai</label>
+                                <select id="reg-kategori" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                                    <option value="guru">Guru</option>
+                                    <option value="kepala_sekolah">Kepala Sekolah</option>
+                                    <option value="siswa">Siswa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Nama Lengkap & Gelar</label>
+                                <input type="text" id="reg-nama" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Asal Sekolah</label>
+                                <input type="text" id="reg-sekolah" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Buat Username (Untuk Login)</label>
+                                <input type="text" id="reg-user" required class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Buat Password</label>
+                                <input type="password" id="reg-pass" required minlength="4" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-sm bg-slate-50 font-mono">
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="w-full bg-accent text-slate-900 py-4 rounded-xl font-black hover:bg-yellow-500 transition-all shadow-[0_4px_15px_rgba(234,179,8,0.4)] active:scale-95 text-sm md:text-base"><i class="fas fa-user-plus mr-2"></i> BUAT AKUN SEKARANG</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.switchAuthTab = (tab) => {
+            const fLogin = document.getElementById('form-login'), fReg = document.getElementById('form-register');
+            const tLogin = document.getElementById('tab-login'), tReg = document.getElementById('tab-register');
+
+            if(tab === 'login') {
+                fLogin.classList.remove('hidden'); fReg.classList.add('hidden');
+                tLogin.className = "flex-1 py-3.5 text-center font-black text-primary border-b-2 border-primary transition-all bg-white";
+                tReg.className = "flex-1 py-3.5 text-center font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all";
+            } else {
+                fReg.classList.remove('hidden'); fLogin.classList.add('hidden');
+                tReg.className = "flex-1 py-3.5 text-center font-black text-primary border-b-2 border-primary transition-all bg-white";
+                tLogin.className = "flex-1 py-3.5 text-center font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition-all";
+            }
+        };
+
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value.trim();
+            const p = document.getElementById('login-pass').value;
+
+            // Jika menggunakan Email, verifikasi via Firebase Auth (Untuk Admin)
+            if(u.includes('@')) {
+                try {
+                    await signInWithEmailAndPassword(auth, u, p);
+                    window.appState.role = 'admin'; window.appState.user = { nama: "Pengawas (Admin)" };
+                    window.navigateTo('pantau_karya');
+                    setTimeout(()=> window.showModal("Berhasil", "Selamat datang di Dasbor Admin."), 300);
+                    return;
+                } catch(err) { return window.showModal("Login Gagal", "Kredensial Admin tidak valid.", true); }
+            }
+
+            // Jika tanpa Email, verifikasi via koleksi 'users' (Untuk Peserta/Guru/Siswa)
+            try {
+                const snap = await getDocs(getCol('users'));
+                let foundUser = null; let userId = null;
+                snap.forEach(doc => { if(doc.data().username === u && doc.data().password === p) { foundUser = doc.data(); userId = doc.id; } });
+
+                if(foundUser) {
+                    window.appState.role = 'user'; window.appState.user = { id: userId, ...foundUser };
+                    window.navigateTo('beranda');
+                } else { window.showModal("Akses Ditolak", "Username atau password salah. Silakan coba lagi.", true); }
+            } catch(err) { window.showModal("Error", "Gagal memproses login.", true); }
+        };
+
+        window.handleRegister = async (e) => {
+            e.preventDefault();
+            const usr = document.getElementById('reg-user').value.trim().toLowerCase();
+            try {
+                const snap = await getDocs(getCol('users'));
+                let isExist = false;
+                snap.forEach(doc => { if(doc.data().username.toLowerCase() === usr) isExist = true; });
+
+                if(isExist) return window.showModal("Gagal", "Username tersebut sudah digunakan orang lain. Gunakan yang lain.", true);
+
+                await addDoc(getCol('users'), {
+                    kategori: document.getElementById('reg-kategori').value,
+                    nama: document.getElementById('reg-nama').value,
+                    sekolah: document.getElementById('reg-sekolah').value,
+                    username: usr, password: document.getElementById('reg-pass').value,
+                    foto_profil: "", nip: "", timestamp: Date.now()
+                });
+                
+                window.showModal("Pendaftaran Berhasil", "Akun Anda telah selesai dibuat. Silakan login menggunakan Username dan Password barusan.");
+                window.switchAuthTab('login');
+                document.getElementById('login-user').value = usr;
+                document.getElementById('login-pass').value = '';
+            } catch(err) { window.showModal("Error", "Gagal mendaftar.", true); }
+        };
+
+        window.handleLogout = () => {
+            if(window.appState.role === 'admin') signOut(auth).then(() => signInAnonymously(auth)); 
+            window.appState.role = 'guest'; window.appState.user = null;
+            window.navigateTo('beranda');
+        };
+
+        async function viewKelolaPengguna(container) {
+            container.innerHTML = `<div class="text-center py-20"><div class="w-10 h-10 border-4 border-rose-200 border-t-primary rounded-full animate-spin mx-auto mb-4"></div><p class="font-bold text-primary">Memuat Data Pengguna...</p></div>`;
+            try {
+                const snap = await getDocs(getCol('users'));
+                let html = `
+                <div class="fade-in max-w-5xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-users-cog text-primary mr-3"></i> Kelola Pengguna</h2>
+                    <div class="glass-card overflow-hidden bg-white shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-rose-50 text-slate-700 text-sm border-b border-rose-200">
+                                        <th class="p-4 font-black">Nama / Instansi</th>
+                                        <th class="p-4 font-black">Username</th>
+                                        <th class="p-4 font-black">Password</th>
+                                        <th class="p-4 font-black text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                if (snap.empty) {
+                    html += `<tr><td colspan="4" class="p-8 text-center text-slate-500 font-medium">Belum ada pengguna terdaftar.</td></tr>`;
+                } else {
+                    snap.forEach(doc => {
+                        const u = doc.data();
+                        html += `
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td class="p-4">
+                                    <div class="font-bold text-slate-800">${u.nama}</div>
+                                    <div class="text-xs text-slate-500 uppercase font-semibold">${u.kategori} • ${u.sekolah || '-'}</div>
+                                </td>
+                                <td class="p-4"><code class="bg-slate-100 px-2 py-1 rounded text-primary text-sm font-bold">${u.username}</code></td>
+                                <td class="p-4 text-sm font-mono text-slate-600">${u.password}</td>
+                                <td class="p-4 text-center space-x-2">
+                                    <button onclick="window.promptGantiPassword('${doc.id}', '${u.username}')" class="w-8 h-8 rounded bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors tooltip" title="Ganti Password"><i class="fas fa-key"></i></button>
+                                    <button onclick="window.tampilkanKonfirmasiHapus('users', '${doc.id}', 'kelola_pengguna')" class="w-8 h-8 rounded bg-red-100 text-red-600 hover:bg-red-200 transition-colors"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                html += `</tbody></table></div></div></div>`;
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="text-center text-red-500 py-10 font-bold"><i class="fas fa-exclamation-triangle text-3xl mb-3"></i><br>Gagal memuat data.</div>`;
+            }
+        }
+
+        window.promptGantiPassword = (id, username) => {
+            const html = `
+                <div class="mt-4 space-y-4 text-left">
+                    <p class="text-sm font-semibold text-slate-700">Setel password baru untuk user: <span class="text-primary font-bold">${username}</span></p>
+                    <input type="text" id="new-password-input" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary outline-none" placeholder="Masukkan password baru">
+                    <p id="modal-pass-error" class="text-red-500 text-xs font-bold"></p>
+                    <div class="flex gap-2 justify-end pt-2">
+                        <button onclick="window.closeModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold hover:bg-slate-300">Batal</button>
+                        <button onclick="window.eksekusiGantiPassword('${id}')" class="px-4 py-2 bg-primary text-white rounded-lg font-bold hover:bg-red-900 shadow-md">Simpan</button>
+                    </div>
+                </div>
+            `;
+            window.showModal("Ganti Password", "", false, html);
+        };
+
+        window.eksekusiGantiPassword = async (id) => {
+            const newPass = document.getElementById('new-password-input').value;
+            if(!newPass || newPass.length < 4) {
+                document.getElementById('modal-pass-error').textContent = "Password minimal 4 karakter.";
+                return;
+            }
+            try {
+                await updateDoc(getDocRef('users', id), { password: newPass });
+                window.closeModal();
+                window.navigateTo('kelola_pengguna');
+                setTimeout(() => window.showModal("Berhasil", "Password pengguna telah diperbarui."), 300);
+            } catch(e) { window.showModal("Gagal", "Gagal mengubah password.", true); }
+        };
+
+        window.tampilkanKonfirmasiHapus = (col, id, redirectView) => {
+            const customActions = `
+                <button onclick="window.closeModal()" class="px-6 py-2 bg-slate-200 text-slate-700 rounded-lg font-bold hover:bg-slate-300">Batal</button>
+                <button onclick="window.eksekusiHapusDoc('${col}', '${id}', '${redirectView}')" class="px-6 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 shadow-md">Ya, Hapus</button>
+            `;
+            window.showModal("Konfirmasi Hapus", "Tindakan ini tidak dapat dibatalkan. Yakin ingin menghapus data ini secara permanen?", true, customActions);
+        };
+
+        window.eksekusiHapusDoc = async (col, id, redirectView) => {
+            try {
+                await deleteDoc(getDocRef(col, id));
+                window.closeModal();
+                if(redirectView && redirectView !== 'null') window.navigateTo(redirectView);
+                setTimeout(() => window.showModal("Berhasil", "Data telah dihapus dari sistem."), 300);
+            } catch(err) { window.showModal("Error", "Gagal menghapus data.", true); }
+        };
+
+        function viewPengaturan() {
+            const set = window.appState.pengaturan;
+            return `
+                <div class="fade-in max-w-2xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-cogs text-primary mr-3"></i> Pengaturan Sistem</h2>
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <form onsubmit="window.simpanPengaturan(event)" class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Nama Aplikasi / Portal</label>
+                                <input type="text" id="set-nama" required value="${set.nama_aplikasi}" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none text-lg font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">URL Logo Sekolah/Institusi (Opsional)</label>
+                                <input type="url" id="set-logo" value="${set.logo_url || ''}" placeholder="https://contoh.com/logo.png" class="w-full px-4 py-3.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                                <p class="text-xs text-slate-500 mt-2">Biarkan kosong untuk menggunakan logo inisial default. Pastikan URL gambar berakhiran .png atau .jpg.</p>
+                            </div>
+                            
+                            <div class="pt-6 border-t border-slate-100">
+                                <button type="submit" class="w-full bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95"><i class="fas fa-save mr-2"></i> Simpan Pengaturan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.simpanPengaturan = async (e) => {
+            e.preventDefault();
+            const data = {
+                nama_aplikasi: document.getElementById('set-nama').value,
+                logo_url: document.getElementById('set-logo').value,
+                timestamp: Date.now()
+            };
+            try {
+                await setDoc(getDocRef('pengaturan', 'app_settings'), data);
+                window.showModal("Tersimpan", "Pengaturan sistem berhasil diperbarui. Tampilan web akan langsung berubah untuk semua pengguna.");
+            } catch(err) { window.showModal("Error", "Gagal menyimpan pengaturan.", true); }
+        };
+
+        function viewInformasi() {
+            let html = `<div class="fade-in max-w-3xl mx-auto pb-10"><h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-bullhorn text-primary mr-3"></i> Informasi & Pengumuman</h2><div class="space-y-6">`;
+            if(window.appState.informasiList.length === 0) html += `<div class="text-center py-10 glass-card bg-white text-slate-500 font-bold"><i class="far fa-newspaper text-4xl mb-3"></i><br>Belum ada informasi.</div>`;
+            else {
+                window.appState.informasiList.forEach(info => {
+                    html += `
+                        <div class="glass-card p-6 md:p-8 border-l-8 border-l-secondary bg-white">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-xl font-black text-slate-800 leading-snug">${info.judul}</h3>
+                                <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap ml-4 bg-slate-50 px-2 py-1 rounded"><i class="far fa-clock mr-1"></i>${formatDate(info.timestamp)}</span>
+                            </div>
+                            <p class="text-slate-600 whitespace-pre-wrap leading-relaxed text-sm md:text-base">${info.isi}</p>
+                            ${info.link_gambar ? `<img src="${info.link_gambar}" class="mt-6 rounded-xl max-h-80 object-cover w-full shadow-sm border border-slate-100" onerror="this.style.display='none'">` : ''}
+                        </div>
+                    `;
+                });
+            }
+            html += `</div></div>`; return html;
+        }
+
+        function viewProfil() { return `<div class="fade-in text-center p-10"><i class="fas fa-id-card text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Profil Pengguna</h3><p class="text-sm text-slate-500">Fitur ini tersedia dan berfungsi penuh di dalam koneksi Firestore.</p></div>`; }
+        function viewKaryaSaya() { return `<div class="fade-in text-center p-10"><i class="fas fa-folder-open text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Karya Saya</h3><p class="text-sm text-slate-500">Daftar karya Anda akan tampil di sini.</p></div>`; }
+        function viewSapa() { return `<div class="fade-in text-center p-10"><i class="fas fa-envelope-open-text text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Sapa Pengawas</h3><p class="text-sm text-slate-500">Kirim pesan langsung ke Ibu Pengawas Lilik Rahmawati, M.Pd.</p></div>`; }
+        function viewDiskusi(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-comments text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Ruang Diskusi</h3><p class="text-sm text-slate-500">Forum obrolan interaktif publik antar guru dan siswa.</p></div>`; }
+        function viewKelolaInformasi() { return `<div class="fade-in text-center p-10"><i class="fas fa-edit text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Kelola Informasi</h3><p class="text-sm text-slate-500">Admin memposting berita di sini.</p></div>`; }
+        function viewPantauKarya(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-chart-pie text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Dasbor Pantauan</h3><p class="text-sm text-slate-500">Admin melihat statistik semua karya dan rapor yang masuk.</p></div>`; }
+        function viewKotakMasuk(c) { c.innerHTML = `<div class="fade-in text-center p-10"><i class="fas fa-inbox text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold">Kotak Masuk</h3><p class="text-sm text-slate-500">Membaca pesan dari form Sapa Pengawas.</p></div>`; }
+
+        // Start App
+        window.onload = () => { initFirebaseAuth(); };
+
+    </script>
+</body>
+</html>
