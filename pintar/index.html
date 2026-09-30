@@ -149,28 +149,15 @@
         // 1. KONFIGURASI FIREBASE ANDA
         // ==========================================
         // Ganti nilai-nilai di bawah ini dengan Firebase Config dari Console Anda
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCsxdF9d4R1Stae6uBh4ptBNKgXh9nzsbI",
-  authDomain: "pintar-d4cf3.firebaseapp.com",
-  projectId: "pintar-d4cf3",
-  storageBucket: "pintar-d4cf3.firebasestorage.app",
-  messagingSenderId: "442069251976",
-  appId: "1:442069251976:web:22cc820f913f145cc4ac3d",
-  measurementId: "G-J2T9VZ7FZN"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyUntukPreviewSaja",
+            authDomain: "pintar-grobogan.firebaseapp.com",
+            projectId: "pintar-grobogan",
+            storageBucket: "pintar-grobogan.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+        const appId = 'pintar-grobogan-app';
 
         // Initialize Firebase
         const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
