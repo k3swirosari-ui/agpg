@@ -175,6 +175,7 @@
             pengaturan: { nama_aplikasi: 'Pintar Grobogan', logo_url: '' },
             diskusiList: [],
             raporList: [],
+            pengawas: { nama: 'Lilik Rahmawati, M.Pd', jabatan: 'Pengawas Sekolah Kabupaten Grobogan', nip: '', foto_url: '', kutipan: 'Inovasi bukan sekadar membuat yang baru, tapi bagaimana karya kita mampu memberikan solusi nyata bagi pembelajaran anak didik. Mari jadikan jejak digital Bapak/Ibu sebagai inspirasi yang tak lekang oleh waktu.' },
             pesanList: [],
             dash: { tab: 'karya', q: '', kat: 'Semua', userCount: null },
             liveDb: false,
@@ -335,6 +336,16 @@
                 }, (err) => console.warn('Listener pengaturan gagal:', err.message)));
             } catch(e) {}
 
+            try {
+                unsubs.push(onSnapshot(getDocRef('pengaturan', 'data_pengawas'), (docSnap) => {
+                    if (docSnap.exists()) {
+                        st.pengawas = { ...st.pengawas, ...docSnap.data() };
+                        renderNavigation();
+                        if(st.currentView === 'beranda') renderCurrentView();
+                    }
+                }, (err) => console.warn('Listener data pengawas gagal:', err.message)));
+            } catch(e) {}
+
             listen('karya', 'karyaList', asc);
             listen('informasi', 'informasiList', desc);
             listen('diskusi', 'diskusiList', asc);
@@ -390,6 +401,7 @@
                 { id: 'pantau_karya', title: 'Dasbor Data', icon: 'fa-chart-pie', roles: ['admin'], isBottom: true },
                 { id: 'kelola_pengguna', title: 'Pengguna', icon: 'fa-users-cog', roles: ['admin'], isBottom: false },
                 { id: 'kelola_informasi', title: 'Kelola Info', icon: 'fa-edit', roles: ['admin'], isBottom: false },
+                { id: 'profil_pengawas', title: 'Profil Pengawas', icon: 'fa-user-tie', roles: ['admin'], isBottom: false },
                 { id: 'kotak_masuk', title: 'Pesan Masuk', icon: 'fa-inbox', roles: ['admin'], isBottom: false },
                 { id: 'pengaturan', title: 'Pengaturan Web', icon: 'fa-cogs', roles: ['admin'], isBottom: false },
                 
@@ -449,10 +461,10 @@
             document.getElementById('desktop-user-info').innerHTML = role === 'guest' ? `<div class="text-sm text-center text-slate-500 font-medium"><i class="fas fa-user-secret mr-1"></i> Mode Pengunjung</div>` : `
                 <div class="flex items-center gap-3 w-full bg-white p-2 rounded-xl shadow-sm border border-rose-100">
                     <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-primary font-bold overflow-hidden border-2 border-white shadow-sm shrink-0">
-                        ${window.appState.user?.foto_profil ? `<img src="${window.appState.user.foto_profil}" class="w-full h-full object-cover">` : '<i class="fas fa-user"></i>'}
+                        ${(role === 'admin' ? window.appState.pengawas.foto_url : window.appState.user?.foto_profil) ? `<img src="${esc(role === 'admin' ? window.appState.pengawas.foto_url : window.appState.user.foto_profil)}" class="w-full h-full object-cover">` : '<i class="fas fa-user"></i>'}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-800 truncate">${window.appState.user?.nama || 'Admin Sistem'}</p>
+                        <p class="text-sm font-bold text-slate-800 truncate">${esc(role === 'admin' ? window.appState.pengawas.nama : (window.appState.user?.nama || 'Admin Sistem'))}</p>
                         <p class="text-[10px] text-slate-500 uppercase font-black tracking-wider">${window.appState.role === 'admin' ? 'Pengawas' : window.appState.user?.kategori}</p>
                     </div>
                 </div>
@@ -499,6 +511,7 @@
             else if(v === 'kotak_masuk') viewKotakMasuk(container);
             else if(v === 'kelola_pengguna') viewKelolaPengguna(container);
             else if(v === 'pengaturan') container.innerHTML = viewPengaturan();
+            else if(v === 'profil_pengawas') container.innerHTML = viewProfilPengawas();
             
             else container.innerHTML = `<div class="text-center p-10 text-gray-500"><i class="fas fa-search mb-2 text-3xl"></i><br>Halaman tidak ditemukan.</div>`;
         }
@@ -566,13 +579,13 @@
                     <div class="glass-card p-6 md:p-8 border-l-8 border-accent flex flex-col md:flex-row gap-6 items-center md:items-start bg-white shadow-lg relative overflow-hidden">
                         <div class="absolute right-0 top-0 w-32 h-32 bg-rose-50 rounded-bl-full -z-10"></div>
                         <div class="w-24 h-24 rounded-full bg-slate-100 shrink-0 flex items-center justify-center text-4xl text-primary border-4 border-white shadow-xl overflow-hidden relative z-10">
-                            <i class="fas fa-user-tie"></i>
+                            ${pengawasAvatar()}
                         </div>
                         <div class="text-center md:text-left relative z-10">
                             <i class="fas fa-quote-left text-rose-200 text-3xl absolute -top-2 -left-4 -z-10 opacity-50"></i>
-                            <p class="text-slate-700 italic mb-4 text-sm md:text-base leading-relaxed font-medium">"Inovasi bukan sekadar membuat yang baru, tapi bagaimana karya kita mampu memberikan solusi nyata bagi pembelajaran anak didik. Mari jadikan jejak digital Bapak/Ibu sebagai inspirasi yang tak lekang oleh waktu."</p>
-                            <h4 class="text-base font-black text-slate-800">Lilik Rahmawati, M.Pd</h4>
-                            <p class="text-xs font-bold text-primary uppercase tracking-wide">Pengawas Sekolah Kabupaten Grobogan</p>
+                            <p class="text-slate-700 italic mb-4 text-sm md:text-base leading-relaxed font-medium">"${esc(window.appState.pengawas.kutipan)}"</p>
+                            <h4 class="text-base font-black text-slate-800">${esc(window.appState.pengawas.nama)}</h4>
+                            <p class="text-xs font-bold text-primary uppercase tracking-wide">${esc(window.appState.pengawas.jabatan)}</p>
                         </div>
                     </div>
 
@@ -1181,7 +1194,7 @@
 
             const data = {
                 id_user: role === 'admin' ? 'admin' : user.id,
-                nama: role === 'admin' ? 'Lilik Rahmawati, M.Pd' : user.nama,
+                nama: role === 'admin' ? window.appState.pengawas.nama : user.nama,
                 kategori: role === 'admin' ? 'pengawas' : (user.kategori || 'guru'),
                 isi, timestamp: Date.now()
             };
@@ -1213,10 +1226,10 @@
                 <div class="fade-in max-w-2xl mx-auto pb-10">
                     <h2 class="text-2xl md:text-3xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-envelope-open-text text-primary mr-3"></i> Sapa Pengawas</h2>
                     <div class="glass-card p-5 mb-5 bg-white flex items-center gap-4 border-l-8 border-accent">
-                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-3xl text-primary border-4 border-white shadow-md shrink-0"><i class="fas fa-user-tie"></i></div>
+                        <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-3xl text-primary border-4 border-white shadow-md shrink-0 overflow-hidden">${pengawasAvatar()}</div>
                         <div>
-                            <h3 class="font-black text-slate-800">Lilik Rahmawati, M.Pd</h3>
-                            <p class="text-xs font-bold text-primary uppercase tracking-wide">Pengawas Sekolah Kabupaten Grobogan</p>
+                            <h3 class="font-black text-slate-800">${esc(window.appState.pengawas.nama)}</h3>
+                            <p class="text-xs font-bold text-primary uppercase tracking-wide">${esc(window.appState.pengawas.jabatan)}</p>
                             <p class="text-xs text-slate-500 mt-1">Sampaikan pertanyaan, saran, atau kendala Anda. Pesan akan diterima langsung oleh Pengawas.</p>
                         </div>
                     </div>
@@ -1779,6 +1792,134 @@
                 window.closeModal();
                 setTimeout(() => window.showModal("Tersimpan", "Karya berhasil diperbarui."), 300);
             } catch(e) { err.textContent = "Gagal menyimpan. Periksa koneksi Anda."; }
+        };
+
+
+        // =====================================================
+        // PROFIL PENGAWAS (ADMIN)
+        // =====================================================
+        function pengawasAvatar() {
+            const f = window.appState.pengawas.foto_url;
+            return f
+                ? `<img src="${esc(f)}" class="w-full h-full object-cover" onerror="this.parentNode.innerHTML='<i class=&quot;fas fa-user-tie&quot;></i>'">`
+                : '<i class="fas fa-user-tie"></i>';
+        }
+
+        let pengawasFotoDraft = '';
+
+        function viewProfilPengawas() {
+            if(window.appState.role !== 'admin') {
+                return `<div class="fade-in text-center p-10"><i class="fas fa-lock text-5xl text-rose-200 mb-4"></i><h3 class="text-xl font-bold mb-2">Khusus Pengawas</h3><p class="text-sm text-slate-500">Silakan masuk sebagai admin.</p></div>`;
+            }
+            const pw = window.appState.pengawas;
+            pengawasFotoDraft = pw.foto_url || '';
+            const isDataUrl = pengawasFotoDraft.startsWith('data:');
+            const html = `
+                <div class="fade-in max-w-2xl mx-auto pb-10">
+                    <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center"><i class="fas fa-user-tie text-primary mr-3"></i> Profil Pengawas</h2>
+                    <div class="glass-card p-6 md:p-8 bg-white">
+                        <form onsubmit="window.simpanProfilPengawas(event)" class="space-y-5">
+                            <div class="flex flex-col items-center gap-3 pb-2">
+                                <div id="pw-preview" class="w-32 h-32 rounded-full bg-rose-100 text-primary text-5xl flex items-center justify-center overflow-hidden border-4 border-white shadow-lg"></div>
+                                <div class="flex flex-wrap gap-2 justify-center">
+                                    <label class="cursor-pointer px-4 py-2 bg-primary text-white rounded-full text-sm font-bold hover:bg-red-900 shadow-md active:scale-95 transition-all">
+                                        <i class="fas fa-camera mr-1"></i> Pilih Foto
+                                        <input type="file" accept="image/*" class="hidden" onchange="window.pilihFotoPengawas(this)">
+                                    </label>
+                                    <button type="button" onclick="window.hapusFotoPengawas()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-sm font-bold hover:bg-slate-200"><i class="fas fa-trash-alt mr-1"></i> Hapus Foto</button>
+                                </div>
+                                <p class="text-xs text-slate-500 text-center">Foto dari perangkat otomatis dikecilkan agar ringan. Atau tempel URL gambar di bawah.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">URL Foto <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="url" id="pw-url" value="${isDataUrl ? '' : esc(pengawasFotoDraft)}" oninput="window.urlFotoPengawas(this.value)" placeholder="https://contoh.com/foto.jpg" class="${INPUT_CLS}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap & Gelar</label>
+                                <input type="text" id="pw-nama" required maxlength="100" value="${esc(pw.nama)}" class="${INPUT_CLS}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Jabatan</label>
+                                <input type="text" id="pw-jabatan" required maxlength="120" value="${esc(pw.jabatan)}" class="${INPUT_CLS}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">NIP <span class="font-normal text-slate-400">- opsional</span></label>
+                                <input type="text" id="pw-nip" value="${esc(pw.nip || '')}" class="${INPUT_CLS} font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Kata Sambutan (tampil di Beranda)</label>
+                                <textarea id="pw-kutipan" rows="5" maxlength="600" required class="${INPUT_CLS} resize-y">${esc(pw.kutipan)}</textarea>
+                            </div>
+                            <button type="submit" id="pw-submit" class="w-full bg-primary text-white py-4 rounded-xl font-black shadow-lg hover:bg-red-900 transition-colors active:scale-95"><i class="fas fa-save mr-2"></i> Simpan Profil Pengawas</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            setTimeout(setPreviewPengawas, 0);
+            return html;
+        }
+
+        function setPreviewPengawas() {
+            const el = document.getElementById('pw-preview'); if(!el) return;
+            el.innerHTML = pengawasFotoDraft
+                ? `<img src="${esc(pengawasFotoDraft)}" class="w-full h-full object-cover" onerror="this.parentNode.innerHTML='<i class=&quot;fas fa-user-tie&quot;></i>'">`
+                : '<i class="fas fa-user-tie"></i>';
+        }
+
+        window.urlFotoPengawas = (v) => { pengawasFotoDraft = v.trim(); setPreviewPengawas(); };
+
+        window.hapusFotoPengawas = () => {
+            pengawasFotoDraft = '';
+            const u = document.getElementById('pw-url'); if(u) u.value = '';
+            setPreviewPengawas();
+        };
+
+        window.pilihFotoPengawas = (input) => {
+            const file = input.files && input.files[0];
+            if(!file) return;
+            if(!file.type.startsWith('image/')) return window.showModal("File Tidak Valid", "Pilih file gambar (JPG, PNG, dsb).", true);
+            if(file.size > 8 * 1024 * 1024) return window.showModal("File Terlalu Besar", "Ukuran foto maksimal 8 MB.", true);
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = new Image();
+                img.onload = () => {
+                    // Potong persegi dari tengah, kecilkan ke 320x320
+                    const size = 320, c = document.createElement('canvas');
+                    c.width = c.height = size;
+                    const side = Math.min(img.width, img.height);
+                    c.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+                    pengawasFotoDraft = c.toDataURL('image/jpeg', 0.85);
+                    const u = document.getElementById('pw-url'); if(u) u.value = '';
+                    setPreviewPengawas();
+                };
+                img.onerror = () => window.showModal("Gagal", "Gambar tidak dapat dibaca.", true);
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+            input.value = '';
+        };
+
+        window.simpanProfilPengawas = async (e) => {
+            e.preventDefault();
+            const data = {
+                nama: document.getElementById('pw-nama').value.trim(),
+                jabatan: document.getElementById('pw-jabatan').value.trim(),
+                nip: document.getElementById('pw-nip').value.trim(),
+                kutipan: document.getElementById('pw-kutipan').value.trim(),
+                foto_url: pengawasFotoDraft
+            };
+            if(!data.nama || !data.jabatan || !data.kutipan) return window.showModal("Data Belum Lengkap", "Nama, jabatan, dan kata sambutan wajib diisi.", true);
+            if(data.foto_url && !/^(https?:\/\/|data:image\/)/i.test(data.foto_url)) return window.showModal("URL Tidak Valid", "URL foto harus diawali http:// atau https://", true);
+
+            const btn = document.getElementById('pw-submit'); btn.disabled = true;
+            try {
+                if(window.appState.liveDb) await setDoc(getDocRef('pengaturan', 'data_pengawas'), { ...data, timestamp: Date.now() }, { merge: true });
+                window.appState.pengawas = { ...window.appState.pengawas, ...data };
+                renderNavigation();
+                window.showModal("Tersimpan", "Profil pengawas berhasil diperbarui. Perubahan langsung tampil di Beranda, Sapa Pengawas, dan Ruang Diskusi.");
+            } catch(err) {
+                window.showModal("Gagal", "Profil tidak dapat disimpan. Pastikan Anda login sebagai admin dan Security Rules Firestore mengizinkan tulis ke koleksi pengaturan.", true);
+            } finally { btn.disabled = false; }
         };
 
         // Start App
